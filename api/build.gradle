@@ -1,0 +1,41 @@
+plugins {
+    id 'multiloader-common'
+    alias libs.plugins.modDevGradle
+}
+
+neoForge {
+    neoFormVersion = libs.neoForm.get().version
+    parchment.parchmentArtifact = libs.parchment.get().toString()
+}
+
+apply from: rootProject.file('repositories.gradle')
+apply from: 'dependencies.gradle'
+
+configurations {
+    apiJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    apiResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    apiGeneratedResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+sourceSets {
+    generated {
+        resources {
+            srcDir 'src/generated/resources'
+        }
+    }
+}
+
+artifacts {
+    apiJava sourceSets.main.java.sourceDirectories.singleFile
+    apiResources sourceSets.main.resources.sourceDirectories.singleFile
+    apiGeneratedResources sourceSets.generated.resources.sourceDirectories.singleFile
+}

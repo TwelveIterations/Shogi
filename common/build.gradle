@@ -1,0 +1,62 @@
+plugins {
+    id 'multiloader-common'
+    alias libs.plugins.modDevGradle
+}
+
+neoForge {
+    neoFormVersion = libs.neoForm.get().version
+    // Automatically enable AccessTransformers if the file exists
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+    parchment.parchmentArtifact = libs.parchment.get().toString()
+}
+
+dependencies {
+    compileOnly libs.mixin
+    testImplementation project(':api')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.12.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.0'
+}
+
+apply from: rootProject.file('repositories.gradle')
+apply from: 'dependencies.gradle'
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonGeneratedResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+sourceSets {
+    generated {
+        resources {
+            srcDir 'src/generated/resources'
+        }
+    }
+    test {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+    commonGeneratedResources sourceSets.generated.resources.sourceDirectories.singleFile
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+}

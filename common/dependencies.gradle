@@ -1,0 +1,48 @@
+dependencies {
+    compileOnly libs.mixinExtras
+}
+
+configurations {
+    apiJava {
+        canBeResolved = true
+    }
+    apiResources {
+        canBeResolved = true
+    }
+    apiGeneratedResources {
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly(project(':api'))
+    apiJava project(path: ':api', configuration: 'apiJava')
+    apiResources project(path: ':api', configuration: 'apiResources')
+    apiGeneratedResources project(path: ':api', configuration: 'apiGeneratedResources')
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.apiJava)
+    source(configurations.apiJava)
+}
+
+processResources {
+    dependsOn(configurations.apiResources)
+    dependsOn(configurations.apiGeneratedResources)
+    from(configurations.apiResources)
+    from(configurations.apiGeneratedResources)
+}
+
+tasks.named('javadoc', Javadoc).configure {
+    dependsOn(configurations.apiJava)
+    source(configurations.apiJava)
+}
+
+tasks.named("sourcesJar", Jar) {
+    dependsOn(configurations.apiJava)
+    from(configurations.apiJava)
+    dependsOn(configurations.apiResources)
+    from(configurations.apiResources)
+    dependsOn(configurations.apiGeneratedResources)
+    from(configurations.apiGeneratedResources)
+}

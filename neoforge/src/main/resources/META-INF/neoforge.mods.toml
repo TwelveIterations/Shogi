@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="${license}"
+issueTrackerURL="https://github.com/TwelveIterations/Shogi/issues"
+[[mods]]
+modId="shogi"
+version="${version}"
+displayName="Shogi"
+displayURL="https://balm.twelveiterations.com/"
+logoFile="shogi.png"
+credits="BlayTheNinth"
+authors="BlayTheNinth"
+description='''${description}'''
+[[mixins]]
+config = "shogi.mixins.json"
+[[mixins]]
+config = "shogi.neoforge.mixins.json"
+[[dependencies.shogi]]
+modId="neoforge"
+type="required"
+versionRange="[${neoforge_version},)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.shogi]]
+modId="minecraft"
+type="required"
+versionRange="[${minecraft_version},)"
+ordering="NONE"
+side="BOTH"

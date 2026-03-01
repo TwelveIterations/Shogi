@@ -1,0 +1,50 @@
+plugins {
+    id 'multiloader-loader'
+    id 'multiloader-api'
+    alias libs.plugins.forgeGradle
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
+minecraft {
+    mappings channel: 'official', version: libs.minecraft.get().version
+    runs {
+        configureEach {
+            workingDir.convention layout.projectDirectory.dir('run')
+            // Mixin requires either specifying the config via command line, or in the Manifest
+            args "--mixin.config=${mod_id}.mixins.json,${mod_id}-api.mixins.json,${mod_id}-forge.mixins.json"
+        }
+        register('client') {
+            systemProperty 'forge.enabledGameTestNamespaces', mod_id
+        }
+    }
+}
+
+repositories {
+    maven minecraft.mavenizer
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+    mavenCentral()
+}
+
+dependencies {
+    def mcVersion = libs.minecraft.get().version
+    def forgeVersion = libs.forge.get().version
+    implementation minecraft.dependency("net.minecraftforge:forge:$mcVersion-$forgeVersion")
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.0'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
+}
+
+tasks.named('jar', Jar) {
+    manifest {
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.api.mixins.json,${mod_id}.forge.mixins.json"
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+apply from: rootProject.file('repositories.gradle')
+apply from: 'dependencies.gradle'

@@ -1,0 +1,15 @@
+## API License
+
+Apache License, Version 2.0
+Copyright (c) 2026 BlayTheNinth
+
+The API for this project (that is, everything under the `api` folder as well as `shogi-api` builds) is licensed under
+the Apache License 2.0. See [LICENSE_api](LICENSE_api) for the full license.
+
+## Mod License
+
+All Rights Reserved
+Copyright (c) 2026 BlayTheNinth
+
+This applies to the Shogi mod sources (excluding `api`) and its binary builds. See [LICENSE](LICENSE] for the full
+terms.

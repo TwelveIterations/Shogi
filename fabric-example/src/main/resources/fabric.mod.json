@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "shogi_example",
+  "version": "${version}",
+
+  "name": "Shogi Example Mod",
+  "description": "${description}",
+  "authors": [
+    "BlayTheNinth"
+  ],
+  "contact": {
+    "homepage": "https://balm.twelveiterations.com/",
+    "sources": "https://github.com/TwelveIterations/Shogi",
+    "issues": "https://github.com/TwelveIterations/Shogi/issues"
+  },
+  "license": "${license}",
+  "icon": "shogi.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.blay09.mods.shogi.fabric.FabricShogiExample"
+    ]
+  },
+  "mixins": [
+  ],
+
+  "depends": {
+    "shogi": "*",
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "minecraft": "*",
+    "java": "*"
+  },
+  "suggests": {
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/VAfZ2Nau6j"
+      }
+    }
+  }
+}
