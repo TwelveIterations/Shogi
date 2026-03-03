@@ -1,5 +1,17 @@
 package net.blay09.mods.shogi.common.network;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import net.blay09.mods.shogi.common.effect.cost.ExperienceCostFailure;
+import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCostFailure;
+import net.blay09.mods.shogi.common.effect.cost.ItemCostFailure;
+import net.blay09.mods.shogi.common.effect.failure.Failure;
+import net.blay09.mods.shogi.common.effect.failure.Refuse;
+import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownActiveFailure;
+import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
+import net.blay09.mods.shogi.effect.EmptyEffect;
+import net.blay09.mods.shogi.effect.ShogiEmpty;
+import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -14,6 +26,8 @@ import static net.blay09.mods.shogi.common.ShogiCommon.id;
 public final class ShogiDefaultStreamCodecs {
     private static boolean initialized;
     private static final StreamCodec<RegistryFriendlyByteBuf, Throwable> THROWABLE_CODEC = StreamCodec.unit(new Exception());
+    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiDeferred> DEFERRED_CODEC = StreamCodec.unit(ShogiDeferred.INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiEmpty> EMPTY_CODEC = StreamCodec.unit(EmptyEffect.INSTANCE);
 
     private ShogiDefaultStreamCodecs() {
     }
@@ -28,8 +42,18 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("float"), Float.class, ByteBufCodecs.FLOAT.cast());
         ShogiStreamCodecs.register(id("bool"), Boolean.class, ByteBufCodecs.BOOL.cast());
         ShogiStreamCodecs.register(id("string"), String.class, ByteBufCodecs.STRING_UTF8.cast());
+        ShogiStreamCodecs.register(id("json"), JsonElement.class, ByteBufCodecs.lenientJson(Short.MAX_VALUE).cast());
         ShogiStreamCodecs.register(id("component"), Component.class, ComponentSerialization.STREAM_CODEC);
         ShogiStreamCodecs.register(id("throwable"), Throwable.class, THROWABLE_CODEC);
         ShogiStreamCodecs.register(id("list"), List.class, ShogiStreamCodecs.LIST_STREAM_CODEC);
+        ShogiStreamCodecs.register(id("failure"), Failure.class, Failure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("refuse"), Refuse.class, Refuse.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("xp_cost_failure"), ExperienceCostFailure.class, ExperienceCostFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("xp_level_cost_failure"), ExperienceLevelCostFailure.class, ExperienceLevelCostFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("item_cost_failure"), ItemCostFailure.class, ItemCostFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("cooldown_active_failure"), CooldownActiveFailure.class, CooldownActiveFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
+        ShogiStreamCodecs.register(id("empty"), ShogiEmpty.class, EMPTY_CODEC);
     }
 }

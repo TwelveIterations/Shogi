@@ -6,8 +6,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.failure.ShogiFatalFailure;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 
 public record Refuse(Component message) implements ShogiEffect<Boolean>, ShogiFatalFailure {
@@ -16,6 +18,11 @@ public record Refuse(Component message) implements ShogiEffect<Boolean>, ShogiFa
     public static final MapCodec<Refuse> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ComponentSerialization.CODEC.fieldOf("message").orElse(Component.empty()).forGetter(Refuse::message)
     ).apply(builder, Refuse::new));
+    public static final StreamCodec<RegistryFriendlyByteBuf, Refuse> STREAM_CODEC = StreamCodec.composite(
+            ComponentSerialization.STREAM_CODEC,
+            Refuse::message,
+            Refuse::new
+    );
 
     @Override
     public Either<Boolean, ?> apply(ShogiContext context) {
