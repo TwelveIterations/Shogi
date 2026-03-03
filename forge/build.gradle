@@ -1,7 +1,11 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 plugins {
     id 'multiloader-loader'
     id 'multiloader-api'
     alias libs.plugins.forgeGradle
+    alias libs.plugins.curseForgeGradle
+    alias libs.plugins.modrinthMinotaur
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -48,3 +52,35 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 
 apply from: rootProject.file('repositories.gradle')
 apply from: 'dependencies.gradle'
+
+tasks.register('curseforge', TaskPublishCurseForge) {
+    dependsOn('build')
+    description = 'Publishes the Forge build to CurseForge.'
+    group = 'publishing'
+
+    apiToken = project.findProperty("curseforge.api_key") ?: System.getenv("CURSEFORGE_TOKEN") ?: "none"
+
+    def projectId = findProperty("curseforge_project_id")
+    onlyIf {
+        projectId != null
+    }
+    if (projectId) {
+        def mainFile = upload(findProperty("curseforge_project_id"), tasks.jarJar.archiveFile.get().asFile)
+        mainFile.changelog = rootProject.file('CHANGELOG.md').text
+        mainFile.addGameVersion(libs.minecraft.get().version)
+        mainFile.releaseType = "release"
+        project.findProperty("curseforge_environments")?.split(",")?.toList()?.each { mainFile.addEnvironment(it) }
+    }
+}
+
+modrinth {
+    token = project.findProperty("modrinth.token") ?: System.getenv("MODRINTH_TOKEN") ?: "none"
+    projectId = findProperty("modrinth_project_id")
+    versionType = "release"
+    versionNumber = project.version + "+forge-" + libs.minecraft.get().version
+    uploadFile = tasks.jarJar.archiveFile.get().asFile
+    changelog = rootProject.file("CHANGELOG.md").text
+    gameVersions = [libs.minecraft.get().version]
+    loaders = ['forge']
+}
+tasks.modrinth.dependsOn(build)
