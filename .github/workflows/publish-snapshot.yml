@@ -25,7 +25,7 @@ jobs:
             const includeNeoForge = gradleProperties.match(/^(?!#)include_neoforge\s*=\s*true/m);
             const mavenSnapshots = gradleProperties.match(/^(?!#)maven_snapshots\s*=\s*(.+)/m);
             return {
-              loader: ['common', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
+              loader: ['api', 'common', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
               task: [mavenSnapshots ? 'publish' : 'build']
             };
   publish-snapshot:
