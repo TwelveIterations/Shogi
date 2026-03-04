@@ -86,10 +86,10 @@ public class ShogiRuleParser {
 
         private JsonObject parseConditionAndGroup() throws ParseException {
             final List<JsonObject> andConditions = new ArrayList<>();
-            andConditions.add(parseConditionCall());
+            andConditions.add(parseConditionPrimary());
             skipWhitespace();
             while (tryConsume('+')) {
-                andConditions.add(parseConditionCall());
+                andConditions.add(parseConditionPrimary());
                 skipWhitespace();
             }
 
@@ -97,6 +97,21 @@ public class ShogiRuleParser {
                 return andConditions.getFirst();
             }
             return andEffect(andConditions);
+        }
+
+        private JsonObject parseConditionPrimary() throws ParseException {
+            skipWhitespace();
+            if (tryConsume('(')) {
+                if (tryConsume(')')) {
+                    throw error("Expected condition");
+                }
+                final JsonObject nested = parseConditionExpression();
+                skipWhitespace();
+                expect(')');
+                return nested;
+            }
+
+            return parseConditionCall();
         }
 
         private JsonObject parseConditionCall() throws ParseException {

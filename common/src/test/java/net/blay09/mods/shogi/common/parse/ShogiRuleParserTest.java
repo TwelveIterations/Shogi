@@ -213,6 +213,48 @@ class ShogiRuleParserTest {
     }
 
     @Test
+    void parsesParenthesizedConditionGroup() {
+        final var effect = parseOk(createScope(), "noop + (noop, noop) -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var and = assertInstanceOf(AndEffect.class, condition.condition());
+        assertEquals(2, and.conditions().size());
+        assertInstanceOf(EmptyEffect.class, and.conditions().get(0));
+
+        final var any = assertInstanceOf(AnyEffect.class, and.conditions().get(1));
+        assertEquals(2, any.conditions().size());
+        any.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
+    }
+
+    @Test
+    void parsesParenthesizedConditionGroupOnLeftBranch() {
+        final var effect = parseOk(createScope(), "(noop, noop) + noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var and = assertInstanceOf(AndEffect.class, condition.condition());
+        assertEquals(2, and.conditions().size());
+
+        final var any = assertInstanceOf(AnyEffect.class, and.conditions().get(0));
+        assertEquals(2, any.conditions().size());
+        any.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
+        assertInstanceOf(EmptyEffect.class, and.conditions().get(1));
+    }
+
+    @Test
+    void parsesNestedParenthesizedConditionGroupsWithoutWhitespace() {
+        final var effect = parseOk(createScope(), "noop+((noop,noop)+noop)->noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var rootAnd = assertInstanceOf(AndEffect.class, condition.condition());
+        assertEquals(2, rootAnd.conditions().size());
+
+        final var nestedAnd = assertInstanceOf(AndEffect.class, rootAnd.conditions().get(1));
+        assertEquals(2, nestedAnd.conditions().size());
+        assertInstanceOf(EmptyEffect.class, nestedAnd.conditions().get(1));
+
+        final var nestedAny = assertInstanceOf(AnyEffect.class, nestedAnd.conditions().get(0));
+        assertEquals(2, nestedAny.conditions().size());
+        nestedAny.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
+    }
+
+    @Test
     void parsesBareCall() {
         final var effect = parseOk(createScope(), "noop");
         assertInstanceOf(EmptyEffect.class, effect);
@@ -254,6 +296,21 @@ class ShogiRuleParserTest {
     @Test
     void failsForMalformedCallSyntax() {
         assertContains(parseErr(createScope(), "binary_op('+', 1, 2"), "Expected ','");
+    }
+
+    @Test
+    void failsForMissingConditionGroupClosingParenthesis() {
+        assertContains(parseErr(createScope(), "noop + (noop, noop -> noop) -> noop"), "Expected ')'");
+    }
+
+    @Test
+    void failsForEmptyConditionGroup() {
+        assertContains(parseErr(createScope(), "() -> noop"), "Expected condition");
+    }
+
+    @Test
+    void failsForEmptyConditionGroupAfterAnd() {
+        assertContains(parseErr(createScope(), "noop + () -> noop"), "Expected condition");
     }
 
     @Test

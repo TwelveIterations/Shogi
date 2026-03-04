@@ -217,8 +217,9 @@ For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher 
 
 (* --- Conditions --- *)
 <conditions>    ::= <and_group> ( "," <and_group> )*
-<and_group>     ::= <condition> ( "+" <condition> )*
-<condition>     ::= <identifier> [ "(" <arguments> ")" ]
+<and_group>     ::= <condition_primary> ( "+" <condition_primary> )*
+<condition_primary> ::= <condition_call> | "(" <conditions> ")"
+<condition_call> ::= <identifier> [ "(" <arguments> ")" ]
 
 (* --- Actions --- *)
 <action>        ::= <assignment> | <function_call>
@@ -250,6 +251,9 @@ For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher 
 
 Example with mixed condition operators:
 `is_dimension('minecraft:the_nether') + is_below_y(0), is_player_nearby(12) -> failure('Unsafe teleport target.')`
+
+Example with explicit condition grouping:
+`noop + (noop, noop) -> noop`
 
 ## Why not just use [insert scripting language] or [insert expression engine]?
 
