@@ -5,6 +5,7 @@ import com.mojang.serialization.DataResult;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
+import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
@@ -60,6 +61,24 @@ class ShogiRuleParserTest {
         assertEquals("result", assignment.variable());
         final var value = assertInstanceOf(ConstantEffect.class, assignment.value());
         assertEquals(new JsonPrimitive(5L), value.value());
+    }
+
+    @Test
+    void parsesConditionalAssignmentWithNamedArgsOutOfOrder() {
+        final var effect = parseOk(createScope(), "$xp_cost = if(condition = can_see_sky, else = 27, then = $distance * 0.01)");
+        final var assignment = assertInstanceOf(AssignmentEffect.class, effect);
+        assertEquals("xp_cost", assignment.variable());
+
+        final var condition = assertInstanceOf(ConditionEffect.class, assignment.value());
+        assertInstanceOf(CanSeeSky.class, condition.condition());
+
+        final var thenEffect = assertInstanceOf(BinaryOpEffect.class, condition.trueEffect());
+        assertEquals("*", thenEffect.op());
+        assertEquals("distance", assertInstanceOf(VariableEffect.class, thenEffect.left()).name());
+        assertEquals(new JsonPrimitive(0.01), assertInstanceOf(ConstantEffect.class, thenEffect.right()).value());
+
+        final var elseEffect = assertInstanceOf(ConstantEffect.class, condition.falseEffect());
+        assertEquals(new JsonPrimitive(27L), elseEffect.value());
     }
 
     @Test
@@ -210,6 +229,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
