@@ -9,6 +9,7 @@ import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
+import net.blay09.mods.shogi.util.ShogiDuration;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -29,7 +30,10 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
             return Either.right(ShogiDeferred.INSTANCE);
         }
 
-        final int durationTicks = duration.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
+        final int durationTicks = duration.apply(context)
+                .mapLeft(Coercion.DURATION)
+                .mapLeft(ShogiDuration::toTicks)
+                .orThrow();
         final var cooldowns = ((ShogiCooldownsAccess) player).shogi$getCooldowns();
         final long remainingTicks = cooldowns.getRemainingTicks(identifier);
         if (remainingTicks > 0) {

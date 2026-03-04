@@ -3,8 +3,11 @@ package net.blay09.mods.shogi.coercion;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
+import net.blay09.mods.shogi.util.ShogiDuration;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -63,6 +66,17 @@ public final class Coercion {
      * Coerces values to a non-negative integer.
      */
     public static final Function<Object, Integer> NON_NEGATIVE_INT = input -> Math.max(0, INT.apply(input));
+
+    /**
+     * Coerces values to a duration in seconds, reading the last list/array element when applicable.
+     */
+    public static final Function<Object, Duration> DURATION = LAST.andThen(input -> switch (input) {
+        case Duration duration -> duration.isNegative() ? Duration.ZERO : duration;
+        case Number numberValue -> Duration.ofMillis(Mth.floor(numberValue.doubleValue() * 1000));
+        case JsonPrimitive jsonElement when jsonElement.isNumber() -> Duration.ofMillis(Mth.floor(jsonElement.getAsDouble() * 1000));
+        case JsonPrimitive jsonElement when jsonElement.isString() -> ShogiDuration.parse(jsonElement.getAsString());
+        default -> ShogiDuration.parse(Objects.toString(input));
+    });
 
     /**
      * Coerces values to a float, reading the last list/array element when applicable.
