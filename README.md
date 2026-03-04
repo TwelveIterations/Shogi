@@ -159,7 +159,7 @@ The above example in JSON would look as follows:
 ```json
 {
   "hardcorerevival:can_revive_others": {
-    "type": "shogi:condition",
+    "type": "shogi:if",
     "condition": {
       "type": "shogi:is_mob_nearby",
       "distance": 10

@@ -16,7 +16,7 @@ public record ConditionEffect(
         ShogiEffect<?> falseEffect
 ) implements ShogiEffect<Object> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "condition");
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "if");
 
     @Override
     public Identifier identifier() {

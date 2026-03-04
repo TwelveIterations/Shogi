@@ -354,7 +354,7 @@ public class ShogiRuleParser {
 
         private JsonObject conditionEffect(JsonObject condition, JsonObject then) {
             final JsonObject json = new JsonObject();
-            json.addProperty("type", "shogi:condition");
+            json.addProperty("type", "shogi:if");
             json.add("condition", condition);
             json.add("then", then);
             final JsonObject elseValue = new JsonObject();
