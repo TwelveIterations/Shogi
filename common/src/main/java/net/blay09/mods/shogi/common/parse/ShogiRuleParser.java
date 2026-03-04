@@ -50,12 +50,9 @@ public class ShogiRuleParser {
 
         private JsonObject parseRule() throws ParseException {
             skipWhitespace();
-            final List<JsonObject> conditions = new ArrayList<>();
+            JsonObject condition = null;
             if (hasTopLevelArrow()) {
-                do {
-                    conditions.add(parseFunctionCall(true));
-                    skipWhitespace();
-                } while (tryConsume(','));
+                condition = parseConditionExpression();
                 expectArrow();
             }
 
@@ -65,12 +62,54 @@ public class ShogiRuleParser {
                 throw error("Unexpected trailing token");
             }
 
-            if (conditions.isEmpty()) {
+            if (condition == null) {
                 return action;
             }
 
-            final JsonObject condition = conditions.size() == 1 ? conditions.getFirst() : andEffect(conditions);
             return conditionEffect(condition, action);
+        }
+
+        private JsonObject parseConditionExpression() throws ParseException {
+            final List<JsonObject> anyConditions = new ArrayList<>();
+            anyConditions.add(parseConditionAndGroup());
+            skipWhitespace();
+            while (tryConsume(',')) {
+                anyConditions.add(parseConditionAndGroup());
+                skipWhitespace();
+            }
+
+            if (anyConditions.size() == 1) {
+                return anyConditions.getFirst();
+            }
+            return anyEffect(anyConditions);
+        }
+
+        private JsonObject parseConditionAndGroup() throws ParseException {
+            final List<JsonObject> andConditions = new ArrayList<>();
+            andConditions.add(parseConditionCall());
+            skipWhitespace();
+            while (tryConsume('+')) {
+                andConditions.add(parseConditionCall());
+                skipWhitespace();
+            }
+
+            if (andConditions.size() == 1) {
+                return andConditions.getFirst();
+            }
+            return andEffect(andConditions);
+        }
+
+        private JsonObject parseConditionCall() throws ParseException {
+            skipWhitespace();
+            final String identifier = parseCallIdentifier();
+            skipWhitespace();
+            if (tryConsume('(')) {
+                return parseFunctionCallWithIdentifier(identifier).json();
+            }
+            if (isBoundaryForConditionBareCall(peek()) || isArrowAhead()) {
+                return buildFunctionCall(identifier, List.of(), Map.of());
+            }
+            throw error("Expected function call");
         }
 
         private JsonObject parseAction() throws ParseException {
@@ -352,6 +391,17 @@ public class ShogiRuleParser {
             return json;
         }
 
+        private JsonObject anyEffect(List<JsonObject> conditions) {
+            final JsonObject json = new JsonObject();
+            json.addProperty("type", "shogi:any");
+            final JsonArray array = new JsonArray();
+            for (final JsonObject condition : conditions) {
+                array.add(condition);
+            }
+            json.add("conditions", array);
+            return json;
+        }
+
         private JsonObject conditionEffect(JsonObject condition, JsonObject then) {
             final JsonObject json = new JsonObject();
             json.addProperty("type", "shogi:if");
@@ -422,7 +472,7 @@ public class ShogiRuleParser {
                 throw error("Expected function name");
             }
             final int start = pos++;
-            while (isCallIdentifierPart(peek())) {
+            while (isCallIdentifierPart(peek()) && !(peek() == '-' && peek(1) == '>')) {
                 pos++;
             }
             final String identifier = input.substring(start, pos);
@@ -535,6 +585,10 @@ public class ShogiRuleParser {
 
         private boolean isBoundaryForBareCall(char ch) {
             return ch == '\0' || ch == ')' || ch == ',' || Character.isWhitespace(ch);
+        }
+
+        private boolean isBoundaryForConditionBareCall(char ch) {
+            return ch == '\0' || ch == ')' || ch == ',' || ch == '+' || Character.isWhitespace(ch);
         }
 
         private boolean isArrowAhead() {

@@ -209,13 +209,15 @@ evaluations.
 
 Shogi supports a ruleset format designed to be concise and embeddable within string literals
 such as a config string list. This way, rule evaluations can be defined even in regular TOML config options.
+For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher precedence than `,`.
 
 ```
 (* --- Top-level rule --- *)
 <rule>          ::= [ <conditions> "->" ] <action>
 
 (* --- Conditions --- *)
-<conditions>    ::= <condition> ( "," <condition> )*
+<conditions>    ::= <and_group> ( "," <and_group> )*
+<and_group>     ::= <condition> ( "+" <condition> )*
 <condition>     ::= <identifier> [ "(" <arguments> ")" ]
 
 (* --- Actions --- *)
@@ -245,6 +247,9 @@ such as a config string list. This way, rule evaluations can be defined even in 
 <string>       ::= '"' [^"]* '"' | "'" [^']* "'"
 <boolean>      ::= "true" | "false"
 ```
+
+Example with mixed condition operators:
+`is_dimension('minecraft:the_nether') + is_below_y(0), is_player_nearby(12) -> failure('Unsafe teleport target.')`
 
 ## Why not just use [insert scripting language] or [insert expression engine]?
 

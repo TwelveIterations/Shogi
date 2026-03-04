@@ -4,6 +4,7 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DataResult;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
+import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
 import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
@@ -151,13 +152,64 @@ class ShogiRuleParserTest {
 
     @Test
     void parsesMultipleConditionsAsAnd() {
-        final var effect = parseOk(createScope(), "noop, noop -> noop");
+        final var effect = parseOk(createScope(), "noop + noop -> noop");
         final var condition = assertInstanceOf(ConditionEffect.class, effect);
         final var and = assertInstanceOf(AndEffect.class, condition.condition());
         assertEquals(2, and.conditions().size());
         and.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
         assertInstanceOf(EmptyEffect.class, condition.trueEffect());
         assertInstanceOf(EmptyEffect.class, condition.falseEffect());
+    }
+
+    @Test
+    void parsesMultipleConditionsAsAny() {
+        final var effect = parseOk(createScope(), "noop, noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var any = assertInstanceOf(AnyEffect.class, condition.condition());
+        assertEquals(2, any.conditions().size());
+        any.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
+        assertInstanceOf(EmptyEffect.class, condition.trueEffect());
+        assertInstanceOf(EmptyEffect.class, condition.falseEffect());
+    }
+
+    @Test
+    void parsesMixedConditionOperatorsWithAndPrecedence() {
+        final var effect = parseOk(createScope(), "noop + noop, noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var any = assertInstanceOf(AnyEffect.class, condition.condition());
+        assertEquals(2, any.conditions().size());
+
+        final var and = assertInstanceOf(AndEffect.class, any.conditions().get(0));
+        assertEquals(2, and.conditions().size());
+        assertInstanceOf(EmptyEffect.class, any.conditions().get(1));
+        assertInstanceOf(EmptyEffect.class, condition.trueEffect());
+        assertInstanceOf(EmptyEffect.class, condition.falseEffect());
+    }
+
+    @Test
+    void parsesMixedConditionOperatorsWithAndPrecedenceOnRightBranch() {
+        final var effect = parseOk(createScope(), "noop, noop + noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var any = assertInstanceOf(AnyEffect.class, condition.condition());
+        assertEquals(2, any.conditions().size());
+
+        assertInstanceOf(EmptyEffect.class, any.conditions().get(0));
+        final var and = assertInstanceOf(AndEffect.class, any.conditions().get(1));
+        assertEquals(2, and.conditions().size());
+        assertInstanceOf(EmptyEffect.class, condition.trueEffect());
+        assertInstanceOf(EmptyEffect.class, condition.falseEffect());
+    }
+
+    @Test
+    void parsesConditionOperatorsWithoutWhitespace() {
+        final var effect = parseOk(createScope(), "noop+noop,noop->noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var any = assertInstanceOf(AnyEffect.class, condition.condition());
+        assertEquals(2, any.conditions().size());
+
+        final var and = assertInstanceOf(AndEffect.class, any.conditions().get(0));
+        assertEquals(2, and.conditions().size());
+        assertInstanceOf(EmptyEffect.class, any.conditions().get(1));
     }
 
     @Test
@@ -229,6 +281,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(AnyEffect.IDENTIFIER, AnyEffect.mapCodec(scope), List.of("conditions"));
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
