@@ -49,6 +49,7 @@ public class ShogiDefaults {
 
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(AnyEffect.IDENTIFIER, AnyEffect.mapCodec(scope), List.of("conditions"));
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(Failure.IDENTIFIER, Failure.MAP_CODEC, List.of("message"));
 
