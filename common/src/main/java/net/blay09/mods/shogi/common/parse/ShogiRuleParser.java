@@ -18,16 +18,18 @@ import java.util.Map;
 
 public class ShogiRuleParser {
 
-    private static final String DEFAULT_NAMESPACE = "shogi";
-
     public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input) {
-        return parse(scope, input, DEFAULT_NAMESPACE);
+        return parse(scope, input, scope.getDefaultNamespaces());
     }
 
     public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input, String defaultNamespace) {
+        return parse(scope, input, List.of(defaultNamespace));
+    }
+
+    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input, List<String> defaultNamespaces) {
         final JsonObject ruleJson;
         try {
-            ruleJson = new Parser(scope, input, defaultNamespace).parseRule();
+            ruleJson = new Parser(scope, input, defaultNamespaces).parseRule();
         } catch (ParseException e) {
             return DataResult.error(() -> "Ruleset parse error at index " + e.position + ": " + e.getMessage());
         }
@@ -38,14 +40,13 @@ public class ShogiRuleParser {
     private static class Parser {
         private final ShogiScope scope;
         private final String input;
-        private final String defaultNamespace;
-        private final DefaultedIdentifiers defaultedIdentifiers = new DefaultedIdentifiers();
+        private final List<String> defaultNamespaces;
         private int pos;
 
-        private Parser(ShogiScope scope, String input, String defaultNamespace) {
+        private Parser(ShogiScope scope, String input, List<String> defaultNamespaces) {
             this.scope = scope;
             this.input = input;
-            this.defaultNamespace = defaultNamespace;
+            this.defaultNamespaces = defaultNamespaces;
         }
 
         private JsonObject parseRule() throws ParseException {
@@ -290,7 +291,7 @@ public class ShogiRuleParser {
         }
 
         private JsonObject buildFunctionCall(String identifier, List<Expr> positional, Map<String, Expr> named) throws ParseException {
-            final Identifier resolvedIdentifier = defaultedIdentifiers.parse(identifier, defaultNamespace);
+            final Identifier resolvedIdentifier = DefaultedIdentifiers.parse(identifier, defaultNamespaces, scope::hasEffect);
             if (resolvedIdentifier == null) {
                 throw error("Invalid effect identifier: " + identifier);
             }

@@ -55,6 +55,28 @@ public interface ShogiScope {
     List<String> getOrdinalParameters(Identifier identifier);
 
     /**
+     * Returns whether an effect is registered for the given identifier.
+     *
+     * @param identifier effect identifier
+     * @return true if the effect is registered in this scope
+     */
+    boolean hasEffect(Identifier identifier);
+
+    /**
+     * Returns ordered default namespaces used for unqualified identifiers.
+     *
+     * @return ordered default namespaces
+     */
+    List<String> getDefaultNamespaces();
+
+    /**
+     * Replaces ordered default namespaces used for unqualified identifiers.
+     *
+     * @param namespaces ordered namespaces
+     */
+    void setDefaultNamespaces(List<String> namespaces);
+
+    /**
      * Resolves a value for the given identifier and context.
      *
      * @param identifier value identifier

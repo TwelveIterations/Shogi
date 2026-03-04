@@ -41,43 +41,29 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
         }
 
         for (final var variable : assignedVariables) {
-            final var identifier = DefaultedIdentifiers.parse(variable, scope.identifier().getNamespace());
-            if (identifier == null) {
-                continue;
+            final var identifier = DefaultedIdentifiers.parse(variable, scope.getDefaultNamespaces(), candidate -> {
+                if (!scope.hasEffect(candidate)) {
+                    return false;
+                }
+                final var ordinals = scope.getOrdinalParameters(candidate);
+                return ordinals.size() == 1;
+            });
+            if (identifier != null) {
+                final var effectJson = new JsonObject();
+                effectJson.addProperty("type", identifier.toString());
+
+                final var variableJson = new JsonObject();
+                variableJson.addProperty("type", "shogi:variable");
+                variableJson.addProperty("name", variable);
+                effectJson.add(scope.getOrdinalParameters(identifier).getFirst(), variableJson);
+
+                scope.getEffectCodec().parse(JsonOps.INSTANCE, effectJson)
+                        .result()
+                        .ifPresent(updatedEffects::add);
             }
-
-            final var ordinals = scope.getOrdinalParameters(identifier);
-            if (ordinals.size() != 1) {
-                continue;
-            }
-
-            if (containsEffect(updatedEffects, identifier)) {
-                continue;
-            }
-
-            final var effectJson = new JsonObject();
-            effectJson.addProperty("type", identifier.toString());
-
-            final var variableJson = new JsonObject();
-            variableJson.addProperty("type", "shogi:variable");
-            variableJson.addProperty("name", variable);
-            effectJson.add(ordinals.getFirst(), variableJson);
-
-            scope.getEffectCodec().parse(JsonOps.INSTANCE, effectJson)
-                    .result()
-                    .ifPresent(updatedEffects::add);
         }
 
         return new AggregateEffect(updatedEffects);
-    }
-
-    private static boolean containsEffect(List<ShogiEffect<?>> effects, Identifier identifier) {
-        for (final var effect : effects) {
-            if (identifier.equals(effect.identifier())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

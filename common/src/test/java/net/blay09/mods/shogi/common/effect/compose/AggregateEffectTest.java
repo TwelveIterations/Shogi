@@ -44,19 +44,6 @@ class AggregateEffectTest {
     }
 
     @Test
-    void skipsAutoApplyWhenMatchingEffectAlreadyExists() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
-        final List<ShogiEffect<?>> effects = List.of(
-                parseOk(scope, "$xp_points_cost = 12"),
-                parseOk(scope, "xp_points_cost($xp_points_cost)")
-        );
-
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
-        assertEquals(2, aggregate.effects().size());
-        assertEquals(1, aggregate.effects().stream().filter(it -> it.identifier().equals(ExperiencePointsCost.IDENTIFIER)).count());
-    }
-
-    @Test
     void doesNotAutoApplyForMultiParameterEffects() {
         final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$binary_op = 12"));
@@ -73,6 +60,29 @@ class AggregateEffectTest {
         final var aggregate = AggregateEffect.withAutoApplied(customScope, effects);
         assertEquals(2, aggregate.effects().size());
         assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
+    }
+
+    @Test
+    void usesOrderedDefaultNamespacesForAutoApply() {
+        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), true);
+        scope.setDefaultNamespaces(List.of("custom", "shogi"));
+        final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
+
+        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        assertEquals(2, aggregate.effects().size());
+        assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
+    }
+
+    @Test
+    void usesFirstAutoApplicableMatchAcrossDefaultNamespaces() {
+        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        scope.registerEffect(CustomScopeBinaryEffect.IDENTIFIER, CustomScopeBinaryEffect.mapCodec(scope), List.of("left", "right"));
+        scope.setDefaultNamespaces(List.of("custom", "shogi"));
+        final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
+
+        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        assertEquals(2, aggregate.effects().size());
+        assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(1));
     }
 
     @Test
@@ -140,6 +150,27 @@ class AggregateEffectTest {
             return RecordCodecBuilder.mapCodec(instance -> instance.group(
                     scope.getEffectCodec().fieldOf("value").forGetter(CustomScopeUnaryEffect::value)
             ).apply(instance, CustomScopeUnaryEffect::new));
+        }
+
+        @Override
+        public Identifier identifier() {
+            return IDENTIFIER;
+        }
+
+        @Override
+        public Either<Object, Object> apply(ShogiContext context) {
+            return Either.left(true);
+        }
+    }
+
+    private record CustomScopeBinaryEffect(ShogiEffect<?> left, ShogiEffect<?> right) implements ShogiEffect<Object> {
+        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("custom", "xp_points_cost");
+
+        private static MapCodec<CustomScopeBinaryEffect> mapCodec(ShogiScope scope) {
+            return RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    scope.getEffectCodec().fieldOf("left").forGetter(CustomScopeBinaryEffect::left),
+                    scope.getEffectCodec().fieldOf("right").forGetter(CustomScopeBinaryEffect::right)
+            ).apply(instance, CustomScopeBinaryEffect::new));
         }
 
         @Override

@@ -1,7 +1,9 @@
 package net.blay09.mods.shogi.common.parse;
 
 import com.google.gson.JsonPrimitive;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
@@ -232,7 +234,7 @@ class ShogiRuleParserTest {
         final var and = assertInstanceOf(AndEffect.class, condition.condition());
         assertEquals(2, and.conditions().size());
 
-        final var any = assertInstanceOf(AnyEffect.class, and.conditions().get(0));
+        final var any = assertInstanceOf(AnyEffect.class, and.conditions().getFirst());
         assertEquals(2, any.conditions().size());
         any.conditions().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
         assertInstanceOf(EmptyEffect.class, and.conditions().get(1));
@@ -266,6 +268,27 @@ class ShogiRuleParserTest {
         scope.registerEffect(Identifier.fromNamespaceAndPath("custom", "foo"), EmptyEffect.MAP_CODEC);
         final var effect = parseOk(scope, "foo", "custom");
         assertInstanceOf(EmptyEffect.class, effect);
+    }
+
+    @Test
+    void usesFirstMatchingDefaultNamespaceForUnqualifiedIdentifier() {
+        final var scope = createScopeWithoutNoop();
+        scope.registerEffect(WaystonesFooEffect.IDENTIFIER, WaystonesFooEffect.MAP_CODEC);
+        scope.registerEffect(ShogiFooEffect.IDENTIFIER, ShogiFooEffect.MAP_CODEC);
+        scope.setDefaultNamespaces(List.of("waystones", "shogi"));
+
+        final var effect = parseOk(scope, "foo");
+        assertInstanceOf(WaystonesFooEffect.class, effect);
+    }
+
+    @Test
+    void fallsBackToLaterDefaultNamespaceForUnqualifiedIdentifier() {
+        final var scope = createScopeWithoutNoop();
+        scope.registerEffect(ShogiFooEffect.IDENTIFIER, ShogiFooEffect.MAP_CODEC);
+        scope.setDefaultNamespaces(List.of("waystones", "shogi"));
+
+        final var effect = parseOk(scope, "foo");
+        assertInstanceOf(ShogiFooEffect.class, effect);
     }
 
     @Test
@@ -346,7 +369,8 @@ class ShogiRuleParserTest {
     }
 
     private static ShogiEffect<?> parseOk(ShogiScope scope, String input) {
-        return parseOk(scope, input, "shogi");
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input);
+        return result.result().orElseThrow(() -> new AssertionError("Expected parse success, got error: " + parseError(result)));
     }
 
     private static ShogiEffect<?> parseOk(ShogiScope scope, String input, String defaultNamespace) {
@@ -355,11 +379,7 @@ class ShogiRuleParserTest {
     }
 
     private static String parseErr(ShogiScope scope, String input) {
-        return parseErr(scope, input, "shogi");
-    }
-
-    private static String parseErr(ShogiScope scope, String input, String defaultNamespace) {
-        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input, defaultNamespace);
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input);
         if (result.result().isPresent()) {
             throw new AssertionError("Expected parse error, got success");
         }
@@ -372,6 +392,36 @@ class ShogiRuleParserTest {
                 .map(String::trim)
                 .filter(it -> !it.isEmpty())
                 .orElse("<missing error>");
+    }
+
+    private record WaystonesFooEffect() implements ShogiEffect<Object> {
+        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("waystones", "foo");
+        private static final MapCodec<WaystonesFooEffect> MAP_CODEC = MapCodec.unit(new WaystonesFooEffect());
+
+        @Override
+        public Identifier identifier() {
+            return IDENTIFIER;
+        }
+
+        @Override
+        public Either<Object, Object> apply(net.blay09.mods.shogi.context.ShogiContext context) {
+            return Either.left(true);
+        }
+    }
+
+    private record ShogiFooEffect() implements ShogiEffect<Object> {
+        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "foo");
+        private static final MapCodec<ShogiFooEffect> MAP_CODEC = MapCodec.unit(new ShogiFooEffect());
+
+        @Override
+        public Identifier identifier() {
+            return IDENTIFIER;
+        }
+
+        @Override
+        public Either<Object, Object> apply(net.blay09.mods.shogi.context.ShogiContext context) {
+            return Either.left(true);
+        }
     }
 
     private static void assertContains(String message, String expectedFragment) {

@@ -18,9 +18,11 @@ import java.util.function.Function;
 
 public class ShogiScopeImpl implements ShogiScope {
     private final Identifier identifier;
+    private List<String> defaultNamespaces;
 
     public ShogiScopeImpl(Identifier identifier) {
         this.identifier = identifier;
+        this.defaultNamespaces = List.of(identifier.getNamespace());
     }
 
     record ShogiEffectType(Identifier identifier, MapCodec<? extends ShogiEffect<?>> mapCodec) {
@@ -65,6 +67,28 @@ public class ShogiScopeImpl implements ShogiScope {
     @Override
     public List<String> getOrdinalParameters(Identifier identifier) {
         return ordinalParametersById.getOrDefault(identifier, List.of());
+    }
+
+    @Override
+    public boolean hasEffect(Identifier identifier) {
+        return effectTypeById.containsKey(identifier);
+    }
+
+    @Override
+    public List<String> getDefaultNamespaces() {
+        return defaultNamespaces;
+    }
+
+    @Override
+    public void setDefaultNamespaces(List<String> namespaces) {
+        final Set<String> deduplicated = new LinkedHashSet<>();
+        for (final var namespace : namespaces) {
+            if (!Identifier.isValidNamespace(namespace)) {
+                throw new IllegalArgumentException("Invalid namespace: " + namespace);
+            }
+            deduplicated.add(namespace);
+        }
+        defaultNamespaces = List.copyOf(deduplicated);
     }
 
     @Override
