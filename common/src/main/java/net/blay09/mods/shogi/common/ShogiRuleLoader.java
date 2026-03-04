@@ -114,7 +114,7 @@ public class ShogiRuleLoader {
                 return;
             }
         }
-        parsedOverrides.put(valueIdentifier, new AggregateEffect(rules));
+        parsedOverrides.put(valueIdentifier, AggregateEffect.withAutoApplied(scope, rules));
     }
 
 }

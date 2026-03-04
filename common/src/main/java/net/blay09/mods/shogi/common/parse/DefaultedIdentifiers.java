@@ -5,7 +5,7 @@ import org.jspecify.annotations.Nullable;
 
 public class DefaultedIdentifiers {
     @Nullable
-    public Identifier parse(String identifier, String defaultNamespace) {
+    public static Identifier parse(String identifier, String defaultNamespace) {
         final var separatorIndex = identifier.indexOf(':');
         if (separatorIndex >= 0) {
             final var path = identifier.substring(separatorIndex + 1);

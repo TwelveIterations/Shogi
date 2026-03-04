@@ -1,10 +1,14 @@
 package net.blay09.mods.shogi.common.effect.compose;
 
+import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.common.context.aggregate.DeferredEffectExecutor;
 import net.blay09.mods.shogi.common.context.aggregate.ShogiAggregateContext;
+import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
+import net.blay09.mods.shogi.common.parse.DefaultedIdentifiers;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
@@ -13,7 +17,9 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffect<List<Object>> {
 
@@ -25,11 +31,59 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
         ).apply(builder, AggregateEffect::new));
     }
 
+    public static AggregateEffect withAutoApplied(ShogiScope scope, List<ShogiEffect<?>> effects) {
+        final var updatedEffects = new ArrayList<>(effects);
+        final Set<String> assignedVariables = new LinkedHashSet<>();
+        for (final var effect : effects) {
+            if (effect instanceof AssignmentEffect assignmentEffect) {
+                assignedVariables.add(assignmentEffect.variable());
+            }
+        }
+
+        for (final var variable : assignedVariables) {
+            final var identifier = DefaultedIdentifiers.parse(variable, scope.identifier().getNamespace());
+            if (identifier == null) {
+                continue;
+            }
+
+            final var ordinals = scope.getOrdinalParameters(identifier);
+            if (ordinals.size() != 1) {
+                continue;
+            }
+
+            if (containsEffect(updatedEffects, identifier)) {
+                continue;
+            }
+
+            final var effectJson = new JsonObject();
+            effectJson.addProperty("type", identifier.toString());
+
+            final var variableJson = new JsonObject();
+            variableJson.addProperty("type", "shogi:variable");
+            variableJson.addProperty("name", variable);
+            effectJson.add(ordinals.getFirst(), variableJson);
+
+            scope.getEffectCodec().parse(JsonOps.INSTANCE, effectJson)
+                    .result()
+                    .ifPresent(updatedEffects::add);
+        }
+
+        return new AggregateEffect(updatedEffects);
+    }
+
+    private static boolean containsEffect(List<ShogiEffect<?>> effects, Identifier identifier) {
+        for (final var effect : effects) {
+            if (identifier.equals(effect.identifier())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
     }
-
 
     @Override
     public Either<List<Object>, ?> apply(ShogiContext context) {
