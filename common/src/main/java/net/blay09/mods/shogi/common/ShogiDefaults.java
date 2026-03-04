@@ -14,6 +14,7 @@ import net.blay09.mods.shogi.common.effect.context.player.OffHand;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
 import net.blay09.mods.shogi.common.effect.cost.ItemCost;
+import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
 import net.blay09.mods.shogi.common.effect.server.condition.player.HasAdvancement;
 import net.blay09.mods.shogi.common.effect.server.condition.pos.IsNearPoi;
@@ -81,6 +82,7 @@ public class ShogiDefaults {
         scope.registerEffect(IsNearPoi.IDENTIFIER, IsNearPoi.MAP_CODEC, List.of("poi", "distance"));
 
         scope.registerEffect(ItemCost.IDENTIFIER, ItemCost.mapCodec(scope), List.of("item", "count"));
+        scope.registerEffect(DamageItem.IDENTIFIER, DamageItem.mapCodec(scope), List.of("amount"));
         scope.registerEffect(ExperiencePointsCost.IDENTIFIER, ExperiencePointsCost.mapCodec(scope), List.of("xp"));
         scope.registerEffect(ExperienceLevelCost.IDENTIFIER, ExperienceLevelCost.mapCodec(scope), List.of("level"));
 
