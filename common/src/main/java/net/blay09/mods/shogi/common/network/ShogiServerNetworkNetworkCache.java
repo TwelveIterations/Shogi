@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Either;
 import net.blay09.mods.shogi.common.platform.ShogiRuntimeSpi;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiNetworkCache;
-import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

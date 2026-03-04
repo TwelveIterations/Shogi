@@ -1,7 +1,6 @@
 package net.blay09.mods.shogi.common.network;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceCostFailure;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCostFailure;
 import net.blay09.mods.shogi.common.effect.cost.ItemCostFailure;
@@ -12,7 +11,7 @@ import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
-import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;

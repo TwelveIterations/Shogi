@@ -1,4 +1,4 @@
-package net.blay09.mods.shogi.sync;
+package net.blay09.mods.shogi.network;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.network.RegistryFriendlyByteBuf;

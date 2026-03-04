@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.common.network;
 
 import com.mojang.datafixers.util.Either;
-import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -2,7 +2,7 @@ package net.blay09.mods.shogi.fabric.client;
 
 import net.blay09.mods.shogi.client.ShogiClient;
 import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
-import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
