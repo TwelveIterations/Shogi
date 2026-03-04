@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.context.internal;
 
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.context.aggregate.EffectExecutor;
 import net.blay09.mods.shogi.context.aggregate.internal.ImmediateEffectExecutor;
 import net.minecraft.core.BlockPos;
@@ -15,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class ShogiContextImpl implements ShogiContext {
+public class ShogiContextImpl implements MutableShogiContext {
 
     private final EffectExecutor executor;
     private final @Nullable ShogiContext parent;
@@ -58,7 +59,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withLevel(@Nullable Level level) {
+    public MutableShogiContext withLevel(@Nullable Level level) {
         this.level = level;
         return this;
     }
@@ -72,7 +73,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withEntity(@Nullable Entity entity) {
+    public MutableShogiContext withEntity(@Nullable Entity entity) {
         this.entity = entity;
         if (entity != null && level == null) {
             level = entity.level();
@@ -92,7 +93,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withBlockPos(@Nullable BlockPos blockPos) {
+    public MutableShogiContext withBlockPos(@Nullable BlockPos blockPos) {
         this.blockPos = blockPos;
         return this;
     }
@@ -109,7 +110,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withBlockState(@Nullable BlockState blockState) {
+    public MutableShogiContext withBlockState(@Nullable BlockState blockState) {
         this.blockState = blockState;
         return this;
     }
@@ -129,7 +130,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withItemStack(ItemStack itemStack) {
+    public MutableShogiContext withItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
         return this;
     }
@@ -147,7 +148,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext withVariable(String path, Object value) {
+    public MutableShogiContext withVariable(String path, Object value) {
         if (variables == null) {
             variables = new HashMap<>();
         }
@@ -156,7 +157,7 @@ public class ShogiContextImpl implements ShogiContext {
     }
 
     @Override
-    public ShogiContext fork() {
+    public MutableShogiContext fork() {
         return new ShogiContextImpl(this);
     }
 }

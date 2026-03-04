@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.common.context.aggregate;
 
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import org.jspecify.annotations.Nullable;
 
@@ -11,7 +12,7 @@ public class ShogiAggregateContext extends ShogiContextImpl {
     }
 
     @Override
-    public ShogiContext fork() {
+    public MutableShogiContext fork() {
         return new ShogiAggregateContext(this);
     }
 }

@@ -2,13 +2,9 @@ package net.blay09.mods.shogi.context;
 
 import net.blay09.mods.shogi.context.aggregate.AggregateKey;
 import net.blay09.mods.shogi.context.aggregate.EffectExecutor;
-import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -21,7 +17,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Mutable evaluation context passed to Shogi effects and value resolution.
+ * Evaluation context passed to Shogi effects and value resolution.
  */
 public interface ShogiContext {
     /**
@@ -48,28 +44,12 @@ public interface ShogiContext {
     Level level();
 
     /**
-     * Sets the level in this context.
-     *
-     * @param level the level to store, or {@code null}
-     * @return this context
-     */
-    ShogiContext withLevel(@Nullable Level level);
-
-    /**
      * Returns the entity in this context.
      *
      * @return the current entity, or {@code null}
      */
     @Nullable
     Entity entity();
-
-    /**
-     * Sets the entity in this context.
-     *
-     * @param entity the entity to store, or {@code null}
-     * @return this context
-     */
-    ShogiContext withEntity(@Nullable Entity entity);
 
     /**
      * Returns the block position in this context.
@@ -80,28 +60,12 @@ public interface ShogiContext {
     BlockPos blockPos();
 
     /**
-     * Sets the block position in this context.
-     *
-     * @param blockPos the block position to store, or {@code null}
-     * @return this context
-     */
-    ShogiContext withBlockPos(@Nullable BlockPos blockPos);
-
-    /**
      * Returns the block state in this context.
      *
      * @return the current block state, or {@code null}
      */
     @Nullable
     BlockState blockState();
-
-    /**
-     * Sets the block state in this context.
-     *
-     * @param blockState the block state to store, or {@code null}
-     * @return this context
-     */
-    ShogiContext withBlockState(@Nullable BlockState blockState);
 
     /**
      * Returns the item stack in this context.
@@ -111,29 +75,12 @@ public interface ShogiContext {
     ItemStack itemStack();
 
     /**
-     * Sets the item stack in this context.
-     *
-     * @param itemStack the item stack to store
-     * @return this context
-     */
-    ShogiContext withItemStack(ItemStack itemStack);
-
-    /**
      * Reads a custom variable from this context.
      *
      * @param path variable path
      * @return the variable value if present
      */
     Optional<Object> getVariable(String path);
-
-    /**
-     * Stores a custom variable in this context.
-     *
-     * @param path variable path
-     * @param value variable value
-     * @return this context
-     */
-    ShogiContext withVariable(String path, Object value);
 
     /**
      * Returns the entity in this context or throws if absent.
@@ -210,66 +157,7 @@ public interface ShogiContext {
      *
      * @return a forked context
      */
-    ShogiContext fork();
-
-    /**
-     * Creates an empty context.
-     *
-     * @return a new context instance
-     */
-    static ShogiContext create() {
-        return new ShogiContextImpl();
-    }
-
-    /**
-     * Creates a context from a known input object type.
-     *
-     * @param input object used to seed context fields
-     * @return a context containing values inferred from {@code input}
-     */
-    static ShogiContext of(Object input) {
-        if (input instanceof ShogiContext context) {
-            return context;
-        }
-
-        final var context = ShogiContext.create();
-        if (input instanceof Entity entity) {
-            context.withEntity(entity);
-            context.withBlockPos(entity.blockPosition());
-        } else if (input instanceof Level level) {
-            context.withLevel(level);
-        }
-
-        if (input instanceof BlockPos blockPos) {
-            context.withBlockPos(blockPos);
-        } else if (input instanceof Vec3i vec3i) {
-            context.withBlockPos(new BlockPos(vec3i));
-        } else if (input instanceof Position position) {
-            context.withBlockPos(BlockPos.containing(position));
-        }
-
-        if (input instanceof ItemStack itemStack) {
-            context.withItemStack(itemStack);
-        } else if (input instanceof LivingEntity livingEntity) {
-            context.withItemStack(livingEntity.getMainHandItem());
-        }
-
-        if (input instanceof BlockState blockState) {
-            context.withBlockState(blockState);
-        }
-
-        return context;
-    }
-
-    /**
-     * Creates a context that extends the provided parent.
-     *
-     * @param parent parent context to extend
-     * @return an extending context
-     */
-    static ShogiContext extend(ShogiContext parent) {
-        return new ShogiContextImpl(parent);
-    }
+    MutableShogiContext fork();
 
     /**
      * Aggregates a value in this context's aggregate executor.

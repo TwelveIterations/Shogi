@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
 import net.blay09.mods.shogi.scope.ShogiNetworkCache;
@@ -93,7 +94,7 @@ public class ShogiScopeImpl implements ShogiScope {
 
     @Override
     public <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, TSuccess> defaultProvider) {
-        final var normalizedContext = ShogiContext.of(context);
+        final var normalizedContext = MutableShogiContext.of(context);
         final var cached = cache.getRemoteValue(identifier, normalizedContext);
         if (cached.isPresent()) {
             return cached.get();
