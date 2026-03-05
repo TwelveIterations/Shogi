@@ -1,5 +1,7 @@
 package net.blay09.mods.shogi.context;
 
+import net.blay09.mods.shogi.context.executor.EffectExecutor;
+import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
 import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Position;
@@ -58,19 +60,32 @@ public interface MutableShogiContext extends ShogiContext {
     /**
      * Stores a custom variable in this context.
      *
-     * @param path variable path
+     * @param path  variable path
      * @param value variable value
      * @return this builder
      */
     MutableShogiContext withVariable(String path, Object value);
 
     /**
-     * Creates an empty context builder.
+     * Creates an empty context builder with an immediate executor.
      *
      * @return a new mutable context builder
      */
     static MutableShogiContext create() {
         return new ShogiContextImpl();
+    }
+
+    /**
+     * Creates an empty context builder.
+     *
+     * @param executor the executor to run effects on
+     * @return a new mutable context builder
+     * @see EffectExecutor#simulated()
+     * @see EffectExecutor#immediate()
+     * @see EffectExecutor#deferred()
+     */
+    static MutableShogiContext create(EffectExecutor executor) {
+        return new ShogiContextImpl(executor);
     }
 
     /**
@@ -80,14 +95,15 @@ public interface MutableShogiContext extends ShogiContext {
      * @return a mutable context containing values inferred from {@code input}
      */
     static MutableShogiContext of(Object input) {
-        if (input instanceof MutableShogiContext builder) {
-            return builder;
+        if (input instanceof MutableShogiContext mutableContext) {
+            return mutableContext;
         }
+
         if (input instanceof ShogiContext context) {
             return extend(context);
         }
 
-        final var context = create();
+        final var context = create(new ImmediateEffectExecutor());
         if (input instanceof Entity entity) {
             context.withEntity(entity);
             context.withBlockPos(entity.blockPosition());
