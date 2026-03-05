@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import net.blay09.mods.shogi.common.effect.cost.*;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
 import net.blay09.mods.shogi.common.effect.failure.Refuse;
-import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownModification;
+import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownInformation;
 import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
@@ -46,13 +46,10 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("failure"), Failure.class, Failure.STREAM_CODEC);
         ShogiStreamCodecs.register(id("refuse"), Refuse.class, Refuse.STREAM_CODEC);
         ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("xp_points_cost_success"), ExperiencePointsCostSuccess.class, ExperiencePointsCostSuccess.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("xp_points_cost_failure"), ExperiencePointsCostFailure.class, ExperiencePointsCostFailure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("xp_level_cost_success"), ExperienceLevelCostSuccess.class, ExperienceLevelCostSuccess.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("xp_level_cost_failure"), ExperienceLevelCostFailure.class, ExperienceLevelCostFailure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("item_cost_success"), ItemCostSuccess.class, ItemCostSuccess.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("item_cost_failure"), ItemCostFailure.class, ItemCostFailure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("cooldown_modification"), CooldownModification.class, CooldownModification.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("xp_points_cost"), ExperiencePointsCostInformation.class, ExperiencePointsCostInformation.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("xp_level_cost"), ExperienceLevelCostInformation.class, ExperienceLevelCostInformation.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("item_cost"), ItemCostInformation.class, ItemCostInformation.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("cooldown"), CooldownInformation.class, CooldownInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
         ShogiStreamCodecs.register(id("empty"), ShogiEmpty.class, EMPTY_CODEC);
     }

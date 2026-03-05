@@ -13,7 +13,7 @@ import net.blay09.mods.shogi.util.ShogiDuration;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
-public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) implements ShogiEffect<CooldownModification> {
+public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) implements ShogiEffect<CooldownInformation> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "cooldown_cost");
 
@@ -25,7 +25,7 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
     }
 
     @Override
-    public Either<CooldownModification, Object> apply(ShogiContext context) {
+    public Either<CooldownInformation, Object> apply(ShogiContext context) {
         if (!(context.requirePlayer() instanceof ServerPlayer player)) {
             return Either.right(ShogiDeferred.INSTANCE);
         }
@@ -37,11 +37,11 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
         final var cooldowns = ((ShogiCooldownsAccess) player).shogi$getCooldowns();
         final long remainingTicks = cooldowns.getRemainingTicks(identifier);
         if (remainingTicks > 0) {
-            return Either.right(new CooldownModification(identifier, remainingTicks, durationTicks));
+            return Either.right(new CooldownInformation(identifier, remainingTicks, durationTicks));
         }
 
         cooldowns.addCooldown(identifier, durationTicks);
-        return Either.left(new CooldownModification(identifier, 0, durationTicks));
+        return Either.left(new CooldownInformation(identifier, 0, durationTicks));
     }
 
     @Override

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements ShogiEffect<ItemCostSuccess> {
+public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements ShogiEffect<ItemCostInformation> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "item_cost");
     public static final AggregateKey<AggregatedItemCost> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
@@ -38,7 +38,7 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
     }
 
     @Override
-    public Either<ItemCostSuccess, Object> apply(ShogiContext context) {
+    public Either<ItemCostInformation, Object> apply(ShogiContext context) {
         final var player = context.requirePlayer();
         final int requestedCount = count.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
 
@@ -48,9 +48,9 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
                 () -> new AggregatedItemCost(player),
                 state -> state.simulateConsume(matcher, requestedCount)
         );
+        final int available = InventoryLookup.countMatchingInPlayerInventory(player, matcher);
         if (consumed < requestedCount) {
-            final int available = InventoryLookup.countMatchingInPlayerInventory(player, matcher);
-            return Either.right(new ItemCostFailure(
+            return Either.right(new ItemCostInformation(
                     item,
                     available,
                     requestedCount
@@ -58,7 +58,7 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
         }
 
         context.consume(AGGREGATE_KEY, AggregatedItemCost::consume);
-        return Either.left(new ItemCostSuccess(item, requestedCount));
+        return Either.left(new ItemCostInformation(item, available, requestedCount));
     }
 
     @Override
