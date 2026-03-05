@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.context;
 
-import net.blay09.mods.shogi.context.aggregate.AggregateKey;
-import net.blay09.mods.shogi.context.aggregate.EffectExecutor;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
+import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -20,14 +20,6 @@ import java.util.function.Supplier;
  * Evaluation context passed to Shogi effects and value resolution.
  */
 public interface ShogiContext {
-    /**
-     * Returns the parent context if this context was created as an extension.
-     *
-     * @return the parent context, or {@code null} when there is no parent
-     */
-    @Nullable
-    ShogiContext parent();
-
     /**
      * Returns the aggregate executor backing this context.
      *

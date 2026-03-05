@@ -1,6 +1,6 @@
-package net.blay09.mods.shogi.context.aggregate.internal;
+package net.blay09.mods.shogi.context.executor.internal;
 
-import net.blay09.mods.shogi.context.aggregate.AggregateKey;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;

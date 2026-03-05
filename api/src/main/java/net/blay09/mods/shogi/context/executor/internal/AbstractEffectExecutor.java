@@ -1,7 +1,7 @@
-package net.blay09.mods.shogi.context.aggregate.internal;
+package net.blay09.mods.shogi.context.executor.internal;
 
-import net.blay09.mods.shogi.context.aggregate.AggregateKey;
-import net.blay09.mods.shogi.context.aggregate.EffectExecutor;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
+import net.blay09.mods.shogi.context.executor.EffectExecutor;
 
 import java.util.HashMap;
 import java.util.Map;

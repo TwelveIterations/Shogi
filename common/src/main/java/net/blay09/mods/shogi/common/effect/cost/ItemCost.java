@@ -7,7 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.common.util.InventoryLookup;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.blay09.mods.shogi.context.aggregate.AggregateKey;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.ShogiEffect;

@@ -2,8 +2,8 @@ package net.blay09.mods.shogi.context.internal;
 
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.MutableShogiContext;
-import net.blay09.mods.shogi.context.aggregate.EffectExecutor;
-import net.blay09.mods.shogi.context.aggregate.internal.ImmediateEffectExecutor;
+import net.blay09.mods.shogi.context.executor.EffectExecutor;
+import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,11 +38,6 @@ public class ShogiContextImpl implements MutableShogiContext {
     public ShogiContextImpl(@Nullable ShogiContext parent, EffectExecutor executor) {
         this.parent = parent;
         this.executor = executor;
-    }
-
-    @Override
-    public @Nullable ShogiContext parent() {
-        return parent;
     }
 
     @Override

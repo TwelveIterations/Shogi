@@ -1,14 +1,14 @@
-package net.blay09.mods.shogi.common.context.aggregate;
+package net.blay09.mods.shogi.context.executor.internal;
 
-import net.blay09.mods.shogi.context.aggregate.AggregateKey;
-import net.blay09.mods.shogi.context.aggregate.internal.AbstractEffectExecutor;
+import net.blay09.mods.shogi.context.executor.DeferredEffectExecutor;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class DeferredEffectExecutor extends AbstractEffectExecutor {
+public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implements DeferredEffectExecutor {
     private final Map<AggregateKey<?>, Consumer<?>> consumers = new HashMap<>();
     private final Map<Identifier, Runnable> runnables = new HashMap<>();
 
@@ -27,6 +27,7 @@ public class DeferredEffectExecutor extends AbstractEffectExecutor {
         consumer.accept((T) aggregates.get(key));
     }
 
+    @Override
     public void execute() {
         consumers.forEach(this::executeConsumer);
         runnables.values().forEach(Runnable::run);
