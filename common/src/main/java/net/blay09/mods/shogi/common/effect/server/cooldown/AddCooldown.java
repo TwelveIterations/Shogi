@@ -3,17 +3,17 @@ package net.blay09.mods.shogi.common.effect.server.cooldown;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.blay09.mods.shogi.util.ShogiDuration;
-import net.blay09.mods.shogi.effect.ShogiEffect;
+import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
+import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.blay09.mods.shogi.coercion.Coercion;
+import net.blay09.mods.shogi.util.ShogiDuration;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
-public record AddCooldown(Identifier identifier, ShogiEffect<?> duration) implements ShogiEffect<Boolean> {
+public record AddCooldown(Identifier identifier, ShogiEffect<?> duration) implements ShogiEffect<CooldownModification> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "add_cooldown");
 
@@ -25,7 +25,7 @@ public record AddCooldown(Identifier identifier, ShogiEffect<?> duration) implem
     }
 
     @Override
-    public Either<Boolean, Object> apply(ShogiContext context) {
+    public Either<CooldownModification, Object> apply(ShogiContext context) {
         if (!(context.requirePlayer() instanceof ServerPlayer player)) {
             return Either.right(ShogiDeferred.INSTANCE);
         }
@@ -34,8 +34,10 @@ public record AddCooldown(Identifier identifier, ShogiEffect<?> duration) implem
                 .mapLeft(Coercion.DURATION)
                 .mapLeft(ShogiDuration::toTicks)
                 .orThrow();
-        ((ShogiCooldownsAccess) player).shogi$getCooldowns().addCooldown(identifier, durationTicks);
-        return Either.left(true);
+        final var cooldowns = ((ShogiCooldownsAccess) player).shogi$getCooldowns();
+        final var remainingTicks = cooldowns.getRemainingTicks(identifier);
+        cooldowns.addCooldown(identifier, durationTicks);
+        return Either.left(new CooldownModification(identifier, remainingTicks, durationTicks));
     }
 
     @Override

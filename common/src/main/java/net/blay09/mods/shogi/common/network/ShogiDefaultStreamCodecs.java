@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import net.blay09.mods.shogi.common.effect.cost.*;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
 import net.blay09.mods.shogi.common.effect.failure.Refuse;
-import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownActiveFailure;
+import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownModification;
 import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
@@ -52,7 +52,7 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("xp_level_cost_failure"), ExperienceLevelCostFailure.class, ExperienceLevelCostFailure.STREAM_CODEC);
         ShogiStreamCodecs.register(id("item_cost_success"), ItemCostSuccess.class, ItemCostSuccess.STREAM_CODEC);
         ShogiStreamCodecs.register(id("item_cost_failure"), ItemCostFailure.class, ItemCostFailure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("cooldown_active_failure"), CooldownActiveFailure.class, CooldownActiveFailure.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("cooldown_modification"), CooldownModification.class, CooldownModification.STREAM_CODEC);
         ShogiStreamCodecs.register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
         ShogiStreamCodecs.register(id("empty"), ShogiEmpty.class, EMPTY_CODEC);
     }
