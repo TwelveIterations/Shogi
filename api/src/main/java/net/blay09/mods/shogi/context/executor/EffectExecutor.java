@@ -1,5 +1,9 @@
-package net.blay09.mods.shogi.context.aggregate;
+package net.blay09.mods.shogi.context.executor;
 
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
+import net.blay09.mods.shogi.context.executor.internal.DeferredEffectExecutorImpl;
+import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
+import net.blay09.mods.shogi.context.executor.internal.SimulatedEffectExecutor;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.Consumer;
@@ -49,4 +53,16 @@ public interface EffectExecutor {
      * @param runnable runnable invoked if the evaluation succeeded
      */
     void execute(Identifier identifier, Runnable runnable);
+
+    static DeferredEffectExecutor deferred() {
+        return new DeferredEffectExecutorImpl();
+    }
+
+    static EffectExecutor immediate() {
+        return new ImmediateEffectExecutor();
+    }
+
+    static EffectExecutor simulated() {
+        return new SimulatedEffectExecutor();
+    }
 }
