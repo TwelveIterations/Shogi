@@ -11,7 +11,7 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.resources.Identifier;
 
-public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<Boolean> {
+public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<ExperienceLevelCostSuccess> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "xp_level_cost");
     public static final AggregateKey<Integer> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
@@ -23,7 +23,7 @@ public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<B
     }
 
     @Override
-    public Either<Boolean, Object> apply(ShogiContext context) {
+    public Either<ExperienceLevelCostSuccess, Object> apply(ShogiContext context) {
         final var player = context.requirePlayer();
 
         final int requestedLevels = level.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
@@ -33,7 +33,7 @@ public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<B
         }
 
         context.consume(AGGREGATE_KEY, cost -> player.giveExperienceLevels(-cost));
-        return Either.left(true);
+        return Either.left(new ExperienceLevelCostSuccess(requestedLevels));
     }
 
     @Override

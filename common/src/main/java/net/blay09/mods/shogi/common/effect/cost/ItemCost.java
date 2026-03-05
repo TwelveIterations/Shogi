@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements ShogiEffect<Boolean> {
+public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements ShogiEffect<ItemCostSuccess> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "item_cost");
     public static final AggregateKey<AggregatedItemCost> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
@@ -38,12 +38,12 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
     }
 
     @Override
-    public Either<Boolean, Object> apply(ShogiContext context) {
+    public Either<ItemCostSuccess, Object> apply(ShogiContext context) {
         final var player = context.requirePlayer();
         final int requestedCount = count.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
 
         Predicate<ItemStack> matcher = it -> it.is(item);
-        final var consumed = context.statefulAggregate(
+        final int consumed = context.statefulAggregate(
                 AGGREGATE_KEY,
                 () -> new AggregatedItemCost(player),
                 state -> state.simulateConsume(matcher, requestedCount)
@@ -58,7 +58,7 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
         }
 
         context.consume(AGGREGATE_KEY, AggregatedItemCost::consume);
-        return Either.left(true);
+        return Either.left(new ItemCostSuccess(item, requestedCount));
     }
 
     @Override
