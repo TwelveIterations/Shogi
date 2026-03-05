@@ -17,15 +17,10 @@ public record Failure(Component message) implements ShogiEffect<Boolean> {
     public static final MapCodec<Failure> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ComponentSerialization.CODEC.fieldOf("message").orElse(Component.empty()).forGetter(Failure::message)
     ).apply(builder, Failure::new));
-    public static final StreamCodec<RegistryFriendlyByteBuf, Failure> STREAM_CODEC = StreamCodec.composite(
-            ComponentSerialization.STREAM_CODEC,
-            Failure::message,
-            Failure::new
-    );
 
     @Override
     public Either<Boolean, ?> apply(ShogiContext context) {
-        return Either.right(this);
+        return Either.right(new FailureInformation(message));
     }
 
     @Override

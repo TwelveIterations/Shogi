@@ -2,8 +2,8 @@ package net.blay09.mods.shogi.common.network;
 
 import com.google.gson.JsonElement;
 import net.blay09.mods.shogi.common.effect.cost.*;
-import net.blay09.mods.shogi.common.effect.failure.Failure;
-import net.blay09.mods.shogi.common.effect.failure.Refuse;
+import net.blay09.mods.shogi.common.effect.failure.FailureInformation;
+import net.blay09.mods.shogi.common.effect.failure.RefusalInformation;
 import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownInformation;
 import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.effect.EmptyEffect;
@@ -43,8 +43,8 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("component"), Component.class, ComponentSerialization.STREAM_CODEC);
         ShogiStreamCodecs.register(id("throwable"), Throwable.class, THROWABLE_CODEC);
         ShogiStreamCodecs.register(id("list"), List.class, ShogiStreamCodecs.LIST_STREAM_CODEC);
-        ShogiStreamCodecs.register(id("failure"), Failure.class, Failure.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("refuse"), Refuse.class, Refuse.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("failure"), FailureInformation.class, FailureInformation.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("refusal"), RefusalInformation.class, RefusalInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
         ShogiStreamCodecs.register(id("xp_points_cost"), ExperiencePointsCostInformation.class, ExperiencePointsCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("xp_level_cost"), ExperienceLevelCostInformation.class, ExperienceLevelCostInformation.STREAM_CODEC);
