@@ -99,7 +99,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
 
         if (failures.isEmpty()) {
             if (aggregateContext.executor() instanceof DeferredEffectExecutor executor) {
-                executor.execute();
+                context.execute(IDENTIFIER, executor::execute);
             }
             return Either.left(successes);
         } else {
