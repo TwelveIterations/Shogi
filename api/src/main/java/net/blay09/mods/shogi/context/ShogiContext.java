@@ -149,7 +149,9 @@ public interface ShogiContext {
      *
      * @return a forked context
      */
-    MutableShogiContext fork();
+    default MutableShogiContext fork() {
+        return MutableShogiContext.extend(this);
+    }
 
     /**
      * Aggregates a value in this context's aggregate executor.
