@@ -7,6 +7,7 @@ import net.minecraft.resources.Identifier;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Executable unit used by Shogi rules.
@@ -36,5 +37,33 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
         } catch (Throwable throwable) {
             return false;
         }
+    }
+
+    static <T> ShogiEffect<T> simple(Identifier identifier, Function<ShogiContext, T> supplier) {
+        return new ShogiEffect<>() {
+            @Override
+            public Identifier identifier() {
+                return identifier;
+            }
+
+            @Override
+            public Either<? extends T, ?> apply(ShogiContext context) {
+                return Either.left(supplier.apply(context));
+            }
+        };
+    }
+
+    static <T> ShogiEffect<T> simple(Identifier identifier, Supplier<T> supplier) {
+        return new ShogiEffect<>() {
+            @Override
+            public Identifier identifier() {
+                return identifier;
+            }
+
+            @Override
+            public Either<? extends T, ?> apply(ShogiContext context) {
+                return Either.left(supplier.get());
+            }
+        };
     }
 }
