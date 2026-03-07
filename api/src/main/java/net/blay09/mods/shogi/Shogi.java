@@ -6,6 +6,7 @@ import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -33,6 +34,16 @@ public class Shogi {
      */
     public static ShogiScope scope(Identifier identifier) {
         return factories.scope(identifier);
+    }
+
+    /**
+     * Returns a scope for the given identifier, creating it and applying the configure callback if needed.
+     *
+     * @param identifier scope identifier
+     * @return scope instance
+     */
+    public static ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure) {
+        return factories.scope(identifier, configure);
     }
 
     /**

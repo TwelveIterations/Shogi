@@ -7,6 +7,7 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
 import net.minecraft.resources.Identifier;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class MinimalShogiFactories implements ShogiFactories {
@@ -14,6 +15,15 @@ public class MinimalShogiFactories implements ShogiFactories {
     @Override
     public ShogiScope scope(Identifier identifier) {
         return ShogiScopeRegistry.getOrCreate(identifier, ShogiScopeImpl::new);
+    }
+
+    @Override
+    public ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure) {
+        return ShogiScopeRegistry.getOrCreate(identifier, id -> {
+            final var scope = new ShogiScopeImpl(id);
+            configure.accept(scope);
+            return scope;
+        });
     }
 
     @Override
