@@ -22,6 +22,7 @@ import net.blay09.mods.shogi.common.effect.server.cooldown.AddCooldown;
 import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownCost;
 import net.blay09.mods.shogi.common.effect.server.cooldown.HasCooldown;
 import net.blay09.mods.shogi.common.effect.player.Dismount;
+import net.blay09.mods.shogi.common.effect.server.cooldown.IsCooldownAbove;
 import net.blay09.mods.shogi.common.effect.variable.*;
 import net.blay09.mods.shogi.common.network.ShogiNetworkCacheImpl;
 import net.blay09.mods.shogi.common.scope.ShogiOverrideProviderImpl;
@@ -89,6 +90,7 @@ public class ShogiDefaults {
         scope.registerEffect(ExperienceLevelCost.IDENTIFIER, ExperienceLevelCost.mapCodec(scope), List.of("level"));
 
         scope.registerEffect(HasCooldown.IDENTIFIER, HasCooldown.MAP_CODEC, List.of("identifier"));
+        scope.registerEffect(IsCooldownAbove.IDENTIFIER, IsCooldownAbove.mapCodec(scope), List.of("identifier", "duration"));
         scope.registerEffect(AddCooldown.IDENTIFIER, AddCooldown.mapCodec(scope), List.of("identifier", "duration"));
         scope.registerEffect(CooldownCost.IDENTIFIER, CooldownCost.mapCodec(scope), List.of("identifier", "duration"));
 
