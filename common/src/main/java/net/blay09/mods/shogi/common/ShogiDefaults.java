@@ -2,6 +2,7 @@ package net.blay09.mods.shogi.common;
 
 import net.blay09.mods.shogi.common.effect.compose.*;
 import net.blay09.mods.shogi.common.effect.condition.context.player.AnyHand;
+import net.blay09.mods.shogi.common.effect.condition.entity.HasEntityTag;
 import net.blay09.mods.shogi.common.effect.condition.item.HasEnchantment;
 import net.blay09.mods.shogi.common.effect.condition.item.IsItem;
 import net.blay09.mods.shogi.common.effect.condition.player.HasItem;
@@ -58,6 +59,8 @@ public class ShogiDefaults {
 
         scope.registerEffect(AnyHand.IDENTIFIER, AnyHand.mapCodec(scope), List.of("condition"));
         scope.registerEffect(OffHand.IDENTIFIER, OffHand.mapCodec(scope), List.of("effect"));
+
+        scope.registerEffect(HasEntityTag.IDENTIFIER, HasEntityTag.MAP_CODEC, List.of("tag"));
 
         scope.registerEffect(HasEnchantment.IDENTIFIER, HasEnchantment.MAP_CODEC, List.of("enchantment", "level"));
         scope.registerEffect(IsItem.IDENTIFIER, IsItem.MAP_CODEC, List.of("item"));
