@@ -3,11 +3,13 @@ package net.blay09.mods.shogi.scope;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Registry and resolution boundary for Shogi effects and value overrides.
@@ -19,6 +21,28 @@ public interface ShogiScope {
      * @return scope identifier
      */
     Identifier identifier();
+
+    /**
+     * Registers a simple, infallible effect with no parameters.
+     *
+     * @param id effect identifier
+     * @param supplier result supplier
+     */
+    default <T> void registerSimpleEffect(Identifier id, Supplier<T> supplier) {
+        final var effect = ShogiEffect.simple(id, supplier);
+        registerEffect(id, MapCodec.unit(effect), List.of());
+    }
+
+    /**
+     * Registers a simple, infallible effect with no parameters.
+     *
+     * @param id effect identifier
+     * @param function result function
+     */
+    default <T> void registerSimpleEffect(Identifier id, Function<ShogiContext, T> function) {
+        final var effect = ShogiEffect.simple(id, function);
+        registerEffect(id, MapCodec.unit(effect), List.of());
+    }
 
     /**
      * Registers an effect codec without ordinal parameter aliases.

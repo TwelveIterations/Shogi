@@ -39,7 +39,7 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
         }
     }
 
-    static <T> ShogiEffect<T> simple(Identifier identifier, Function<ShogiContext, T> supplier) {
+    static <T> ShogiEffect<T> simple(Identifier identifier, Function<ShogiContext, T> function) {
         return new ShogiEffect<>() {
             @Override
             public Identifier identifier() {
@@ -48,7 +48,7 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
 
             @Override
             public Either<? extends T, ?> apply(ShogiContext context) {
-                return Either.left(supplier.apply(context));
+                return Either.left(function.apply(context));
             }
         };
     }
