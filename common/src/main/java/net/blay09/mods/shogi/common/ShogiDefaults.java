@@ -1,30 +1,28 @@
 package net.blay09.mods.shogi.common;
 
-import net.blay09.mods.shogi.common.effect.compose.*;
+import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
+import net.blay09.mods.shogi.common.effect.compose.AndEffect;
+import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
+import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
 import net.blay09.mods.shogi.common.effect.condition.context.player.AnyHand;
-import net.blay09.mods.shogi.common.effect.condition.entity.HasEntityTag;
-import net.blay09.mods.shogi.common.effect.condition.entity.IsOnAnyVehicle;
-import net.blay09.mods.shogi.common.effect.condition.entity.IsOnVehicle;
+import net.blay09.mods.shogi.common.effect.condition.entity.*;
 import net.blay09.mods.shogi.common.effect.condition.item.HasEnchantment;
 import net.blay09.mods.shogi.common.effect.condition.item.IsItem;
 import net.blay09.mods.shogi.common.effect.condition.player.HasItem;
-import net.blay09.mods.shogi.common.effect.condition.player.HasMobEffect;
-import net.blay09.mods.shogi.common.effect.condition.player.IsPlayer;
+import net.blay09.mods.shogi.common.effect.condition.player.SimplePlayerEffects;
 import net.blay09.mods.shogi.common.effect.condition.pos.*;
-import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
-import net.blay09.mods.shogi.common.effect.condition.pos.IsDimension;
 import net.blay09.mods.shogi.common.effect.context.player.OffHand;
+import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
 import net.blay09.mods.shogi.common.effect.cost.ItemCost;
-import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
+import net.blay09.mods.shogi.common.effect.player.Dismount;
 import net.blay09.mods.shogi.common.effect.server.condition.player.HasAdvancement;
 import net.blay09.mods.shogi.common.effect.server.condition.pos.IsNearPoi;
 import net.blay09.mods.shogi.common.effect.server.cooldown.AddCooldown;
 import net.blay09.mods.shogi.common.effect.server.cooldown.CooldownCost;
 import net.blay09.mods.shogi.common.effect.server.cooldown.HasCooldown;
-import net.blay09.mods.shogi.common.effect.player.Dismount;
 import net.blay09.mods.shogi.common.effect.server.cooldown.IsCooldownAbove;
 import net.blay09.mods.shogi.common.effect.variable.*;
 import net.blay09.mods.shogi.common.network.ShogiNetworkCacheImpl;
@@ -33,7 +31,9 @@ import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 
-import java.util.*;
+import java.util.List;
+
+import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 public class ShogiDefaults {
 
@@ -63,15 +63,17 @@ public class ShogiDefaults {
         scope.registerEffect(OffHand.IDENTIFIER, OffHand.mapCodec(scope), List.of("effect"));
 
         scope.registerEffect(HasEntityTag.IDENTIFIER, HasEntityTag.MAP_CODEC, List.of("tag"));
+        scope.registerEffect(HasMobEffect.IDENTIFIER, HasMobEffect.MAP_CODEC, List.of("effect"));
         scope.registerEffect(IsOnAnyVehicle.IDENTIFIER, IsOnAnyVehicle.MAP_CODEC);
         scope.registerEffect(IsOnVehicle.IDENTIFIER, IsOnVehicle.MAP_CODEC, List.of("vehicle"));
+        scope.registerEffect(IsPlayer.IDENTIFIER, IsPlayer.MAP_CODEC);
 
         scope.registerEffect(HasEnchantment.IDENTIFIER, HasEnchantment.MAP_CODEC, List.of("enchantment", "level"));
         scope.registerEffect(IsItem.IDENTIFIER, IsItem.MAP_CODEC, List.of("item"));
 
         scope.registerEffect(HasItem.IDENTIFIER, HasItem.mapCodec(scope), List.of("item", "count"));
-        scope.registerEffect(HasMobEffect.IDENTIFIER, HasMobEffect.MAP_CODEC, List.of("effect"));
-        scope.registerEffect(IsPlayer.IDENTIFIER, IsPlayer.MAP_CODEC);
+        scope.registerSimpleEffect(id("has_empty_inventory"), SimplePlayerEffects::hasEmptyInventory);
+        scope.registerSimpleEffect(id("is_wearing_any_armor"), SimplePlayerEffects::isWearingAnyArmor);
 
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(IsAboveY.IDENTIFIER, IsAboveY.MAP_CODEC, List.of("y"));

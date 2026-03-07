@@ -1,4 +1,4 @@
-package net.blay09.mods.shogi.common.effect.condition.player;
+package net.blay09.mods.shogi.common.effect.condition.entity;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
