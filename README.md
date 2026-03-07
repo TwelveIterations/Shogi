@@ -210,6 +210,7 @@ evaluations.
 Shogi supports a ruleset format designed to be concise and embeddable within string literals
 such as a config string list. This way, rule evaluations can be defined even in regular TOML config options.
 For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher precedence than `,`.
+Unary `!` negates a condition or expression and has the highest precedence.
 
 ```
 (* --- Top-level rule --- *)
@@ -217,7 +218,8 @@ For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher 
 
 (* --- Conditions --- *)
 <conditions>    ::= <and_group> ( "," <and_group> )*
-<and_group>     ::= <condition_primary> ( "+" <condition_primary> )*
+<and_group>     ::= <condition_unary> ( "+" <condition_unary> )*
+<condition_unary> ::= ( "!" )* <condition_primary>
 <condition_primary> ::= <condition_call> | "(" <conditions> ")"
 <condition_call> ::= <identifier> [ "(" <arguments> ")" ]
 
@@ -234,7 +236,7 @@ For conditions before `->`, `+` means AND, `,` means ANY/OR, and `+` has higher 
 (* --- Expressions --- *)
 <expression>   ::= <term> ( ("+" | "-") <term> )*
 <term>         ::= <factor> ( ("*" | "/") <factor> )*
-<factor>       ::= <number> | <variable> | <function_call> | "(" <expression> ")"
+<factor>       ::= "!" <factor> | <number> | <variable> | <function_call> | "(" <expression> ")"
 
 (* --- Variables --- *)
 <variable>     ::= "$" <identifier> ( "." <identifier> )*

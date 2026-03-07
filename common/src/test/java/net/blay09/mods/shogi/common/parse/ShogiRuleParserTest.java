@@ -8,6 +8,7 @@ import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
+import net.blay09.mods.shogi.common.effect.compose.NotEffect;
 import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
@@ -257,6 +258,52 @@ class ShogiRuleParserTest {
     }
 
     @Test
+    void parsesConditionNotOperator() {
+        final var effect = parseOk(createScope(), "!noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var not = assertInstanceOf(NotEffect.class, condition.condition());
+        assertInstanceOf(EmptyEffect.class, not.condition());
+    }
+
+    @Test
+    void parsesConditionNotOperatorWithParenthesizedGroup() {
+        final var effect = parseOk(createScope(), "!(noop, noop) -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var not = assertInstanceOf(NotEffect.class, condition.condition());
+        final var any = assertInstanceOf(AnyEffect.class, not.condition());
+        assertEquals(2, any.conditions().size());
+    }
+
+    @Test
+    void parsesNestedConditionNotOperators() {
+        final var effect = parseOk(createScope(), "!!noop -> noop");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        final var outer = assertInstanceOf(NotEffect.class, condition.condition());
+        final var inner = assertInstanceOf(NotEffect.class, outer.condition());
+        assertInstanceOf(EmptyEffect.class, inner.condition());
+    }
+
+    @Test
+    void parsesExpressionNotOperator() {
+        final var effect = parseOk(createScope(), "$result = !noop");
+        final var assignment = assertInstanceOf(AssignmentEffect.class, effect);
+        final var not = assertInstanceOf(NotEffect.class, assignment.value());
+        assertInstanceOf(EmptyEffect.class, not.condition());
+    }
+
+    @Test
+    void parsesExpressionNotOperatorWithPrecedence() {
+        final var effect = parseOk(createScope(), "$result = !true + 1");
+        final var assignment = assertInstanceOf(AssignmentEffect.class, effect);
+        final var binary = assertInstanceOf(BinaryOpEffect.class, assignment.value());
+        final var not = assertInstanceOf(NotEffect.class, binary.left());
+        final var literal = assertInstanceOf(ConstantEffect.class, not.condition());
+        assertEquals(new JsonPrimitive(true), literal.value());
+        final var right = assertInstanceOf(ConstantEffect.class, binary.right());
+        assertEquals(new JsonPrimitive(1L), right.value());
+    }
+
+    @Test
     void parsesBareCall() {
         final var effect = parseOk(createScope(), "noop");
         assertInstanceOf(EmptyEffect.class, effect);
@@ -362,6 +409,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
         scope.registerEffect(AnyEffect.IDENTIFIER, AnyEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(NotEffect.IDENTIFIER, NotEffect.mapCodec(scope), List.of("condition"));
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));

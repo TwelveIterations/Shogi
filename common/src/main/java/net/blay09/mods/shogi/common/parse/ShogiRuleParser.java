@@ -102,6 +102,10 @@ public class ShogiRuleParser {
 
         private JsonObject parseConditionPrimary() throws ParseException {
             skipWhitespace();
+            if (tryConsume('!')) {
+                return notEffect(parseConditionPrimary());
+            }
+
             if (tryConsume('(')) {
                 if (tryConsume(')')) {
                     throw error("Expected condition");
@@ -171,6 +175,10 @@ public class ShogiRuleParser {
 
         private Expr parseFactor() throws ParseException {
             skipWhitespace();
+            if (tryConsume('!')) {
+                return new UnaryExpr("!", parseFactor());
+            }
+
             final char ch = peek();
             if (ch == '(') {
                 pos++;
@@ -346,6 +354,10 @@ public class ShogiRuleParser {
                 case LiteralExpr(JsonElement value) -> constantEffect(value);
                 case FunctionCallExpr(JsonObject json) -> json;
                 case VariableExpr(String path) -> variableEffect(path);
+                case UnaryExpr(String op, Expr expr) -> switch (op) {
+                    case "!" -> notEffect(effectFromExpr(expr));
+                    default -> throw new IllegalStateException("Unknown unary operator: " + op);
+                };
                 case BinaryExpr(String op, Expr left, Expr right) ->
                         binaryOpEffect(op, effectFromExpr(left), effectFromExpr(right));
                 case null, default ->
@@ -358,6 +370,10 @@ public class ShogiRuleParser {
                 case LiteralExpr(JsonElement value) -> value;
                 case FunctionCallExpr(JsonObject json) -> json;
                 case VariableExpr(String path) -> variableEffect(path);
+                case UnaryExpr(String op, Expr expr) -> switch (op) {
+                    case "!" -> notEffect(effectFromExpr(expr));
+                    default -> throw new IllegalStateException("Unknown unary operator: " + op);
+                };
                 case BinaryExpr(String op, Expr left, Expr right) ->
                         binaryOpEffect(op, effectFromExpr(left), effectFromExpr(right));
                 case null, default ->
@@ -415,6 +431,13 @@ public class ShogiRuleParser {
                 array.add(condition);
             }
             json.add("conditions", array);
+            return json;
+        }
+
+        private JsonObject notEffect(JsonObject condition) {
+            final JsonObject json = new JsonObject();
+            json.addProperty("type", "shogi:not");
+            json.add("condition", condition);
             return json;
         }
 
@@ -622,6 +645,9 @@ public class ShogiRuleParser {
     }
 
     private record VariableExpr(String path) implements Expr {
+    }
+
+    private record UnaryExpr(String op, Expr expr) implements Expr {
     }
 
     private record BinaryExpr(String op, Expr left, Expr right) implements Expr {

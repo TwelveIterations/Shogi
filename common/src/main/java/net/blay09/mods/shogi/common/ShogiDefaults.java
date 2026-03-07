@@ -4,6 +4,7 @@ import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
+import net.blay09.mods.shogi.common.effect.compose.NotEffect;
 import net.blay09.mods.shogi.common.effect.condition.context.player.AnyHand;
 import net.blay09.mods.shogi.common.effect.condition.entity.*;
 import net.blay09.mods.shogi.common.effect.condition.item.HasEnchantment;
@@ -56,6 +57,7 @@ public class ShogiDefaults {
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
         scope.registerEffect(AnyEffect.IDENTIFIER, AnyEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(NotEffect.IDENTIFIER, NotEffect.mapCodec(scope), List.of("condition"));
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(Failure.IDENTIFIER, Failure.MAP_CODEC, List.of("message"));
 
