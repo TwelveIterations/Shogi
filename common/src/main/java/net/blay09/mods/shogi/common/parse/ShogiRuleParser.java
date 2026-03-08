@@ -303,6 +303,9 @@ public class ShogiRuleParser {
             if (resolvedIdentifier == null) {
                 throw error("Invalid effect identifier: " + identifier);
             }
+            if (!scope.hasEffect(resolvedIdentifier)) {
+                throw error("Unknown effect: " + resolvedIdentifier);
+            }
 
             final JsonObject json = new JsonObject();
             json.addProperty("type", resolvedIdentifier.toString());
