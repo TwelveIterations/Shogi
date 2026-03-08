@@ -3,12 +3,12 @@ package net.blay09.mods.shogi.common.effect.server.cooldown;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 public final class ShogiCooldowns {
 
@@ -78,6 +78,10 @@ public final class ShogiCooldowns {
 
     private void clear() {
         cooldowns.clear();
+    }
+
+    public Set<Identifier> getCooldownIds() {
+        return cooldowns.keySet();
     }
 
     public Collection<ShogiCooldownInstance> getCooldowns() {
