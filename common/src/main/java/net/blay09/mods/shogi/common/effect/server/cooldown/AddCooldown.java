@@ -37,7 +37,9 @@ public record AddCooldown(Identifier identifier, ShogiEffect<?> duration) implem
         final var cooldowns = ((ShogiCooldownsAccess) player).shogi$getCooldowns();
         final var remainingTicks = cooldowns.getRemainingTicks(identifier);
         cooldowns.addCooldown(identifier, durationTicks);
-        return Either.left(new CooldownInformation(identifier, remainingTicks, durationTicks));
+        final var nowUnixMs = System.currentTimeMillis();
+        final var nanosecondsPerTick = player.level().tickRateManager().nanosecondsPerTick();
+        return Either.left(new CooldownInformation(identifier, remainingTicks, durationTicks, nowUnixMs, nanosecondsPerTick));
     }
 
     @Override

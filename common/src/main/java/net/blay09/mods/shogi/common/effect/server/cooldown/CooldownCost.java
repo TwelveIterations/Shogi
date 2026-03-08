@@ -36,12 +36,14 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
                 .orThrow();
         final var cooldowns = ((ShogiCooldownsAccess) player).shogi$getCooldowns();
         final long remainingTicks = cooldowns.getRemainingTicks(identifier);
+        final long nowUnixMs = System.currentTimeMillis();
+        final var nanosecondsPerTick = player.level().tickRateManager().nanosecondsPerTick();
         if (remainingTicks > 0) {
-            return Either.right(new CooldownInformation(identifier, remainingTicks, durationTicks));
+            return Either.right(new CooldownInformation(identifier, remainingTicks, durationTicks, nowUnixMs, nanosecondsPerTick));
         }
 
         cooldowns.addCooldown(identifier, durationTicks);
-        return Either.left(new CooldownInformation(identifier, 0, durationTicks));
+        return Either.left(new CooldownInformation(identifier, 0, durationTicks, nowUnixMs, nanosecondsPerTick));
     }
 
     @Override

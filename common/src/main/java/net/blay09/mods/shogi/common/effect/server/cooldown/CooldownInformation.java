@@ -5,7 +5,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 
-public record CooldownInformation(Identifier identifier, long remainingTicks, int requestedTicks) {
+public record CooldownInformation(Identifier identifier, long remainingTicks, int requestedTicks, long nowUnixMs, long nanosecondsPerTick) {
     public static final StreamCodec<RegistryFriendlyByteBuf, CooldownInformation> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC,
             CooldownInformation::identifier,
@@ -13,6 +13,10 @@ public record CooldownInformation(Identifier identifier, long remainingTicks, in
             CooldownInformation::remainingTicks,
             ByteBufCodecs.VAR_INT,
             CooldownInformation::requestedTicks,
+            ByteBufCodecs.VAR_LONG,
+            CooldownInformation::nowUnixMs,
+            ByteBufCodecs.LONG,
+            CooldownInformation::nanosecondsPerTick,
             CooldownInformation::new
     );
 }
