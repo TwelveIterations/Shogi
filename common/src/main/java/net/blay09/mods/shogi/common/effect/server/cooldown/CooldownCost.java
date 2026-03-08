@@ -42,7 +42,7 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
             return Either.right(new CooldownInformation(identifier, remainingTicks, durationTicks, nowUnixMs, nanosecondsPerTick));
         }
 
-        cooldowns.addCooldown(identifier, durationTicks);
+        context.execute(IDENTIFIER, () -> cooldowns.addCooldown(identifier, durationTicks));
         return Either.left(new CooldownInformation(identifier, 0, durationTicks, nowUnixMs, nanosecondsPerTick));
     }
 
