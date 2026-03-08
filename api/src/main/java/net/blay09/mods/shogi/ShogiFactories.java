@@ -51,10 +51,9 @@ public interface ShogiFactories {
      * @param defaultRule fallback resolver returning an either payload
      * @param <TContext>  the context type supplied during resolution
      * @param <TSuccess>  the success type
-     * @param <TFailure>  the failure type
      * @return a Shogi value wrapper
      */
-    <TContext, TSuccess, TFailure> ShogiValue<TContext, ?> maybe(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, TFailure>> defaultRule);
+    <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> defaultRule);
 
     /**
      * Creates a factory implementation.

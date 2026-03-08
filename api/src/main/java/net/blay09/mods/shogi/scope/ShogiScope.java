@@ -110,7 +110,7 @@ public interface ShogiScope {
      * @param <TSuccess> default provider success type
      * @return either resolved success or failure payload
      */
-    <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, TSuccess> defaultProvider);
+    <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider);
 
     /**
      * Registers an override provider consulted during resolution.

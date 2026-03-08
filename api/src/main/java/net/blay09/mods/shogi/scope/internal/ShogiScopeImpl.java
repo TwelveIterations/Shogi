@@ -93,7 +93,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, TSuccess> defaultProvider) {
+    public <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
         final var normalizedContext = MutableShogiContext.of(context);
         final var cached = cache.getRemoteValue(identifier, normalizedContext);
         if (cached.isPresent()) {
@@ -103,7 +103,7 @@ public class ShogiScopeImpl implements ShogiScope {
         return cache.valueResolved(identifier, normalizedContext, resolveWithoutCache(identifier, normalizedContext, context, defaultProvider));
     }
 
-    private <TContext, TSuccess> Either<?, ?> resolveWithoutCache(Identifier identifier, ShogiContext normalizedContext, TContext context, Function<TContext, TSuccess> defaultProvider) {
+    private <TContext, TSuccess> Either<?, ?> resolveWithoutCache(Identifier identifier, ShogiContext normalizedContext, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
         final var override = getOverride(identifier);
         if (override != null) {
             try {
@@ -117,7 +117,7 @@ public class ShogiScopeImpl implements ShogiScope {
         }
 
         try {
-            return Either.left(defaultProvider.apply(context));
+            return defaultProvider.apply(context);
         } catch (Throwable t) {
             return Either.right(t);
         }

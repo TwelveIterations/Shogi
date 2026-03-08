@@ -113,10 +113,9 @@ public class Shogi {
      * @param defaultValue the fallback resolver returning either success or failure
      * @param <TContext> the context type supplied during resolution
      * @param <TSuccess> the success value type
-     * @param <TFailure> the failure value type
      * @return a value that resolves to the given either payload shape
      */
-    public static <TContext, TSuccess, TFailure> ShogiValue<TContext, ?> maybe(Identifier identifier, Function<TContext, Either<TSuccess, TFailure>> defaultValue) {
+    public static <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, Function<TContext, Either<TSuccess, ?>> defaultValue) {
         return factories.maybe(identifier, defaultScope(), defaultValue);
     }
 

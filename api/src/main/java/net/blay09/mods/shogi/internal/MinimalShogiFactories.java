@@ -28,11 +28,11 @@ public class MinimalShogiFactories implements ShogiFactories {
 
     @Override
     public <TContext, TSuccess> ShogiValue<TContext, ?> value(Identifier identifier, ShogiScope scope, Function<TContext, TSuccess> defaultProvider) {
-        return new ShogiValueImpl<>(identifier, scope, context -> scope.resolve(identifier, context, defaultProvider));
+        return new ShogiValueImpl<>(identifier, scope, context -> scope.resolve(identifier, context, (it) -> Either.left(defaultProvider.apply(it))));
     }
 
     @Override
-    public <TContext, TSuccess, TFailure> ShogiValue<TContext, ?> maybe(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, TFailure>> defaultRule) {
+    public <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> defaultRule) {
         return new ShogiValueImpl<>(identifier, scope, context -> scope.resolve(identifier, context, defaultRule));
     }
 
