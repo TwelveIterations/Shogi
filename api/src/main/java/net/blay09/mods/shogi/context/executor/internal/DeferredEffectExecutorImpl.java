@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implements DeferredEffectExecutor {
     private final Map<AggregateKey<?>, Consumer<?>> consumers = new HashMap<>();
     private final Map<Identifier, Runnable> runnables = new HashMap<>();
+    private boolean executing;
 
     @Override
     public <T> void consume(AggregateKey<T> key, Consumer<T> o) {
@@ -29,7 +30,16 @@ public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implement
 
     @Override
     public void execute() {
-        consumers.forEach(this::executeConsumer);
-        runnables.values().forEach(Runnable::run);
+        if (executing) {
+            return;
+        }
+
+        executing = true;
+        try {
+            consumers.forEach(this::executeConsumer);
+            runnables.values().forEach(Runnable::run);
+        } finally {
+            executing = false;
+        }
     }
 }
