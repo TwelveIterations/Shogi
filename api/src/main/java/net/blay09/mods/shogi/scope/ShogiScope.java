@@ -3,8 +3,12 @@ package net.blay09.mods.shogi.scope;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import net.blay09.mods.shogi.Shogi;
+import net.blay09.mods.shogi.ShogiValue;
+import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
@@ -99,6 +103,79 @@ public interface ShogiScope {
      * @param namespaces ordered namespaces
      */
     void setDefaultNamespaces(List<String> namespaces);
+
+    /**
+     * Creates an integer value backed by this scope.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback value provider used when no override applies
+     * @param <TContext> the context type supplied during resolution
+     * @return a value that resolves to an integer
+     */
+    default <TContext> ShogiValue<TContext, Integer> intValue(Identifier identifier, Function<TContext, Integer> defaultValue) {
+        return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.INT);
+    }
+
+    /**
+     * Creates a float value backed by this scope.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback value provider used when no override applies
+     * @param <TContext> the context type supplied during resolution
+     * @return a value that resolves to a float
+     */
+    default <TContext> ShogiValue<TContext, Float> floatValue(Identifier identifier, Function<TContext, Float> defaultValue) {
+        return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.FLOAT);
+    }
+
+    /**
+     * Creates a boolean value backed by this scope.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback value provider used when no override applies
+     * @param <TContext> the context type supplied during resolution
+     * @return a value that resolves to a boolean
+     */
+    default <TContext> ShogiValue<TContext, Boolean> booleanValue(Identifier identifier, Function<TContext, Boolean> defaultValue) {
+        return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.BOOLEAN);
+    }
+
+    /**
+     * Creates a string value backed by this scope.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback value provider used when no override applies
+     * @param <TContext> the context type supplied during resolution
+     * @return a value that resolves to a string
+     */
+    default <TContext> ShogiValue<TContext, String> stringValue(Identifier identifier, Function<TContext, String> defaultValue) {
+        return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.STRING);
+    }
+
+    /**
+     * Creates a component value backed by this scope.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback value provider used when no override applies
+     * @param <TContext> the context type supplied during resolution
+     * @return a value that resolves to a chat component
+     */
+    default <TContext> ShogiValue<TContext, Component> componentValue(Identifier identifier, Function<TContext, Component> defaultValue) {
+        return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.COMPONENT);
+    }
+
+    /**
+     * Creates a value whose default provider already returns an Either payload.
+     *
+     * @param identifier the unique identifier for this value
+     * @param defaultValue the fallback resolver returning either success or failure
+     * @param <TContext> the context type supplied during resolution
+     * @param <TSuccess> the success value type
+     * @return a value that resolves to the given either payload shape
+     */
+    default <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, Function<TContext, Either<TSuccess, ?>> defaultValue) {
+        return Shogi.__factories().maybe(identifier, this, defaultValue);
+    }
 
     /**
      * Resolves a value for the given identifier and context.

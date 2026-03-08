@@ -27,6 +27,15 @@ public class Shogi {
     }
 
     /**
+     * Provides access to the internal factories providing the Shogi implementation.
+     * Internal use only. Use methods in {@link Shogi} or {@link ShogiScope} directly instead.
+     * @return internal factories
+     */
+    public static ShogiFactories __factories() {
+        return factories;
+    }
+
+    /**
      * Returns a scope for the given identifier, creating it if needed.
      *
      * @param identifier scope identifier
