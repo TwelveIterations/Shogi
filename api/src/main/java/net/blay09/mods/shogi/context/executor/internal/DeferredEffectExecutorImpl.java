@@ -25,7 +25,11 @@ public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implement
 
     @SuppressWarnings("unchecked")
     private <T> void executeConsumer(AggregateKey<?> key, Consumer<T> consumer) {
-        consumer.accept((T) aggregates.get(key));
+        applyConsumeOverride((AggregateKey<T>) key, consumer, (T) aggregates.get(key));
+    }
+
+    private void executeRunnable(Identifier identifier, Runnable runnable) {
+        applyExecuteOverride(identifier, runnable);
     }
 
     @Override
@@ -37,7 +41,7 @@ public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implement
         executing = true;
         try {
             consumers.forEach(this::executeConsumer);
-            runnables.values().forEach(Runnable::run);
+            runnables.forEach(this::executeRunnable);
         } finally {
             executing = false;
         }

@@ -11,12 +11,12 @@ public class ImmediateEffectExecutor extends AbstractEffectExecutor {
     public <T> void consume(AggregateKey<T> key, Consumer<T> o) {
         final var aggregate = aggregates.get(key);
         if (aggregate != null) {
-            o.accept((T) aggregate);
+            applyConsumeOverride(key, o, (T) aggregate);
         }
     }
 
     @Override
     public void execute(Identifier identifier, Runnable runnable) {
-        runnable.run();
+        applyExecuteOverride(identifier, runnable);
     }
 }

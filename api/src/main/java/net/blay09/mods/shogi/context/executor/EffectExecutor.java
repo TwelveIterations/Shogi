@@ -6,6 +6,7 @@ import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
 import net.blay09.mods.shogi.context.executor.internal.SimulatedEffectExecutor;
 import net.minecraft.resources.Identifier;
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -47,12 +48,31 @@ public interface EffectExecutor {
     <T> void consume(AggregateKey<T> key, Consumer<T> consumer);
 
     /**
+     * Overrides how aggregate consume operations are executed for the given identifier.
+     *
+     * @param identifier effect identifier
+     * @param override override callback receiving the original operation and aggregate value
+     * @param <T> aggregate value type
+     */
+    default <T> void overrideConsume(Identifier identifier, BiConsumer<Consumer<T>, T> override) {
+    }
+
+    /**
      * Schedules a side effect to run on success.
      *
      * @param identifier side effect identifier
      * @param runnable runnable invoked if the evaluation succeeded
      */
     void execute(Identifier identifier, Runnable runnable);
+
+    /**
+     * Overrides how execute operations are executed for the given identifier.
+     *
+     * @param identifier effect identifier
+     * @param override override callback receiving the original runnable
+     */
+    default void overrideExecute(Identifier identifier, Consumer<Runnable> override) {
+    }
 
     static DeferredEffectExecutor deferred() {
         return new DeferredEffectExecutorImpl();
