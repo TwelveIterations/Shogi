@@ -7,8 +7,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
@@ -17,7 +18,7 @@ public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
                              int min) implements ShogiEffect<Boolean> {
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_entity_nearby");
     public static final MapCodec<IsEntityNearby> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).fieldOf("entity").forGetter(IsEntityNearby::entity),
+            HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("entity").forGetter(IsEntityNearby::entity),
             Codec.FLOAT.fieldOf("distance").forGetter(IsEntityNearby::distance),
             Codec.INT.fieldOf("min").orElse(1).forGetter(IsEntityNearby::min)
     ).apply(instance, IsEntityNearby::new));

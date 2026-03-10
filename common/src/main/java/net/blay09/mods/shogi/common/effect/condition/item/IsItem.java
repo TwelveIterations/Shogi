@@ -6,8 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
@@ -15,7 +16,7 @@ public record IsItem(HolderSet<Item> item) implements ShogiEffect<Boolean> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_item");
     public static final MapCodec<IsItem> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("item").forGetter(IsItem::item)
+            HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false).fieldOf("item").forGetter(IsItem::item)
     ).apply(instance, IsItem::new));
 
     @Override

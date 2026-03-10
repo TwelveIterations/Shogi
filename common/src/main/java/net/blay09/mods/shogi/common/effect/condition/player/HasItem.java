@@ -12,8 +12,9 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.common.util.InventoryLookup;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
@@ -23,7 +24,7 @@ public record HasItem(HolderSet<Item> item, ShogiEffect<?> count) implements Sho
 
     public static MapCodec<HasItem> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                RegistryCodecs.homogeneousList(Registries.ITEM).fieldOf("item").forGetter(HasItem::item),
+                HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false).fieldOf("item").forGetter(HasItem::item),
                 EffectArgumentCodecs.effectOrConstant(scope).fieldOf("count").orElse(new ConstantEffect(new JsonPrimitive(1))).forGetter(HasItem::count)
         ).apply(instance, HasItem::new));
     }

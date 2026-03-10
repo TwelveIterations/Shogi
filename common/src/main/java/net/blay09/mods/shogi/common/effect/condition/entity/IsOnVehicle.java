@@ -6,8 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 
@@ -16,7 +17,7 @@ import static net.blay09.mods.shogi.common.ShogiCommon.id;
 public record IsOnVehicle(HolderSet<EntityType<?>> vehicle) implements ShogiEffect<Boolean> {
     public static final Identifier IDENTIFIER = id("is_on_vehicle");
     public static final MapCodec<IsOnVehicle> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).fieldOf("vehicle").forGetter(IsOnVehicle::vehicle)
+            HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("vehicle").forGetter(IsOnVehicle::vehicle)
     ).apply(instance, IsOnVehicle::new));
 
     @Override
