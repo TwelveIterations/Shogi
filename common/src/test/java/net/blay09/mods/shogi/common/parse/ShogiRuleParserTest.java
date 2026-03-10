@@ -146,8 +146,8 @@ class ShogiRuleParserTest {
     }
 
     @Test
-    void parsesImportEffect() {
-        final var effect = parseOk(createScope(), "import('test:other_rule')");
+    void parsesUseEffect() {
+        final var effect = parseOk(createScope(), "use('test:other_rule')");
         final var imported = assertInstanceOf(UseEffect.class, effect);
         assertEquals(Identifier.fromNamespaceAndPath("test", "other_rule"), imported.importedIdentifier());
     }
