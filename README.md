@@ -9,7 +9,7 @@ customizability that extends beyond the limited set of inbuilt behaviors and con
 Mods must implement the Shogi API in order to be customizable with Shogi. To allow for support without requiring a
 hard dependency, the API is shipped as a separate embeddable jar. By defining your options as `ShogiValue` and resolving
 them with a context, users who install Shogi will be able to override its behavior by specifying rules inside their
-`config/shogi.json` file.
+scope-specific files in the `config` folder.
 
 The separately downloaded Shogi mod is only a required dependency if your mod uses advanced features
 (like `.networked()` values) or relies on Shogi rules as part of its main configuration
@@ -142,7 +142,12 @@ Rules are the heart of Shogi. They define what conditions lead to which results.
 expressions (like `is_dimension('the_nether') -> failure('This feature is disabled in the Nether')`), to multistep
 aggregates and calculations.
 
-These rules can be defined inside `config/shogi.json`, keyed by the value they should target.
+These rules can be defined inside a JSON file in the config folder, named by the scope they target.
+
+For example, `config/hardcorerevival.default.json` can contain rules for the `hardcorerevival:default` scope, keyed by the value they should target.
+
+Config file names use the pattern `config/<scopeNamespace>.<scopePath>.json`.
+If the scope path contains `/`, it is normalized to `.` in the file name.
 
 ```json
 {
@@ -151,8 +156,7 @@ These rules can be defined inside `config/shogi.json`, keyed by the value they s
 ```
 
 Shogi supports both this custom expression format and JSON directly. The expression format can be a more readable
-option,
-and is designed to be embeddable within standard toml config files.
+option, and is designed to be embeddable within standard toml config files where supported.
 
 The above example in JSON would look as follows:
 
@@ -171,6 +175,17 @@ The above example in JSON would look as follows:
   }
 }
 ```
+
+Datapacks can define rules as well. For a scope with identifier `<scopeNamespace>:<scopePath>`, datapack rules
+must be placed under:
+
+`data/<ruleNamespace>/<scopeNamespace>/<scopePath>/<rulePath>.json`
+
+For example, a rule imported as `example:foo` for scope `waystones:default` would live at:
+
+`data/example/waystones/default/foo.json`
+
+JSON files from datapacks always contain a single rule (unlike the files in the config folder that contain multiple).
 
 ## Technical Implementation
 

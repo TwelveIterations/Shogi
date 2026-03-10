@@ -1,19 +1,17 @@
 package net.blay09.mods.shogi.internal;
 
-import com.google.common.collect.MapMaker;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 public final class ShogiScopeRegistry {
 
-    private static final ConcurrentMap<Identifier, ShogiScope> scopes = new MapMaker()
-            .weakValues()
-            .makeMap();
+    private static final ConcurrentMap<Identifier, ShogiScope> scopes = new ConcurrentHashMap<>();
 
     private ShogiScopeRegistry() {
     }

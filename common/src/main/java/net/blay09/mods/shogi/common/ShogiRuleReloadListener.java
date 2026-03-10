@@ -1,54 +1,51 @@
 package net.blay09.mods.shogi.common;
 
-import net.blay09.mods.shogi.common.scope.ShogiOverrideProviderImpl;
+import net.blay09.mods.shogi.common.scope.ShogiRuleRepositories;
+import net.blay09.mods.shogi.common.scope.ShogiRuleRepository;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.internal.ShogiScopeRegistry;
-import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
 
 import java.nio.file.Path;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class ShogiRuleReloadListener implements PreparableReloadListener {
-    public static final Map<ShogiScope, ShogiOverrideProviderImpl> overrideProviders = Collections.synchronizedMap(new WeakHashMap<>());
+public class ShogiRuleReloadListener extends SimplePreparableReloadListener<List<ShogiRuleReloadListener.ScopeRules>> {
 
     private final HolderLookup.Provider registries;
-    private final Path path;
+    private final Path configDirectory;
 
-    public ShogiRuleReloadListener(HolderLookup.Provider registries, Path path) {
+    public ShogiRuleReloadListener(HolderLookup.Provider registries, Path configDirectory) {
         this.registries = registries;
-        this.path = path;
+        this.configDirectory = configDirectory;
     }
 
     @Override
-    public CompletableFuture<Void> reload(SharedState sharedState, Executor reloadExecutor, PreparationBarrier preparationBarrier, Executor applyExecutor) {
-        return CompletableFuture.supplyAsync(this::loadAllOverrides, reloadExecutor)
-                .thenCompose(preparationBarrier::wait)
-                .thenAcceptAsync(this::applyAllOverrides, applyExecutor);
-    }
-
-    private List<ScopeOverrides> loadAllOverrides() {
-        final List<ScopeOverrides> loadedOverrides = new ArrayList<>();
+    protected List<ScopeRules> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+        final List<ScopeRules> loadedRules = new ArrayList<>();
         for (final var scope : ShogiScopeRegistry.getAll()) {
-            final var overrideProvider = overrideProviders.get(scope);
-            if (overrideProvider == null) {
+            final var repository = ShogiRuleRepositories.get(scope).orElse(null);
+            if (repository == null) {
                 continue;
             }
 
-            final var overrides = ShogiRuleLoader.loadJson(registries, scope, path);
-            loadedOverrides.add(new ScopeOverrides(overrideProvider, overrides));
+            final var configRules = ShogiRuleLoader.loadConfigRules(registries, scope, configDirectory);
+            final var datapackRules = ShogiRuleLoader.loadDatapackRules(registries, scope, resourceManager);
+            loadedRules.add(new ScopeRules(repository, configRules, datapackRules));
         }
-        return loadedOverrides;
+        return loadedRules;
     }
 
-    private void applyAllOverrides(List<ScopeOverrides> loadedOverrides) {
-        loadedOverrides.forEach(it -> it.overrideProvider().apply(it.overrides()));
+    @Override
+    protected void apply(List<ScopeRules> loadedRules, ResourceManager resourceManager, ProfilerFiller profiler) {
+        loadedRules.forEach(it -> it.repository().apply(it.configRules(), it.datapackRules()));
     }
 
-    private record ScopeOverrides(ShogiOverrideProviderImpl overrideProvider, Map<Identifier, ShogiEffect<?>> overrides) {
+    protected record ScopeRules(ShogiRuleRepository repository, Map<Identifier, ShogiEffect<?>> configRules, Map<Identifier, ShogiEffect<?>> datapackRules) {
     }
 }

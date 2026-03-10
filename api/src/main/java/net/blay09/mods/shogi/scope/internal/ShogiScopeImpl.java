@@ -12,7 +12,6 @@ import net.blay09.mods.shogi.scope.ShogiNetworkCache;
 import net.blay09.mods.shogi.scope.ShogiOverrideProvider;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
-import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -104,7 +103,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     private <TContext, TSuccess> Either<?, ?> resolveWithoutCache(Identifier identifier, ShogiContext normalizedContext, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
-        final var override = getOverride(identifier);
+        final var override = getOverride(identifier).orElse(null);
         if (override != null) {
             try {
                 var result = override.apply(normalizedContext);
@@ -128,8 +127,8 @@ public class ShogiScopeImpl implements ShogiScope {
         overrideProviders.add(provider);
     }
 
-    @Nullable
-    private ShogiEffect<?> getOverride(Identifier identifier) {
+    @Override
+    public Optional<ShogiEffect<?>> getOverride(Identifier identifier) {
         ShogiEffect<?> override = null;
         for (final var provider : overrideProviders) {
             final var providerOverride = provider.getOverride(identifier).orElse(null);
@@ -137,7 +136,7 @@ public class ShogiScopeImpl implements ShogiScope {
                 override = providerOverride;
             }
         }
-        return override;
+        return Optional.ofNullable(override);
     }
 
 

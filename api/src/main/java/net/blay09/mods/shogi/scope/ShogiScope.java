@@ -12,6 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -195,6 +196,14 @@ public interface ShogiScope {
      * @param provider override provider
      */
     void registerOverrideProvider(ShogiOverrideProvider provider);
+
+    /**
+     * Resolves the current override effect for the given value identifier.
+     *
+     * @param identifier value identifier
+     * @return override effect, or empty when none applies
+     */
+    Optional<ShogiEffect<?>> getOverride(Identifier identifier);
 
     /**
      * Sets the network cache used for synchronized values.

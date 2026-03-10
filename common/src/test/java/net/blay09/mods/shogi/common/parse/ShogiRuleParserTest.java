@@ -8,6 +8,7 @@ import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
+import net.blay09.mods.shogi.common.effect.compose.UseEffect;
 import net.blay09.mods.shogi.common.effect.compose.NotEffect;
 import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
@@ -142,6 +143,13 @@ class ShogiRuleParserTest {
         final var aggregate = assertInstanceOf(AggregateEffect.class, effect);
         assertEquals(2, aggregate.effects().size());
         aggregate.effects().forEach(rule -> assertInstanceOf(EmptyEffect.class, rule));
+    }
+
+    @Test
+    void parsesImportEffect() {
+        final var effect = parseOk(createScope(), "import('test:other_rule')");
+        final var imported = assertInstanceOf(UseEffect.class, effect);
+        assertEquals(Identifier.fromNamespaceAndPath("test", "other_rule"), imported.importedIdentifier());
     }
 
     @Test
@@ -414,6 +422,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
         scope.registerEffect(AnyEffect.IDENTIFIER, AnyEffect.mapCodec(scope), List.of("conditions"));
+        scope.registerEffect(UseEffect.IDENTIFIER, UseEffect.mapCodec(scope), List.of("identifier"));
         scope.registerEffect(NotEffect.IDENTIFIER, NotEffect.mapCodec(scope), List.of("condition"));
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));

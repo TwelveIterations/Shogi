@@ -13,8 +13,8 @@ public class ShogiCommon implements ShogiEventListener {
         ShogiDefaultStreamCodecs.registerDefaults();
 
         final var runtime = ShogiRuntimeSpi.get();
-        final var shogiConfigPath = runtime.getConfigDirectory().resolve("shogi.json");
-        runtime.registerServerReloadListener(ShogiCommon.id("rule_reloader"), registries -> new ShogiRuleReloadListener(registries, shogiConfigPath));
+        final var configDirectory = runtime.getConfigDirectory();
+        runtime.registerServerReloadListener(ShogiCommon.id("rule_reloader"), registries -> new ShogiRuleReloadListener(registries, configDirectory));
     }
 
     public static ShogiCommon initialize() {
