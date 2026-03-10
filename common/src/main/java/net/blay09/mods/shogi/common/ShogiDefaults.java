@@ -19,6 +19,7 @@ import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
 import net.blay09.mods.shogi.common.effect.cost.ItemCost;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
+import net.blay09.mods.shogi.common.effect.failure.Refuse;
 import net.blay09.mods.shogi.common.effect.player.Dismount;
 import net.blay09.mods.shogi.common.effect.server.condition.player.HasAdvancement;
 import net.blay09.mods.shogi.common.effect.server.condition.pos.IsNearPoi;
@@ -65,6 +66,7 @@ public class ShogiDefaults {
         scope.registerEffect(NotEffect.IDENTIFIER, NotEffect.mapCodec(scope), List.of("condition"));
         scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(Failure.IDENTIFIER, Failure.MAP_CODEC, List.of("message"));
+        scope.registerEffect(Refuse.IDENTIFIER, Refuse.MAP_CODEC, List.of("message"));
 
         scope.registerEffect(AnyHand.IDENTIFIER, AnyHand.mapCodec(scope), List.of("condition"));
         scope.registerEffect(OffHand.IDENTIFIER, OffHand.mapCodec(scope), List.of("effect"));
