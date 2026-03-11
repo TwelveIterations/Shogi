@@ -48,6 +48,7 @@ include('api')
 include('common')
 if (include_fabric == "true") {
     include('fabric')
+    include('fabric-example')
 }
 if (include_neoforge == "true") {
     include('neoforge')
