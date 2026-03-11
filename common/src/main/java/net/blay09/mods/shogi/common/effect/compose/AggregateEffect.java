@@ -1,8 +1,9 @@
 package net.blay09.mods.shogi.common.effect.compose;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Either;
-import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.common.context.aggregate.ShogiAggregateContext;
@@ -31,7 +32,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
         ).apply(builder, AggregateEffect::new));
     }
 
-    public static AggregateEffect withAutoApplied(ShogiScope scope, List<ShogiEffect<?>> effects) {
+    public static AggregateEffect withAutoApplied(ShogiScope scope, DynamicOps<JsonElement> ops, List<ShogiEffect<?>> effects) {
         final var updatedEffects = new ArrayList<>(effects);
         final Set<String> assignedVariables = new LinkedHashSet<>();
         for (final var effect : effects) {
@@ -57,7 +58,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
                 variableJson.addProperty("name", variable);
                 effectJson.add(scope.getOrdinalParameters(identifier).getFirst(), variableJson);
 
-                scope.getEffectCodec().parse(JsonOps.INSTANCE, effectJson)
+                scope.getEffectCodec().parse(ops, effectJson)
                         .result()
                         .ifPresent(updatedEffects::add);
             }

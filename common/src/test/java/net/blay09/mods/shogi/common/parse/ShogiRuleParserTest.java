@@ -3,6 +3,7 @@ package net.blay09.mods.shogi.common.parse;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
@@ -431,17 +432,17 @@ class ShogiRuleParserTest {
     }
 
     private static ShogiEffect<?> parseOk(ShogiScope scope, String input) {
-        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input);
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, input);
         return result.result().orElseThrow(() -> new AssertionError("Expected parse success, got error: " + parseError(result)));
     }
 
     private static ShogiEffect<?> parseOk(ShogiScope scope, String input, String defaultNamespace) {
-        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input, defaultNamespace);
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, input, defaultNamespace);
         return result.result().orElseThrow(() -> new AssertionError("Expected parse success, got error: " + parseError(result)));
     }
 
     private static String parseErr(ShogiScope scope, String input) {
-        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input);
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, input);
         if (result.result().isPresent()) {
             throw new AssertionError("Expected parse error, got success");
         }

@@ -35,7 +35,7 @@ class AggregateEffectTest {
                 parseOk(scope, "$xp_points_cost * 2")
         );
 
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(3, aggregate.effects().size());
 
         final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(2));
@@ -48,7 +48,7 @@ class AggregateEffectTest {
         final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$binary_op = 12"));
 
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(1, aggregate.effects().size());
     }
 
@@ -57,7 +57,7 @@ class AggregateEffectTest {
         final var customScope = createScope(Identifier.fromNamespaceAndPath("custom", "test"), true);
         final List<ShogiEffect<?>> effects = List.of(parseOk(customScope, "$xp_points_cost = 12"));
 
-        final var aggregate = AggregateEffect.withAutoApplied(customScope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(customScope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
         assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
     }
@@ -68,7 +68,7 @@ class AggregateEffectTest {
         scope.setDefaultNamespaces(List.of("custom", "shogi"));
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
 
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
         assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
     }
@@ -80,7 +80,7 @@ class AggregateEffectTest {
         scope.setDefaultNamespaces(List.of("custom", "shogi"));
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
 
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
         assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(1));
     }
@@ -90,7 +90,7 @@ class AggregateEffectTest {
         final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$XP_Points_Cost = 12"));
 
-        final var aggregate = AggregateEffect.withAutoApplied(scope, effects);
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(1, aggregate.effects().size());
         assertInstanceOf(AssignmentEffect.class, aggregate.effects().getFirst());
     }
@@ -131,7 +131,7 @@ class AggregateEffectTest {
     }
 
     private static ShogiEffect<?> parseOk(ShogiScope scope, String input) {
-        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, input);
+        final DataResult<ShogiEffect<?>> result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, input);
         return result.result().orElseThrow(() -> new AssertionError("Expected parse success, got error: " + parseError(result)));
     }
 

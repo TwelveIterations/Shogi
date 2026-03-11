@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
@@ -18,15 +19,15 @@ import java.util.Map;
 
 public class ShogiRuleParser {
 
-    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input) {
-        return parse(scope, input, scope.getDefaultNamespaces());
+    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, DynamicOps<JsonElement> ops, String input) {
+        return parse(scope, ops, input, scope.getDefaultNamespaces());
     }
 
-    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input, String defaultNamespace) {
-        return parse(scope, input, List.of(defaultNamespace));
+    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, DynamicOps<JsonElement> ops, String input, String defaultNamespace) {
+        return parse(scope, ops, input, List.of(defaultNamespace));
     }
 
-    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, String input, List<String> defaultNamespaces) {
+    public static DataResult<ShogiEffect<?>> parse(ShogiScope scope, DynamicOps<JsonElement> ops, String input, List<String> defaultNamespaces) {
         final JsonObject ruleJson;
         try {
             ruleJson = new Parser(scope, input, defaultNamespaces).parseRule();
@@ -34,7 +35,7 @@ public class ShogiRuleParser {
             return DataResult.error(() -> "Ruleset parse error at index " + e.position + ": " + e.getMessage());
         }
 
-        return scope.getEffectCodec().parse(JsonOps.INSTANCE, ruleJson);
+        return scope.getEffectCodec().parse(ops, ruleJson);
     }
 
     private static class Parser {

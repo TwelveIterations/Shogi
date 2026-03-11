@@ -103,7 +103,7 @@ public final class ShogiRuleLoader {
             );
         }
         if (payload.isJsonPrimitive() && payload.getAsJsonPrimitive().isString()) {
-            return ShogiRuleParser.parse(scope, payload.getAsString()).resultOrPartial(error ->
+            return ShogiRuleParser.parse(scope, registryJsonOps, payload.getAsString()).resultOrPartial(error ->
                     logger.warn("Skipping Shogi rule '{}': {}", source, error)
             );
         }
@@ -116,7 +116,7 @@ public final class ShogiRuleLoader {
                 }
                 rules.add(parsed.orElseThrow());
             }
-            return Optional.of(AggregateEffect.withAutoApplied(scope, rules));
+            return Optional.of(AggregateEffect.withAutoApplied(scope, registryJsonOps, rules));
         }
 
         logger.warn("Skipping Shogi rule '{}': expected string, object, or array payload", source);
