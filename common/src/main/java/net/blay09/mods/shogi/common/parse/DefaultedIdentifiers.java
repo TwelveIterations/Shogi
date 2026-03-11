@@ -41,20 +41,16 @@ public class DefaultedIdentifiers {
 
     @Nullable
     private static Identifier firstMatching(String path, List<String> defaultNamespaces, Predicate<Identifier> matcher) {
-        Identifier firstValid = null;
         for (final var namespace : defaultNamespaces) {
             if (!Identifier.isValidNamespace(namespace)) {
                 continue;
             }
 
             final var resolved = Identifier.fromNamespaceAndPath(namespace, path);
-            if (firstValid == null) {
-                firstValid = resolved;
-            }
             if (matcher.test(resolved)) {
                 return resolved;
             }
         }
-        return firstValid;
+        return null;
     }
 }
