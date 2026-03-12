@@ -15,7 +15,7 @@ import java.util.function.Function;
 public class Shogi {
 
     private static final ShogiFactories factories = ShogiFactories.create();
-    private static final ShogiScope defaultScope = factories.scope(Identifier.fromNamespaceAndPath("shogi", "default"));
+    private static final ShogiScope defaultScope = factories.scope(Identifier.fromNamespaceAndPath("shogi", "rules"));
 
     /**
      * Returns the default global scope used by the convenience factory methods in this class.
