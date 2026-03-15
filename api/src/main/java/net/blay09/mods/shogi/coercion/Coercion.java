@@ -112,7 +112,10 @@ public final class Coercion {
     /**
      * Coerces values to a literal chat component using {@link #STRING}.
      */
-    public static final Function<Object, Component> COMPONENT = input -> Component.literal(STRING.apply(input));
+    public static final Function<Object, Component> COMPONENT = LAST.andThen(input -> switch (input) {
+        case Component component -> component;
+        default -> Component.literal(STRING.apply(input));
+    });
 
     /**
      * Creates a coercion that requires values to be assignable to the given class.
