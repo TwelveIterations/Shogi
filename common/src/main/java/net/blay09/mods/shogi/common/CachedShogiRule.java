@@ -3,6 +3,7 @@ package net.blay09.mods.shogi.common;
 import com.mojang.serialization.JsonOps;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.parse.ShogiRuleParser;
+import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
@@ -34,6 +35,10 @@ public final class CachedShogiRule {
 
     public static CachedShogiRule ofRules(ShogiScope scope, Supplier<List<String>> rulesSupplier) {
         return new CachedShogiRule((registries) -> compileRules(scope, registries, rulesSupplier.get()));
+    }
+
+    public ShogiEffect<?> get(ShogiContext context) {
+        return get(context.requireLevel().registryAccess());
     }
 
     public ShogiEffect<?> get(HolderLookup.Provider registries) {
