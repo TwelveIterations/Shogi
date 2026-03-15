@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -58,6 +59,14 @@ public interface ShogiContext {
      */
     @Nullable
     BlockState blockState();
+
+    /**
+     * Returns the block entity in this context.
+     *
+     * @return the current block entity, or {@code null}
+     */
+    @Nullable
+    BlockEntity blockEntity();
 
     /**
      * Returns the item stack in this context.
@@ -140,6 +149,20 @@ public interface ShogiContext {
         final var blockState = blockState();
         if (blockState != null) {
             return blockState;
+        }
+        throw new MissingContextException(this);
+    }
+
+    /**
+     * Returns the block entity in this context or throws if absent.
+     *
+     * @return the current block entity
+     * @throws MissingContextException if no block entity is available
+     */
+    default BlockEntity requireBlockEntity() {
+        final var blockEntity = blockEntity();
+        if (blockEntity != null) {
+            return blockEntity;
         }
         throw new MissingContextException(this);
     }

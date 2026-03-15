@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -25,6 +26,7 @@ public class ShogiContextImpl implements MutableShogiContext {
     private @Nullable Entity entity;
     private @Nullable BlockPos blockPos;
     private @Nullable BlockState blockState;
+    private @Nullable BlockEntity blockEntity;
     private @Nullable ItemStack itemStack;
     private @Nullable Map<String, Object> variables;
 
@@ -83,6 +85,9 @@ public class ShogiContextImpl implements MutableShogiContext {
 
     @Override
     public @Nullable BlockPos blockPos() {
+        if (blockPos == null && blockEntity != null) {
+            return blockEntity.getBlockPos();
+        }
         if (blockPos == null && entity instanceof Entity currentEntity) {
             return currentEntity.blockPosition();
         }
@@ -100,6 +105,9 @@ public class ShogiContextImpl implements MutableShogiContext {
 
     @Override
     public @Nullable BlockState blockState() {
+        if (blockState == null && blockEntity != null) {
+            return blockEntity.getBlockState();
+        }
         if (blockState == null && level() != null && blockPos() != null) {
             return level().getBlockState(blockPos());
         }
@@ -112,6 +120,23 @@ public class ShogiContextImpl implements MutableShogiContext {
     @Override
     public MutableShogiContext withBlockState(@Nullable BlockState blockState) {
         this.blockState = blockState;
+        return this;
+    }
+
+    @Override
+    public @Nullable BlockEntity blockEntity() {
+        if (blockEntity == null && parent != null) {
+            return parent.blockEntity();
+        }
+        return blockEntity;
+    }
+
+    @Override
+    public MutableShogiContext withBlockEntity(@Nullable BlockEntity blockEntity) {
+        this.blockEntity = blockEntity;
+        if (blockEntity != null && level == null) {
+            level = blockEntity.getLevel();
+        }
         return this;
     }
 

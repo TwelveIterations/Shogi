@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jspecify.annotations.Nullable;
 
@@ -48,6 +49,14 @@ public interface MutableShogiContext extends ShogiContext {
      * @return this builder
      */
     MutableShogiContext withBlockState(@Nullable BlockState blockState);
+
+    /**
+     * Sets the block entity in this context.
+     *
+     * @param blockEntity the block entity to store, or {@code null}
+     * @return this builder
+     */
+    MutableShogiContext withBlockEntity(@Nullable BlockEntity blockEntity);
 
     /**
      * Sets the item stack in this context.
@@ -106,6 +115,7 @@ public interface MutableShogiContext extends ShogiContext {
         final var context = create(new ImmediateEffectExecutor());
         if (input instanceof Entity entity) {
             context.withEntity(entity);
+            context.withLevel(entity.level());
             context.withBlockPos(entity.blockPosition());
         } else if (input instanceof Level level) {
             context.withLevel(level);
@@ -117,6 +127,11 @@ public interface MutableShogiContext extends ShogiContext {
             context.withBlockPos(new BlockPos(vec3i));
         } else if (input instanceof Position position) {
             context.withBlockPos(BlockPos.containing(position));
+        } else if (input instanceof BlockEntity blockEntity) {
+            context.withBlockEntity(blockEntity);
+            context.withLevel(blockEntity.getLevel());
+            context.withBlockPos(blockEntity.getBlockPos());
+            context.withBlockState(blockEntity.getBlockState());
         }
 
         if (input instanceof ItemStack itemStack) {
