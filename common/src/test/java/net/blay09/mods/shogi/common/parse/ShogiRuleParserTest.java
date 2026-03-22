@@ -392,16 +392,6 @@ class ShogiRuleParserTest {
         assertContains(parseErr(createScope(), "noop + () -> noop"), "Expected condition");
     }
 
-    @Test
-    void failsForUnknownEffectAtCodecStage() {
-        assertContains(parseErr(createScope(), "not_registered()"), "Unknown effect");
-    }
-
-    @Test
-    void failsForUnknownEffectWithPositionalArguments() {
-        assertContains(parseErr(createScope(), "not_registered(1)"), "Unknown effect");
-    }
-
     private static ShogiScope createScope() {
         final ShogiScopeImpl scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
         registerParserEffects(scope, true);

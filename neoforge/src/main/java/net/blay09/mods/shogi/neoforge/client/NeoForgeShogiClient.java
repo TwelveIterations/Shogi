@@ -3,7 +3,7 @@ package net.blay09.mods.shogi.neoforge.client;
 import net.blay09.mods.shogi.client.ShogiClient;
 import net.blay09.mods.shogi.client.platform.ShogiClientEventListener;
 import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
-import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
