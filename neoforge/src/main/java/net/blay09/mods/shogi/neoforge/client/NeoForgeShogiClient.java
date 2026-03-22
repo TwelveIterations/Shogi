@@ -6,6 +6,7 @@ import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
 import net.blay09.mods.shogi.sync.ShogiStreamCodecs;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent;
@@ -15,7 +16,7 @@ import net.neoforged.neoforge.common.NeoForge;
 public class NeoForgeShogiClient {
     private final ShogiClientEventListener events;
 
-    public NeoForgeShogiClient(IEventBus modEventBus) {
+    public NeoForgeShogiClient(ModContainer modContainer, IEventBus modEventBus) {
         events = ShogiClient.initialize();
         modEventBus.addListener(this::onRegisterClientPayloadHandlers);
         NeoForge.EVENT_BUS.addListener(this::onClientLoggedOut);
