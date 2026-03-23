@@ -18,10 +18,8 @@ public class ShogiFactoriesImpl extends MinimalShogiFactories {
 
     @Override
     public ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure) {
-        return ShogiScopeRegistry.getOrCreate(identifier, (id) -> {
-            final var scope = ShogiDefaults.registerDefaults(new ShogiScopeImpl(id));
-            configure.accept(scope);
-            return scope;
-        });
+        final var scope = ShogiScopeRegistry.getOrCreate(identifier, (id) -> ShogiDefaults.registerDefaults(new ShogiScopeImpl(id)));
+        configure.accept(scope);
+        return scope;
     }
 }

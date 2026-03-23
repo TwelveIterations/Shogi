@@ -19,11 +19,9 @@ public class MinimalShogiFactories implements ShogiFactories {
 
     @Override
     public ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure) {
-        return ShogiScopeRegistry.getOrCreate(identifier, id -> {
-            final var scope = new ShogiScopeImpl(id);
-            configure.accept(scope);
-            return scope;
-        });
+        final var scope = ShogiScopeRegistry.getOrCreate(identifier, ShogiScopeImpl::new);
+        configure.accept(scope);
+        return scope;
     }
 
     @Override

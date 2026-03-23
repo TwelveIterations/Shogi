@@ -46,7 +46,7 @@ public class Shogi {
     }
 
     /**
-     * Returns a scope for the given identifier, creating it and applying the configure callback if needed.
+     * Returns a scope for the given identifier, creating it if needed, and applies the configure callback.
      *
      * @param identifier scope identifier
      * @return scope instance

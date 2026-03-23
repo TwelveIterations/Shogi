@@ -22,12 +22,12 @@ public interface ShogiFactories {
     ShogiScope scope(Identifier identifier);
 
     /**
-     * Creates a new scope for a namespace of effect registrations and value resolution, and runs the configuration
-     * callback for it.
+     * Returns a scope for a namespace of effect registrations and value resolution, creating it if needed, and runs
+     * the configuration callback for the resulting scope.
      *
      * @param identifier the scope identifier
-     * @param configure  configuration callback for the new scope
-     * @return the created scope
+     * @param configure  configuration callback for the scope
+     * @return the scope
      */
     ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure);
 
