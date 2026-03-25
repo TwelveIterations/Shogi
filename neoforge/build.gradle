@@ -2,7 +2,6 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'multiloader-api'
     alias libs.plugins.modDevGradle
     alias libs.plugins.curseForgeGradle
     alias libs.plugins.modrinthMinotaur
@@ -27,6 +26,10 @@ neoForge {
         client {
             client()
         }
+
+        server {
+            server()
+        }
     }
 
     mods {
@@ -40,20 +43,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 apply from: rootProject.file('repositories.gradle')
 apply from: 'dependencies.gradle'
-
-def neoForgeSnapshotUrl = findProperty("neoforge_snapshot_url")
-if (neoForgeSnapshotUrl != null && !neoForgeSnapshotUrl.isBlank()) {
-    repositories {
-        maven {
-            name = 'Maven for NeoForge Snapshots'
-            url = neoForgeSnapshotUrl
-            content {
-                includeModule('net.neoforged', 'neoforge')
-                includeModule('net.neoforged', 'testframework')
-            }
-        }
-    }
-}
 
 tasks.register('curseforge', TaskPublishCurseForge) {
     dependsOn('build')
@@ -85,4 +74,18 @@ modrinth {
     changelog = rootProject.file("CHANGELOG.md").text
     gameVersions = [libs.minecraft.get().version]
     loaders = ['neoforge']
+}
+
+def neoForgeSnapshotUrl = findProperty("neoforge_snapshot_url")
+if (neoForgeSnapshotUrl != null && !neoForgeSnapshotUrl.isBlank()) {
+    repositories {
+        maven {
+            name = 'Maven for NeoForge Snapshots'
+            url = neoForgeSnapshotUrl
+            content {
+                includeModule('net.neoforged', 'neoforge')
+                includeModule('net.neoforged', 'testframework')
+            }
+        }
+    }
 }

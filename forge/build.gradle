@@ -2,13 +2,13 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'multiloader-api'
     alias libs.plugins.forgeGradle
     alias libs.plugins.curseForgeGradle
     alias libs.plugins.modrinthMinotaur
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+
 
 minecraft {
     mappings channel: 'official', version: libs.minecraft.get().version
@@ -24,6 +24,7 @@ minecraft {
     }
 }
 
+apply from: rootProject.file('repositories.gradle')
 repositories {
     maven minecraft.mavenizer
     maven fg.forgeMaven
@@ -37,6 +38,7 @@ dependencies {
     implementation minecraft.dependency("net.minecraftforge:forge:$mcVersion-$forgeVersion")
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.0'
 }
+apply from: 'dependencies.gradle'
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
@@ -50,8 +52,6 @@ tasks.named('jar', Jar) {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
-apply from: rootProject.file('repositories.gradle')
-apply from: 'dependencies.gradle'
 
 tasks.register('curseforge', TaskPublishCurseForge) {
     dependsOn('build')
@@ -65,7 +65,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
         projectId != null
     }
     if (projectId) {
-        def mainFile = upload(findProperty("curseforge_project_id"), tasks.jarJar.archiveFile.get().asFile)
+        def mainFile = upload(findProperty("curseforge_project_id"), jar.archiveFile.get().asFile)
         mainFile.changelog = rootProject.file('CHANGELOG.md').text
         mainFile.addGameVersion(libs.minecraft.get().version)
         mainFile.releaseType = "release"
@@ -78,9 +78,14 @@ modrinth {
     projectId = findProperty("modrinth_project_id")
     versionType = "release"
     versionNumber = project.version + "+forge-" + libs.minecraft.get().version
-    uploadFile = tasks.jarJar.archiveFile.get().asFile
+    uploadFile = jar
     changelog = rootProject.file("CHANGELOG.md").text
     gameVersions = [libs.minecraft.get().version]
     loaders = ['forge']
 }
-tasks.modrinth.dependsOn(build)
+
+sourceSets.each {
+    def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+    it.output.resourcesDir = dir
+    it.java.destinationDirectory = dir
+}
