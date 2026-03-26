@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.JsonOps;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
@@ -73,12 +72,10 @@ public class ShogiRuleParser {
 
         private JsonObject parseConditionExpression() throws ParseException {
             final List<JsonObject> anyConditions = new ArrayList<>();
-            anyConditions.add(parseConditionAndGroup());
-            skipWhitespace();
-            while (tryConsume(',')) {
+            do {
                 anyConditions.add(parseConditionAndGroup());
                 skipWhitespace();
-            }
+            } while (tryConsume(','));
 
             if (anyConditions.size() == 1) {
                 return anyConditions.getFirst();
@@ -88,12 +85,10 @@ public class ShogiRuleParser {
 
         private JsonObject parseConditionAndGroup() throws ParseException {
             final List<JsonObject> andConditions = new ArrayList<>();
-            andConditions.add(parseConditionPrimary());
-            skipWhitespace();
-            while (tryConsume('+')) {
+            do {
                 andConditions.add(parseConditionPrimary());
                 skipWhitespace();
-            }
+            } while (tryConsume('+'));
 
             if (andConditions.size() == 1) {
                 return andConditions.getFirst();

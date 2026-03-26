@@ -1,10 +1,9 @@
 package net.blay09.mods.shogi.context.internal;
 
-import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.MutableShogiContext;
+import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
-import net.blay09.mods.shogi.context.executor.internal.SimulatedEffectExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -108,8 +107,12 @@ public class ShogiContextImpl implements MutableShogiContext {
         if (blockState == null && blockEntity != null) {
             return blockEntity.getBlockState();
         }
-        if (blockState == null && level() != null && blockPos() != null) {
-            return level().getBlockState(blockPos());
+        if (blockState == null) {
+            final var level = level();
+            final var blockPos = blockPos();
+            if (level != null && blockPos != null) {
+                return level.getBlockState(blockPos);
+            }
         }
         if (blockState == null && parent != null) {
             return parent.blockState();

@@ -48,10 +48,11 @@ public final class CachedShogiRule {
         }
 
         synchronized (this) {
-            if (cachedEffect == null) {
-                cachedEffect = compiler.apply(registries);
+            var effectiveEffect = cachedEffect;
+            if (effectiveEffect == null) {
+                effectiveEffect = compiler.apply(registries);
             }
-            return cachedEffect;
+            return effectiveEffect;
         }
     }
 

@@ -50,6 +50,6 @@ public record ClampEffect(ShogiEffect<?> value, ShogiEffect<?> min, ShogiEffect<
         final var valueNumber = valueResult.mapLeft(Coercion.FLOAT).orThrow();
         final var minNumber = minResult.mapLeft(Coercion.FLOAT).orThrow();
         final var maxNumber = maxResult.mapLeft(Coercion.FLOAT).orThrow();
-        return Either.left(Math.max(minNumber, Math.min(valueNumber, maxNumber)));
+        return Either.left(Math.clamp(valueNumber, minNumber, maxNumber));
     }
 }
