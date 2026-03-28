@@ -2,6 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
+    id 'multiloader-api'
     alias libs.plugins.modDevGradle
     alias libs.plugins.curseForgeGradle
     alias libs.plugins.modrinthMinotaur
