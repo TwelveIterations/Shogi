@@ -97,7 +97,8 @@ public class ShogiDefaults {
         scope.registerEffect(IsEntityNearby.IDENTIFIER, IsEntityNearby.MAP_CODEC, List.of("entity", "distance", "min"));
         scope.registerEffect(IsMobNearby.IDENTIFIER, IsMobNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsNear.IDENTIFIER, IsNear.MAP_CODEC, List.of("pos", "distance"));
-        scope.registerEffect(IsNearBlockEntity.IDENTIFIER, IsNearBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
+        scope.registerEffect(FindBlockEntity.IDENTIFIER, FindBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
+        scope.registerEffectAlias(id("is_near_block_entity"), FindBlockEntity.IDENTIFIER);
         scope.registerEffect(IsPlayerNearby.IDENTIFIER, IsPlayerNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsWithin.IDENTIFIER, IsWithin.MAP_CODEC, List.of("bounds"));
 
