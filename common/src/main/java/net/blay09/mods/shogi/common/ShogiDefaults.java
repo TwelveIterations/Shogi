@@ -91,11 +91,13 @@ public class ShogiDefaults {
         scope.registerEffect(IsBelowY.IDENTIFIER, IsBelowY.MAP_CODEC, List.of("y"));
         scope.registerEffect(IsBiome.IDENTIFIER, IsBiome.MAP_CODEC, List.of("biome"));
         scope.registerEffect(IsBlock.IDENTIFIER, IsBlock.MAP_CODEC, List.of("block"));
+        scope.registerEffect(IsBlockEntity.IDENTIFIER, IsBlockEntity.MAP_CODEC, List.of("block_entity_type"));
         scope.registerEffect(IsBlockStateProperty.IDENTIFIER, IsBlockStateProperty.MAP_CODEC, List.of("property", "value"));
         scope.registerEffect(IsDimension.IDENTIFIER, IsDimension.MAP_CODEC, List.of("dimension"));
         scope.registerEffect(IsEntityNearby.IDENTIFIER, IsEntityNearby.MAP_CODEC, List.of("entity", "distance", "min"));
         scope.registerEffect(IsMobNearby.IDENTIFIER, IsMobNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsNear.IDENTIFIER, IsNear.MAP_CODEC, List.of("pos", "distance"));
+        scope.registerEffect(IsNearBlockEntity.IDENTIFIER, IsNearBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
         scope.registerEffect(IsPlayerNearby.IDENTIFIER, IsPlayerNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsWithin.IDENTIFIER, IsWithin.MAP_CODEC, List.of("bounds"));
 
