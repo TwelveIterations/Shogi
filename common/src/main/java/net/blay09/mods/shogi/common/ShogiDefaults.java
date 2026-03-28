@@ -87,16 +87,20 @@ public class ShogiDefaults {
         scope.registerSimpleEffect(id("is_wearing_any_armor"), SimplePlayerEffects::isWearingAnyArmor);
 
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
+        scope.registerEffect(GetLightLevel.IDENTIFIER, GetLightLevel.MAP_CODEC);
         scope.registerEffect(IsAboveY.IDENTIFIER, IsAboveY.MAP_CODEC, List.of("y"));
         scope.registerEffect(IsAnimalNearby.IDENTIFIER, IsAnimalNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsAt.IDENTIFIER, IsAt.MAP_CODEC, List.of("pos"));
         scope.registerEffect(IsBelowY.IDENTIFIER, IsBelowY.MAP_CODEC, List.of("y"));
         scope.registerEffect(IsBiome.IDENTIFIER, IsBiome.MAP_CODEC, List.of("biome"));
+        scope.registerEffect(IsBrighterThan.IDENTIFIER, IsBrighterThan.mapCodec(scope), List.of("light_level"));
         scope.registerEffect(IsBlock.IDENTIFIER, IsBlock.MAP_CODEC, List.of("block"));
         scope.registerEffect(IsBlockEntity.IDENTIFIER, IsBlockEntity.MAP_CODEC, List.of("block_entity_type"));
         scope.registerEffect(IsBlockStateProperty.IDENTIFIER, IsBlockStateProperty.MAP_CODEC, List.of("property", "value"));
+        scope.registerEffect(IsDarkerThan.IDENTIFIER, IsDarkerThan.mapCodec(scope), List.of("light_level"));
         scope.registerEffect(IsDimension.IDENTIFIER, IsDimension.MAP_CODEC, List.of("dimension"));
         scope.registerEffect(IsEntityNearby.IDENTIFIER, IsEntityNearby.MAP_CODEC, List.of("entity", "distance", "min"));
+        scope.registerEffect(IsLightLevel.IDENTIFIER, IsLightLevel.mapCodec(scope), List.of("light_level"));
         scope.registerEffect(IsMobNearby.IDENTIFIER, IsMobNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsNear.IDENTIFIER, IsNear.MAP_CODEC, List.of("pos", "distance"));
         scope.registerEffect(FindBlockEntity.IDENTIFIER, FindBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
