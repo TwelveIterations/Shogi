@@ -25,7 +25,7 @@ public record ConditionEffect(
 
     public static MapCodec<ConditionEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
-                EffectArgumentCodecs.effectOrConstant(scope).fieldOf("condition").forGetter(ConditionEffect::condition),
+                scope.getEffectCodec().fieldOf("condition").forGetter(ConditionEffect::condition),
                 EffectArgumentCodecs.effectOrConstant(scope).fieldOf("then").forGetter(ConditionEffect::trueEffect),
                 EffectArgumentCodecs.effectOrConstant(scope).fieldOf("else").orElse(EmptyEffect.INSTANCE).forGetter(ConditionEffect::falseEffect)
         ).apply(builder, ConditionEffect::new));
