@@ -15,7 +15,7 @@ public record NotEffect(ShogiEffect<?> condition) implements ShogiEffect<Boolean
 
     public static MapCodec<NotEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
-                EffectArgumentCodecs.effectOrConstant(scope).fieldOf("condition").forGetter(NotEffect::condition)
+                scope.getEffectCodec().fieldOf("condition").forGetter(NotEffect::condition)
         ).apply(builder, NotEffect::new));
     }
 
