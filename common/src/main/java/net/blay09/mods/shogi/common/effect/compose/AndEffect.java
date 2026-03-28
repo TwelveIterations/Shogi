@@ -3,8 +3,8 @@ package net.blay09.mods.shogi.common.effect.compose;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
@@ -16,7 +16,7 @@ public record AndEffect(List<ShogiEffect<?>> conditions) implements ShogiEffect<
 
     public static MapCodec<AndEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
-                scope.getEffectCodec().listOf().fieldOf("conditions").forGetter(AndEffect::conditions)
+                scope.getEffectCodec().listOf(1, Integer.MAX_VALUE).fieldOf("conditions").forGetter(AndEffect::conditions)
         ).apply(builder, AndEffect::new));
     }
 
