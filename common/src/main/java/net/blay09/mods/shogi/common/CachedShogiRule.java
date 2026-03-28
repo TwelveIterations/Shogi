@@ -51,6 +51,7 @@ public final class CachedShogiRule {
             var effectiveEffect = cachedEffect;
             if (effectiveEffect == null) {
                 effectiveEffect = compiler.apply(registries);
+                cachedEffect = effectiveEffect;
             }
             return effectiveEffect;
         }
