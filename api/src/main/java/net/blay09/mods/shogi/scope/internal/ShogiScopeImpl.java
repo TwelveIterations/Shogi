@@ -29,9 +29,11 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     private final Map<Identifier, ShogiEffectType> effectTypeById = new HashMap<>();
+    private final Map<Identifier, Identifier> effectAliasById = new HashMap<>();
     private final Map<Identifier, List<String>> ordinalParametersById = new HashMap<>();
     private final List<ShogiOverrideProvider> overrideProviders = new ArrayList<>();
-    private final Codec<ShogiEffectType> effectTypeByNameCodec = Identifier.CODEC.flatXmap((identifier) -> Optional.ofNullable(effectTypeById.get(identifier))
+    private final Codec<ShogiEffectType> effectTypeByNameCodec = Identifier.CODEC.flatXmap((identifier) -> resolveEffectIdentifier(identifier)
+            .map(effectTypeById::get)
             .map(DataResult::success)
             .orElseGet(() -> DataResult.error(() -> "Unknown effect: " + identifier)), (type) -> DataResult.success(type.identifier()));
     private final Codec<ShogiEffect<?>> effectCodec = effectTypeByNameCodec.dispatch(it -> effectTypeById.get(it.identifier()), ShogiEffectType::mapCodec);
@@ -55,8 +57,30 @@ public class ShogiScopeImpl implements ShogiScope {
 
     @Override
     public void registerEffect(Identifier id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters) {
+        if (effectAliasById.containsKey(id)) {
+            throw new IllegalArgumentException("Effect identifier collides with existing alias: " + id);
+        }
         effectTypeById.put(id, new ShogiEffectType(id, effectCodec));
         ordinalParametersById.put(id, List.copyOf(ordinalParameters));
+    }
+
+    @Override
+    public void registerEffectAlias(Identifier alias, Identifier target) {
+        final var canonicalTarget = resolveEffectIdentifier(target)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown target effect for alias '" + alias + "': " + target));
+        if (effectTypeById.containsKey(alias)) {
+            throw new IllegalArgumentException("Effect alias collides with registered effect: " + alias);
+        }
+        effectAliasById.put(alias, canonicalTarget);
+    }
+
+    @Override
+    public Optional<Identifier> resolveEffectIdentifier(Identifier identifier) {
+        if (effectTypeById.containsKey(identifier)) {
+            return Optional.of(identifier);
+        }
+
+        return Optional.ofNullable(effectAliasById.get(identifier));
     }
 
     @Override
@@ -66,12 +90,14 @@ public class ShogiScopeImpl implements ShogiScope {
 
     @Override
     public List<String> getOrdinalParameters(Identifier identifier) {
-        return ordinalParametersById.getOrDefault(identifier, List.of());
+        return resolveEffectIdentifier(identifier)
+                .map(it -> ordinalParametersById.getOrDefault(it, List.of()))
+                .orElse(List.of());
     }
 
     @Override
     public boolean hasEffect(Identifier identifier) {
-        return effectTypeById.containsKey(identifier);
+        return effectTypeById.containsKey(identifier) || effectAliasById.containsKey(identifier);
     }
 
     @Override

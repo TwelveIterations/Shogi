@@ -60,6 +60,14 @@ public interface ShogiScope {
     }
 
     /**
+     * Registers an alias that resolves to an existing canonical effect identifier.
+     *
+     * @param alias alternate identifier accepted during lookup and decoding
+     * @param target canonical registered effect identifier
+     */
+    void registerEffectAlias(Identifier alias, Identifier target);
+
+    /**
      * Registers an effect codec with optional ordinal parameter aliases.
      *
      * @param id effect identifier
@@ -67,6 +75,14 @@ public interface ShogiScope {
      * @param ordinalParameters parameter names used for positional argument decoding
      */
     void registerEffect(Identifier id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters);
+
+    /**
+     * Resolves the given effect identifier to its canonical registered identifier.
+     *
+     * @param identifier canonical id or alias
+     * @return canonical effect identifier, or empty when unresolved
+     */
+    Optional<Identifier> resolveEffectIdentifier(Identifier identifier);
 
     /**
      * Returns the polymorphic effect codec for all effects registered in this scope.

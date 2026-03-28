@@ -299,18 +299,17 @@ public class ShogiRuleParser {
             if (resolvedIdentifier == null) {
                 throw error("Invalid effect identifier: " + identifier);
             }
-            if (!scope.hasEffect(resolvedIdentifier)) {
-                throw error("Unknown effect: " + resolvedIdentifier);
-            }
+            final var canonicalIdentifier = scope.resolveEffectIdentifier(resolvedIdentifier)
+                    .orElseThrow(() -> error("Unknown effect: " + resolvedIdentifier));
 
             final JsonObject json = new JsonObject();
-            json.addProperty("type", resolvedIdentifier.toString());
+            json.addProperty("type", canonicalIdentifier.toString());
 
             for (final var entry : named.entrySet()) {
                 json.add(entry.getKey(), valueForArgument(entry.getValue()));
             }
 
-            final List<String> ordinals = scope.getOrdinalParameters(resolvedIdentifier);
+            final List<String> ordinals = scope.getOrdinalParameters(canonicalIdentifier);
             if (!positional.isEmpty()) {
                 if (ordinals.isEmpty()) {
                     throw error("Effect '" + resolvedIdentifier + "' does not support positional parameters");

@@ -126,6 +126,18 @@ class ShogiRuleParserTest {
     }
 
     @Test
+    void parsesEffectAliasUsingCanonicalOrdinals() {
+        final var scope = createScope();
+        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("shogi", "math"), BinaryOpEffect.IDENTIFIER);
+
+        final var effect = parseOk(scope, "math('+', 1, 2)");
+        final var binary = assertInstanceOf(BinaryOpEffect.class, effect);
+        assertEquals("+", binary.op());
+        assertEquals(new JsonPrimitive(1L), assertInstanceOf(ConstantEffect.class, binary.left()).value());
+        assertEquals(new JsonPrimitive(2L), assertInstanceOf(ConstantEffect.class, binary.right()).value());
+    }
+
+    @Test
     void failsForMixedNamedAndPositionalArguments() {
         assertContains(parseErr(createScope(), "binary_op(op='+', 1, 2)"), "Cannot mix named and positional arguments");
     }
@@ -345,6 +357,36 @@ class ShogiRuleParserTest {
 
         final var effect = parseOk(scope, "foo");
         assertInstanceOf(ShogiFooEffect.class, effect);
+    }
+
+    @Test
+    void parsesAliasFromExplicitNamespaceAsCanonicalType() {
+        final var scope = createScope();
+        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+
+        final var parsed = parseOk(scope, "custom:sky");
+        assertInstanceOf(CanSeeSky.class, parsed);
+    }
+
+    @Test
+    void parsesAliasFromDefaultNamespaceAsCanonicalType() {
+        final var scope = createScopeWithoutNoop();
+        scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
+        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+        scope.setDefaultNamespaces(List.of("custom", "shogi"));
+
+        final var parsed = parseOk(scope, "sky");
+        assertInstanceOf(CanSeeSky.class, parsed);
+    }
+
+    @Test
+    void writesCanonicalTypeForAliasCalls() {
+        final var scope = createScope();
+        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+
+        final var result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, "custom:sky");
+        final var encoded = scope.getEffectCodec().encodeStart(JsonOps.INSTANCE, result.result().orElseThrow()).result().orElseThrow();
+        assertEquals(CanSeeSky.IDENTIFIER.toString(), encoded.getAsJsonObject().get("type").getAsString());
     }
 
     @Test
