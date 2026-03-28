@@ -104,6 +104,17 @@ public interface MutableShogiContext extends ShogiContext {
      * @return a mutable context containing values inferred from {@code input}
      */
     static MutableShogiContext of(Object input) {
+        return of(input, null);
+    }
+
+    /**
+     * Creates a context builder from a known input object type while extending the provided parent.
+     *
+     * @param input object used to seed context fields
+     * @param parent parent context to extend
+     * @return a mutable context containing values inferred from {@code input}
+     */
+    static MutableShogiContext of(Object input, @Nullable ShogiContext parent) {
         if (input instanceof MutableShogiContext mutableContext) {
             return mutableContext;
         }
@@ -112,7 +123,7 @@ public interface MutableShogiContext extends ShogiContext {
             return extend(context);
         }
 
-        final var context = create(new ImmediateEffectExecutor());
+        final var context = parent == null ? create(new ImmediateEffectExecutor()) : extend(parent);
         if (input instanceof Entity entity) {
             context.withEntity(entity);
             context.withLevel(entity.level());

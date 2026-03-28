@@ -13,6 +13,7 @@ import net.blay09.mods.shogi.common.effect.condition.item.IsItem;
 import net.blay09.mods.shogi.common.effect.condition.player.HasItem;
 import net.blay09.mods.shogi.common.effect.condition.player.SimplePlayerEffects;
 import net.blay09.mods.shogi.common.effect.condition.pos.*;
+import net.blay09.mods.shogi.common.effect.context.WithContext;
 import net.blay09.mods.shogi.common.effect.context.player.OffHand;
 import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
@@ -69,6 +70,7 @@ public class ShogiDefaults {
         scope.registerEffect(Refuse.IDENTIFIER, Refuse.MAP_CODEC, List.of("message"));
 
         scope.registerEffect(AnyHand.IDENTIFIER, AnyHand.mapCodec(scope), List.of("condition"));
+        scope.registerEffect(WithContext.IDENTIFIER, WithContext.mapCodec(scope), List.of("context", "effect"));
         scope.registerEffect(OffHand.IDENTIFIER, OffHand.mapCodec(scope), List.of("effect"));
 
         scope.registerEffect(HasEntityTag.IDENTIFIER, HasEntityTag.MAP_CODEC, List.of("tag"));
