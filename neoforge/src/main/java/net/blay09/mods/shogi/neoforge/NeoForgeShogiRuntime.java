@@ -46,6 +46,6 @@ public class NeoForgeShogiRuntime implements ShogiRuntime {
     }
 
     private void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-        reloadListeners.forEach((id, factory) -> event.addListener(id, factory.apply(event.getRegistryAccess())));
+        reloadListeners.forEach((id, factory) -> event.addListener(id, factory.apply(event.getServerResources().getRegistryLookup())));
     }
 }
