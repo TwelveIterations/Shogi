@@ -52,6 +52,7 @@ if (include_fabric == "true") {
 }
 if (include_neoforge == "true") {
     include('neoforge')
+    include('neoforge-example')
 }
 if (include_forge == "true") {
     include('forge')
