@@ -1,1 +1,8 @@
-- Initial Release
+- Added `is_any_structure` and `is_structure`
+- Added `get_light_level`, `is_brighter_than`, `is_darker_than`, `is_light_level`
+- Added `with(context, effect)` for running an effect with an explicit context
+- Added `is_block_entity` and `find_block_entity` (alias: `is_near_block_entity`)
+- Fixed rules referencing tags not loading correctly on NeoForge
+- Fixed `is_block` not being registered by default
+- Fixed JSON object rules being falsely parsed and used as json constants when failing to decode
+- Fixed `not` and `if` to no longer accept constants for their conditions
