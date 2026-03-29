@@ -90,6 +90,7 @@ public class ShogiDefaults {
         scope.registerEffect(GetLightLevel.IDENTIFIER, GetLightLevel.MAP_CODEC);
         scope.registerEffect(IsAboveY.IDENTIFIER, IsAboveY.MAP_CODEC, List.of("y"));
         scope.registerEffect(IsAnimalNearby.IDENTIFIER, IsAnimalNearby.MAP_CODEC, List.of("distance", "min"));
+        scope.registerEffect(IsAnyStructure.IDENTIFIER, IsAnyStructure.MAP_CODEC);
         scope.registerEffect(IsAt.IDENTIFIER, IsAt.MAP_CODEC, List.of("pos"));
         scope.registerEffect(IsBelowY.IDENTIFIER, IsBelowY.MAP_CODEC, List.of("y"));
         scope.registerEffect(IsBiome.IDENTIFIER, IsBiome.MAP_CODEC, List.of("biome"));
@@ -104,6 +105,7 @@ public class ShogiDefaults {
         scope.registerEffect(IsMobNearby.IDENTIFIER, IsMobNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsNear.IDENTIFIER, IsNear.MAP_CODEC, List.of("pos", "distance"));
         scope.registerEffect(FindBlockEntity.IDENTIFIER, FindBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
+        scope.registerEffect(IsStructure.IDENTIFIER, IsStructure.MAP_CODEC, List.of("structure"));
         scope.registerEffectAlias(id("is_near_block_entity"), FindBlockEntity.IDENTIFIER);
         scope.registerEffect(IsPlayerNearby.IDENTIFIER, IsPlayerNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsWithin.IDENTIFIER, IsWithin.MAP_CODEC, List.of("bounds"));
