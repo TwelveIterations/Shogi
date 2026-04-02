@@ -9,6 +9,7 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
 
 public record ClampEffect(ShogiEffect<?> value, ShogiEffect<?> min, ShogiEffect<?> max) implements ShogiEffect<Object> {
 
@@ -50,6 +51,6 @@ public record ClampEffect(ShogiEffect<?> value, ShogiEffect<?> min, ShogiEffect<
         final var valueNumber = valueResult.mapLeft(Coercion.FLOAT).orThrow();
         final var minNumber = minResult.mapLeft(Coercion.FLOAT).orThrow();
         final var maxNumber = maxResult.mapLeft(Coercion.FLOAT).orThrow();
-        return Either.left(Math.clamp(valueNumber, minNumber, maxNumber));
+        return Either.left(Mth.clamp(valueNumber, minNumber, maxNumber));
     }
 }
