@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "shogi_api",
+  "version": "${version}",
+  "name": "Shogi API",
+  "description": "${description}",
+  "authors": [
+    "BlayTheNinth"
+  ],
+  "contact": {
+    "homepage": "${homepage}",
+    "sources": "${sources}",
+    "issues": "${issues}"
+  },
+  "license": "${license}",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "minecraft": ">=${minecraft_version}",
+    "java": ">=${java_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"]
+    }
+  }
+}

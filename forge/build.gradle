@@ -2,13 +2,22 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
+    id 'multiloader-api'
     alias libs.plugins.forgeGradle
+    alias libs.plugins.forgeJarJar
     alias libs.plugins.curseForgeGradle
     alias libs.plugins.modrinthMinotaur
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(java_version)
 
+jarJar.register()
+tasks.named('jar') {
+    archiveClassifier = 'slim'
+}
+tasks.named('jarJar') {
+    archiveClassifier = null
+}
 
 minecraft {
     mappings channel: 'official', version: libs.minecraft.get().version
@@ -16,7 +25,7 @@ minecraft {
         configureEach {
             workingDir.convention layout.projectDirectory.dir('run')
             // Mixin requires either specifying the config via command line, or in the Manifest
-            args "--mixin.config=${mod_id}.mixins.json,${mod_id}-api.mixins.json,${mod_id}-forge.mixins.json"
+            args "--mixin.config=${mod_id}.mixins.json,${mod_id}-forge.mixins.json"
         }
         register('client') {
             systemProperty 'forge.enabledGameTestNamespaces', mod_id
@@ -46,7 +55,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named('jar', Jar) {
     manifest {
-        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.api.mixins.json,${mod_id}.forge.mixins.json"
+        attributes["MixinConfigs"] = "${mod_id}.mixins.json,${mod_id}.forge.mixins.json"
     }
 }
 
@@ -65,7 +74,7 @@ tasks.register('curseforge', TaskPublishCurseForge) {
         projectId != null
     }
     if (projectId) {
-        def mainFile = upload(findProperty("curseforge_project_id"), jar.archiveFile.get().asFile)
+        def mainFile = upload(findProperty("curseforge_project_id"), tasks.jarJar.archiveFile.get().asFile)
         mainFile.changelog = rootProject.file('CHANGELOG.md').text
         mainFile.addGameVersion(libs.minecraft.get().version)
         mainFile.releaseType = "release"
@@ -78,7 +87,7 @@ modrinth {
     projectId = findProperty("modrinth_project_id")
     versionType = "release"
     versionNumber = project.version + "+forge-" + libs.minecraft.get().version
-    uploadFile = jar
+    uploadFile = tasks.jarJar.archiveFile.get().asFile
     changelog = rootProject.file("CHANGELOG.md").text
     gameVersions = [libs.minecraft.get().version]
     loaders = ['forge']
