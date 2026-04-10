@@ -24,6 +24,6 @@ config = "shogi.forge.mixins.json"
 [[dependencies.shogi]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${minecraft_version},)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

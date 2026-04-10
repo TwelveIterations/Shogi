@@ -18,6 +18,6 @@ description='''${description}'''
 [[dependencies.shogi_api]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${minecraft_version},)"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
