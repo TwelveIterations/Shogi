@@ -5,6 +5,7 @@ import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -93,6 +94,20 @@ public interface ShogiContext {
         final var entity = entity();
         if (entity != null) {
             return entity;
+        }
+        throw new MissingContextException(this);
+    }
+
+    /**
+     * Returns the player in this context or throws if absent/not a player.
+     *
+     * @return the current player
+     * @throws MissingContextException if no player is available
+     */
+    default LivingEntity requireLivingEntity() {
+        final var entity = entity();
+        if (entity instanceof LivingEntity livingEntity) {
+            return livingEntity;
         }
         throw new MissingContextException(this);
     }

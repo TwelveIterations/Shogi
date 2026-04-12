@@ -27,10 +27,10 @@ public record AnyHand(ShogiEffect<?> condition) implements ShogiEffect<Boolean> 
 
     @Override
     public Either<Boolean, Object> apply(ShogiContext context) {
-        final var player = context.requirePlayer();
+        final var livingEntity = context.requireLivingEntity();
         final var nestedContext = context.fork();
         for (final var hand : HANDS) {
-            if (condition.test(nestedContext.withItemStack(player.getItemInHand(hand)))) {
+            if (condition.test(nestedContext.withItemStack(livingEntity.getItemInHand(hand)))) {
                 return Either.left(true);
             }
         }

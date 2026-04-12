@@ -14,8 +14,8 @@ public class Dismount implements ShogiEffect<Boolean> {
 
     @Override
     public Either<Boolean, ?> apply(ShogiContext context) {
-        final var player = context.requirePlayer();
-        context.execute(IDENTIFIER, player::stopRiding);
+        final var livingEntity = context.requireLivingEntity();
+        context.execute(IDENTIFIER, livingEntity::stopRiding);
         return Either.left(true);
     }
 

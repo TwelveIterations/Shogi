@@ -26,8 +26,8 @@ public record OffHand<T>(ShogiEffect<T> effect) implements ShogiEffect<T> {
 
     @Override
     public Either<? extends T, ?> apply(ShogiContext context) {
-        final var player = context.requirePlayer();
-        final var nestedContext = context.fork().withItemStack(player.getItemInHand(InteractionHand.OFF_HAND));
+        final var livingEntity = context.requireLivingEntity();
+        final var nestedContext = context.fork().withItemStack(livingEntity.getItemInHand(InteractionHand.OFF_HAND));
         return effect.apply(nestedContext);
     }
 }
