@@ -1,2 +1,1 @@
-- Fixed `shogi-api` to be included as a jar-in-jar mod to avoid classloading issues on NeoForge
-- Fixed `clamp` to not crash when upper bound is below lower bound
+- Fixed `any_hand`, `dismount`, `xp_level_cost`, `xp_points_cost`, `offhand` always failing for non-players (even if costs were 0)
