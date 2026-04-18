@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.fabric;
 
 import net.blay09.mods.shogi.Shogi;
+import net.blay09.mods.shogi.scope.ShogiScope;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.resources.Identifier;
@@ -16,6 +17,9 @@ public class FabricShogiExample implements ModInitializer {
         final var booleanValue = Shogi.booleanValue(id("boolean"), _ -> false).networked();
         final var nameValue = Shogi.componentValue(id("name"), Player::getName);
 
+        final var clientScope = Shogi.scope(id("client"), ShogiScope::loadOnClient);
+        final var clientIntValue = clientScope.intValue(id("int"), _ -> 1337);
+
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (final var player : server.getPlayerList().getPlayers()) {
                 if (player.isShiftKeyDown()) {
@@ -24,6 +28,7 @@ public class FabricShogiExample implements ModInitializer {
                     System.out.println(stringValue.get(player));
                     System.out.println(booleanValue.get(player));
                     System.out.println(nameValue.get(player));
+                    System.out.println(clientIntValue.get(player));
                 }
             }
         });
