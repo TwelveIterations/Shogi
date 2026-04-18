@@ -90,7 +90,7 @@ public final class ShogiRuleLoader {
         return scopeIdentifier.getNamespace() + "/" + scopeIdentifier.getPath();
     }
 
-    private static Path configPath(Path configDirectory, ShogiScope scope) {
+    static Path configPath(Path configDirectory, ShogiScope scope) {
         final var scopeIdentifier = scope.identifier();
         final var normalizedScopePath = scopeIdentifier.getPath().replace('/', '.');
         return configDirectory.resolve(scopeIdentifier.getNamespace() + "." + normalizedScopePath + ".json");

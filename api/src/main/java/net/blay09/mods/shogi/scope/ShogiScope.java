@@ -122,6 +122,27 @@ public interface ShogiScope {
     void setDefaultNamespaces(List<String> namespaces);
 
     /**
+     * Marks this scope to load rules on the client as well.
+     *
+     * @return this scope
+     */
+    ShogiScope loadOnClient();
+
+    /**
+     * Returns whether this scope loads rules on clients.
+     *
+     * @return true if this scope is loaded on clients
+     */
+    boolean isLoadedOnClient();
+
+    /**
+     * Returns whether this scope loads rules on servers.
+     *
+     * @return true if this scope is loaded on servers
+     */
+    boolean isLoadedOnServer();
+
+    /**
      * Creates an integer value backed by this scope.
      *
      * @param identifier the unique identifier for this value
@@ -234,4 +255,5 @@ public interface ShogiScope {
      * @return network cache implementation
      */
     ShogiNetworkCache getNetworkCache();
+
 }

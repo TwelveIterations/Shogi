@@ -19,6 +19,7 @@ import java.util.function.Function;
 public class ShogiScopeImpl implements ShogiScope {
     private final Identifier identifier;
     private List<String> defaultNamespaces;
+    private boolean loadedOnClient;
 
     public ShogiScopeImpl(Identifier identifier) {
         this.identifier = identifier;
@@ -115,6 +116,22 @@ public class ShogiScopeImpl implements ShogiScope {
             deduplicated.add(namespace);
         }
         defaultNamespaces = List.copyOf(deduplicated);
+    }
+
+    @Override
+    public ShogiScope loadOnClient() {
+        loadedOnClient = true;
+        return this;
+    }
+
+    @Override
+    public boolean isLoadedOnClient() {
+        return loadedOnClient;
+    }
+
+    @Override
+    public boolean isLoadedOnServer() {
+        return true;
     }
 
     @Override
