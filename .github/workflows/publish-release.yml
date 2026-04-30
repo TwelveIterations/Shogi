@@ -117,7 +117,7 @@ jobs:
             const includeForge = gradleProperties.match(/^(?!#)include_forge\s*=\s*true/m) && ${{inputs.forge}};
             const includeNeoForge = gradleProperties.match(/^(?!#)include_neoforge\s*=\s*true/m) && ${{inputs.neoforge}};
             return {
-              loader: [includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
+              loader: ['api', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
             }
       - name: Preparing publish matrix
         id: set-publish-matrix
