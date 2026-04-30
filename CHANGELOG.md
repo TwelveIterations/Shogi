@@ -1,1 +1,1 @@
-- Fixed `any_hand`, `dismount`, `xp_level_cost`, `xp_points_cost`, `offhand` always failing for non-players (even if costs were 0)
+- Added support for loading of rules on client-only mods (e.g. Client Tweaks)
