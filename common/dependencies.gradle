@@ -3,5 +3,5 @@ dependencies {
 }
 
 dependencies {
-    api(project(':api'))
+    api(project(':shogi-api'))
 }

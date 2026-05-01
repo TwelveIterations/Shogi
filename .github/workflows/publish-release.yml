@@ -117,7 +117,7 @@ jobs:
             const includeForge = gradleProperties.match(/^(?!#)include_forge\s*=\s*true/m) && ${{inputs.forge}};
             const includeNeoForge = gradleProperties.match(/^(?!#)include_neoforge\s*=\s*true/m) && ${{inputs.neoforge}};
             return {
-              loader: ['api', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
+              loader: ['shogi-api', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
             }
       - name: Preparing publish matrix
         id: set-publish-matrix
@@ -136,11 +136,11 @@ jobs:
             const publishModrinth = modrinthProjectId && ${{inputs.modrinth}};
             const publishMaven = mavenReleases && ${{inputs.maven}};
             return {
-              loader: ['api', 'common', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
+              loader: ['shogi-api', 'common', includeFabric ? 'fabric' : false, includeForge ? 'forge' : false, includeNeoForge ? 'neoforge' : false].filter(Boolean),
               site: [publishCurseForge ? 'curseforge' : false, publishModrinth ? 'modrinth' : false, publishMaven ? 'publish' : false].filter(Boolean),
               exclude: [
-                {loader: 'api', site: 'curseforge'},
-                {loader: 'api', site: 'modrinth'},
+                {loader: 'shogi-api', site: 'curseforge'},
+                {loader: 'shogi-api', site: 'modrinth'},
                 {loader: 'common', site: 'curseforge'},
                 {loader: 'common', site: 'modrinth'}
               ]

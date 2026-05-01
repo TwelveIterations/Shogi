@@ -44,7 +44,7 @@ plugins {
 }
 
 includeBuild('build-logic')
-include('api')
+include('shogi-api')
 include('common')
 if (include_fabric == "true") {
     include('fabric')

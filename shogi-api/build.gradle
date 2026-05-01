@@ -3,6 +3,18 @@ plugins {
     alias libs.plugins.modDevGradle
 }
 
+base {
+    archivesName = "${project.name}"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "shogi-api"
+        }
+    }
+}
+
 neoForge {
     neoFormVersion = libs.neoForm.get().version
     parchment.parchmentArtifact = libs.parchment.get().toString()

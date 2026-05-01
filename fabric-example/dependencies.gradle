@@ -1,5 +1,5 @@
 dependencies {
-    compileOnly project(path: ":api")
+    compileOnly project(path: ":shogi-api")
     compileOnly project(path: ":common")
     implementation project(path: ":fabric")
 }
