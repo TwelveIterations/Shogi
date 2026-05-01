@@ -1,1 +1,1 @@
-- Added support for loading of rules on client-only mods (e.g. Client Tweaks)
+- Fixed errors and failing world load due to API version conflicts caused by a wrong version declaration
