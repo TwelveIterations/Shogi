@@ -1,16 +1,13 @@
 package net.blay09.mods.shogi.context.executor.internal;
 
-import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
+import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 public abstract class AbstractEffectExecutor implements EffectExecutor {
 
@@ -18,6 +15,18 @@ public abstract class AbstractEffectExecutor implements EffectExecutor {
     private final Map<Identifier, BiFunction<?, ?, ?>> aggregateOverrides = new HashMap<>();
     private final Map<Identifier, BiConsumer<?, ?>> consumeOverrides = new HashMap<>();
     private final Map<Identifier, Consumer<Runnable>> executeOverrides = new HashMap<>();
+
+    public AbstractEffectExecutor() {
+        this(null);
+    }
+
+    public AbstractEffectExecutor(@Nullable AbstractEffectExecutor copy) {
+        if (copy != null) {
+            aggregateOverrides.putAll(copy.aggregateOverrides);
+            consumeOverrides.putAll(copy.consumeOverrides);
+            executeOverrides.putAll(copy.executeOverrides);
+        }
+    }
 
     @Override
     @SuppressWarnings("unchecked")

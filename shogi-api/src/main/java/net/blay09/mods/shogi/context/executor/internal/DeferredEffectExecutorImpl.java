@@ -3,6 +3,7 @@ package net.blay09.mods.shogi.context.executor.internal;
 import net.blay09.mods.shogi.context.executor.DeferredEffectExecutor;
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,13 @@ public class DeferredEffectExecutorImpl extends AbstractEffectExecutor implement
     private final Map<AggregateKey<?>, Consumer<?>> consumers = new HashMap<>();
     private final Map<Identifier, Runnable> runnables = new HashMap<>();
     private boolean executing;
+
+    public DeferredEffectExecutorImpl() {
+    }
+
+    public DeferredEffectExecutorImpl(@Nullable AbstractEffectExecutor copy) {
+        super(copy);
+    }
 
     @Override
     public <T> void consume(AggregateKey<T> key, Consumer<T> o) {
