@@ -7,6 +7,7 @@ import net.blay09.mods.shogi.context.executor.internal.SimulatedEffectExecutor;
 import net.minecraft.resources.Identifier;
 
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -25,6 +26,17 @@ public interface EffectExecutor {
      * @return the updated aggregate value
      */
     <T> T aggregate(AggregateKey<T> key, Supplier<T> initializer, Function<T, T> aggregator);
+
+    /**
+     * Overrides how aggregate update operations are executed for the given identifier.
+     *
+     * @param identifier effect identifier
+     * @param override override callback receiving the original operation and current aggregate value
+     * @param <T> aggregate value type
+     * @param <R> aggregate operation return value type
+     */
+    default <T, R> void overrideAggregate(Identifier identifier, BiFunction<Function<T, R>, T, R> override) {
+    }
 
     /**
      * Updates an aggregate value while returning a custom operation result.
