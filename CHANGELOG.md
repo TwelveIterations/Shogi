@@ -1,1 +1,2 @@
-- Fixed errors and failing world load due to API version conflicts caused by a wrong version declaration
+- API: Added `overrideAggregate` to allow making changes to aggregations, for example to apply Waystone's `enableXpCosts` option
+- Fixed overrides not being retained when constructing aggregate context child executors
