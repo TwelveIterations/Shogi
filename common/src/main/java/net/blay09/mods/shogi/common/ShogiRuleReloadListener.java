@@ -6,7 +6,7 @@ import java.nio.file.Path;
 
 public class ShogiRuleReloadListener extends AbstractShogiRuleReloadListener {
     static boolean loadsScopeOnServer(ShogiScope scope) {
-        return !scope.isLoadedOnServer();
+        return scope.isLoadedOnServer();
     }
 
     public ShogiRuleReloadListener(HolderLookup.Provider registries, Path configDirectory) {
