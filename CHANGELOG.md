@@ -1,2 +1,1 @@
-- API: Added `overrideAggregate` to allow making changes to aggregations, for example to apply Waystone's `enableXpCosts` option
-- Fixed overrides not being retained when constructing aggregate context child executors
+- Fixed server-scoped rules not loading, resulting in `use('waystones:generated_waystones')` not working
