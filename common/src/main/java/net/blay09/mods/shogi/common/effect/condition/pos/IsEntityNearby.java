@@ -13,6 +13,7 @@ import net.minecraft.resources.HolderSetCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
                              int min) implements ShogiEffect<Boolean> {
@@ -33,7 +34,7 @@ public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
         final var selfEntity = context.entity();
         final var level = context.requireLevel();
         final var pos = context.requireBlockPos();
-        final var entities = level.getEntities(selfEntity, AABB.ofSize(pos.getCenter(), distance, distance, distance), it -> entity.contains(it.typeHolder()));
+        final var entities = level.getEntities(selfEntity, AABB.ofSize(Vec3.atCenterOf(pos), distance, distance, distance),it -> entity.contains(it.typeHolder()));
         return Either.left(entities.size() >= min);
     }
 }

@@ -9,6 +9,7 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public record IsMobNearby(float distance, int min) implements ShogiEffect<Boolean> {
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_mob_nearby");
@@ -26,7 +27,7 @@ public record IsMobNearby(float distance, int min) implements ShogiEffect<Boolea
     public Either<? extends Boolean, ?> apply(ShogiContext context) {
         final var level = context.requireLevel();
         final var pos = context.requireBlockPos();
-        final var entities = level.getEntitiesOfClass(Mob.class, AABB.ofSize(pos.getCenter(), distance, distance, distance));
+        final var entities = level.getEntitiesOfClass(Mob.class, AABB.ofSize(Vec3.atCenterOf(pos), distance, distance, distance));
         return Either.left(entities.size() >= min);
     }
 }
