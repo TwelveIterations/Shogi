@@ -1,1 +1,1 @@
-- Fixed server-scoped rules not loading, resulting in `use('waystones:generated_waystones')` not working
+- Updated to Minecraft 26.2
