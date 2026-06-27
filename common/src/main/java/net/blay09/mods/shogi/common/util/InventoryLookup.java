@@ -28,7 +28,7 @@ public class InventoryLookup {
                     },
                     parentStack -> {
                         final var containerContents = parentStack.get(DataComponents.CONTAINER);
-                        return containerContents != null ? containerContents.allItemsCopyStream().collect(Collectors.toCollection(ArrayList::new)) : List.of();
+                        return containerContents != null ? containerContents.nonEmptyItemCopyStream().collect(Collectors.toCollection(ArrayList::new)) : List.of();
                     },
                     (parentStack, items) -> parentStack.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items))
             ),
@@ -40,7 +40,7 @@ public class InventoryLookup {
                     },
                     parentStack -> {
                         final var bundleContents = parentStack.get(DataComponents.BUNDLE_CONTENTS);
-                        return bundleContents != null ? bundleContents.itemCopyStream().collect(Collectors.toCollection(ArrayList::new)) : List.of();
+                        return bundleContents != null ? bundleContents.itemCopies().collect(Collectors.toCollection(ArrayList::new)) : List.of();
                     },
                     (parentStack, items) -> {
                         final var compactedBundleItems = items.stream().filter(it -> !it.isEmpty()).map(ItemStackTemplate::fromNonEmptyStack).toList();
