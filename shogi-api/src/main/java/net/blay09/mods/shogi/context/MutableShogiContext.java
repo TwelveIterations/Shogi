@@ -135,7 +135,7 @@ public interface MutableShogiContext extends ShogiContext {
         if (input instanceof BlockPos blockPos) {
             context.withBlockPos(blockPos);
         } else if (input instanceof Vec3i vec3i) {
-            context.withBlockPos(new BlockPos(vec3i));
+            context.withBlockPos(new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ()));
         } else if (input instanceof Position position) {
             context.withBlockPos(BlockPos.containing(position));
         } else if (input instanceof BlockEntity blockEntity) {
