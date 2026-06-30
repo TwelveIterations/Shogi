@@ -11,6 +11,8 @@ import net.blay09.mods.shogi.common.effect.condition.entity.*;
 import net.blay09.mods.shogi.common.effect.condition.item.HasEnchantment;
 import net.blay09.mods.shogi.common.effect.condition.item.IsItem;
 import net.blay09.mods.shogi.common.effect.condition.player.HasItem;
+import net.blay09.mods.shogi.common.effect.condition.player.IsInTeam;
+import net.blay09.mods.shogi.common.effect.condition.player.LookupTeam;
 import net.blay09.mods.shogi.common.effect.condition.player.SimplePlayerEffects;
 import net.blay09.mods.shogi.common.effect.condition.pos.*;
 import net.blay09.mods.shogi.common.effect.context.WithContext;
@@ -83,6 +85,8 @@ public class ShogiDefaults {
         scope.registerEffect(IsItem.IDENTIFIER, IsItem.MAP_CODEC, List.of("item"));
 
         scope.registerEffect(HasItem.IDENTIFIER, HasItem.mapCodec(scope), List.of("item", "count"));
+        scope.registerEffect(IsInTeam.IDENTIFIER, IsInTeam.mapCodec(scope), List.of("team"));
+        scope.registerEffect(LookupTeam.IDENTIFIER, LookupTeam.mapCodec(scope), List.of("username"));
         scope.registerSimpleEffect(id("has_empty_inventory"), SimplePlayerEffects::hasEmptyInventory);
         scope.registerSimpleEffect(id("is_wearing_any_armor"), SimplePlayerEffects::isWearingAnyArmor);
 
