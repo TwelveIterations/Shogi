@@ -31,7 +31,7 @@ public record IsInTeam(ShogiEffect<?> team) implements ShogiEffect<Boolean> {
         }
 
         final var expectedTeam = teamResult.mapLeft(Coercion.STRING).orThrow();
-        return Either.left(isInTeam(context.requirePlayer().getTeam(), expectedTeam));
+        return Either.left(expectedTeam.isEmpty() || isInTeam(context.requirePlayer().getTeam(), expectedTeam));
     }
 
     static boolean isInTeam(@Nullable PlayerTeam playerTeam, String expectedTeam) {
