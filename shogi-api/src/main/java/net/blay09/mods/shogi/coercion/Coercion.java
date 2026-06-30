@@ -114,6 +114,7 @@ public final class Coercion {
      */
     public static final Function<Object, Component> COMPONENT = LAST.andThen(input -> switch (input) {
         case Component component -> component;
+        case ComponentHolder holder -> holder.component();
         default -> Component.literal(STRING.apply(input));
     });
 
