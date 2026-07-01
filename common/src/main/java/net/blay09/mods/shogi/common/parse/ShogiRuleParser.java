@@ -174,6 +174,12 @@ public class ShogiRuleParser {
             if (tryConsume('!')) {
                 return new UnaryExpr("!", parseFactor());
             }
+            if (tryConsume('-')) {
+                return new UnaryExpr("-", parseFactor());
+            }
+            if (tryConsume('+')) {
+                return parseFactor();
+            }
 
             final char ch = peek();
             if (ch == '(') {
@@ -347,13 +353,17 @@ public class ShogiRuleParser {
             return "conditions".equals(ordinalName) || "effects".equals(ordinalName);
         }
 
-        private JsonObject effectFromExpr(Expr expression) {
+        private JsonObject effectFromExpr(Expr expression) throws ParseException {
             return switch (expression) {
                 case LiteralExpr(JsonElement value) -> constantEffect(value);
                 case FunctionCallExpr(JsonObject json) -> json;
                 case VariableExpr(String path) -> variableEffect(path);
                 case UnaryExpr(String op, Expr expr) -> switch (op) {
                     case "!" -> notEffect(effectFromExpr(expr));
+                    case "-" -> switch (expr) {
+                        case LiteralExpr(JsonElement value) -> constantEffect(negateLiteral(value));
+                        default -> binaryOpEffect("-", constantEffect(new JsonPrimitive(0L)), effectFromExpr(expr));
+                    };
                     default -> throw new IllegalStateException("Unknown unary operator: " + op);
                 };
                 case BinaryExpr(String op, Expr left, Expr right) ->
@@ -363,13 +373,17 @@ public class ShogiRuleParser {
             };
         }
 
-        private JsonElement valueForArgument(Expr expression) {
+        private JsonElement valueForArgument(Expr expression) throws ParseException {
             return switch (expression) {
                 case LiteralExpr(JsonElement value) -> value;
                 case FunctionCallExpr(JsonObject json) -> json;
                 case VariableExpr(String path) -> variableEffect(path);
                 case UnaryExpr(String op, Expr expr) -> switch (op) {
                     case "!" -> notEffect(effectFromExpr(expr));
+                    case "-" -> switch (expr) {
+                        case LiteralExpr(JsonElement value) -> negateLiteral(value);
+                        default -> binaryOpEffect("-", constantEffect(new JsonPrimitive(0L)), effectFromExpr(expr));
+                    };
                     default -> throw new IllegalStateException("Unknown unary operator: " + op);
                 };
                 case BinaryExpr(String op, Expr left, Expr right) ->
@@ -473,6 +487,17 @@ public class ShogiRuleParser {
             }
 
             return new JsonPrimitive(Long.parseLong(input.substring(start, pos)));
+        }
+
+        private JsonElement negateLiteral(JsonElement value) throws ParseException {
+            if (!(value instanceof JsonPrimitive primitive) || !primitive.isNumber()) {
+                throw error("Unary '-' requires a number");
+            }
+
+            if (primitive.getAsString().contains(".")) {
+                return new JsonPrimitive(-primitive.getAsDouble());
+            }
+            return new JsonPrimitive(-primitive.getAsLong());
         }
 
         private JsonElement parseString() throws ParseException {
