@@ -28,6 +28,8 @@ import net.blay09.mods.shogi.common.effect.failure.Refuse;
 import net.blay09.mods.shogi.common.effect.player.AddHealth;
 import net.blay09.mods.shogi.common.effect.player.AddHunger;
 import net.blay09.mods.shogi.common.effect.player.Dismount;
+import net.blay09.mods.shogi.common.effect.player.SetFoodLevel;
+import net.blay09.mods.shogi.common.effect.player.SetHealth;
 import net.blay09.mods.shogi.common.effect.server.condition.player.HasAdvancement;
 import net.blay09.mods.shogi.common.effect.server.condition.pos.IsNearPoi;
 import net.blay09.mods.shogi.common.effect.server.cooldown.AddCooldown;
@@ -123,6 +125,8 @@ public class ShogiDefaults {
         scope.registerEffect(Dismount.IDENTIFIER, Dismount.MAP_CODEC);
         scope.registerEffect(AddHealth.IDENTIFIER, AddHealth.mapCodec(scope), List.of("health"));
         scope.registerEffect(AddHunger.IDENTIFIER, AddHunger.mapCodec(scope), List.of("hunger"));
+        scope.registerEffect(SetHealth.IDENTIFIER, SetHealth.mapCodec(scope), List.of("health"));
+        scope.registerEffect(SetFoodLevel.IDENTIFIER, SetFoodLevel.mapCodec(scope), List.of("food_level"));
 
         scope.registerEffect(ItemCost.IDENTIFIER, ItemCost.mapCodec(scope), List.of("item", "count"));
         scope.registerEffect(DamageItem.IDENTIFIER, DamageItem.mapCodec(scope), List.of("amount"));
