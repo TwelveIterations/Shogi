@@ -12,6 +12,7 @@ import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
 import net.blay09.mods.shogi.common.effect.compose.UseEffect;
 import net.blay09.mods.shogi.common.effect.compose.NotEffect;
 import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
+import net.blay09.mods.shogi.common.effect.player.AddHunger;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
@@ -37,6 +38,20 @@ class ShogiRuleParserTest {
         final var effect = parseOk(createScope(), "42");
         final var constant = assertInstanceOf(ConstantEffect.class, effect);
         assertEquals(new JsonPrimitive(42L), constant.value());
+    }
+
+    @Test
+    void parsesNegativeNumericLiteralAsConstant() {
+        final var effect = parseOk(createScope(), "-42");
+        final var constant = assertInstanceOf(ConstantEffect.class, effect);
+        assertEquals(new JsonPrimitive(-42L), constant.value());
+    }
+
+    @Test
+    void parsesNegativeDecimalLiteralAsConstant() {
+        final var effect = parseOk(createScope(), "-4.2");
+        final var constant = assertInstanceOf(ConstantEffect.class, effect);
+        assertEquals(new JsonPrimitive(-4.2), constant.value());
     }
 
     @Test
@@ -117,6 +132,15 @@ class ShogiRuleParserTest {
     }
 
     @Test
+    void parsesUnaryMinusBeforeExpression() {
+        final var effect = parseOk(createScope(), "-$distance");
+        final var root = assertInstanceOf(BinaryOpEffect.class, effect);
+        assertEquals("-", root.op());
+        assertEquals(new JsonPrimitive(0L), assertInstanceOf(ConstantEffect.class, root.left()).value());
+        assertEquals("distance", assertInstanceOf(VariableEffect.class, root.right()).name());
+    }
+
+    @Test
     void parsesPositionalFunctionArgumentsUsingOrdinals() {
         final var effect = parseOk(createScope(), "binary_op('+', 1, 2)");
         final var binary = assertInstanceOf(BinaryOpEffect.class, effect);
@@ -163,6 +187,13 @@ class ShogiRuleParserTest {
         final var effect = parseOk(createScope(), "use('test:other_rule')");
         final var imported = assertInstanceOf(UseEffect.class, effect);
         assertEquals(Identifier.fromNamespaceAndPath("test", "other_rule"), imported.importedIdentifier());
+    }
+
+    @Test
+    void parsesNegativePositionalArgument() {
+        final var effect = parseOk(createScope(), "add_hunger(-2)");
+        final var addHunger = assertInstanceOf(AddHunger.class, effect);
+        assertEquals(new JsonPrimitive(-2L), assertInstanceOf(ConstantEffect.class, addHunger.hunger()).value());
     }
 
     @Test
@@ -458,6 +489,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(UseEffect.IDENTIFIER, UseEffect.mapCodec(scope), List.of("identifier"));
         scope.registerEffect(NotEffect.IDENTIFIER, NotEffect.mapCodec(scope), List.of("condition"));
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
+        scope.registerEffect(AddHunger.IDENTIFIER, AddHunger.mapCodec(scope), List.of("hunger"));
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));

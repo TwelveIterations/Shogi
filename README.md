@@ -251,7 +251,7 @@ Unary `!` negates a condition or expression and has the highest precedence.
 (* --- Expressions --- *)
 <expression>   ::= <term> ( ("+" | "-") <term> )*
 <term>         ::= <factor> ( ("*" | "/") <factor> )*
-<factor>       ::= "!" <factor> | <number> | <variable> | <function_call> | "(" <expression> ")"
+<factor>       ::= ("!" | "-" | "+") <factor> | <number> | <variable> | <function_call> | "(" <expression> ")"
 
 (* --- Variables --- *)
 <variable>     ::= "$" <identifier> ( "." <identifier> )*
