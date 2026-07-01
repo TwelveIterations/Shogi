@@ -20,10 +20,12 @@ import net.blay09.mods.shogi.common.effect.context.player.OffHand;
 import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
+import net.blay09.mods.shogi.common.effect.cost.HealthCost;
 import net.blay09.mods.shogi.common.effect.cost.HungerCost;
 import net.blay09.mods.shogi.common.effect.cost.ItemCost;
 import net.blay09.mods.shogi.common.effect.failure.Failure;
 import net.blay09.mods.shogi.common.effect.failure.Refuse;
+import net.blay09.mods.shogi.common.effect.player.AddHealth;
 import net.blay09.mods.shogi.common.effect.player.AddHunger;
 import net.blay09.mods.shogi.common.effect.player.Dismount;
 import net.blay09.mods.shogi.common.effect.server.condition.player.HasAdvancement;
@@ -119,12 +121,14 @@ public class ShogiDefaults {
         scope.registerEffect(HasAdvancement.IDENTIFIER, HasAdvancement.MAP_CODEC, List.of("advancement"));
         scope.registerEffect(IsNearPoi.IDENTIFIER, IsNearPoi.MAP_CODEC, List.of("poi", "distance"));
         scope.registerEffect(Dismount.IDENTIFIER, Dismount.MAP_CODEC);
+        scope.registerEffect(AddHealth.IDENTIFIER, AddHealth.mapCodec(scope), List.of("health"));
         scope.registerEffect(AddHunger.IDENTIFIER, AddHunger.mapCodec(scope), List.of("hunger"));
 
         scope.registerEffect(ItemCost.IDENTIFIER, ItemCost.mapCodec(scope), List.of("item", "count"));
         scope.registerEffect(DamageItem.IDENTIFIER, DamageItem.mapCodec(scope), List.of("amount"));
         scope.registerEffect(ExperiencePointsCost.IDENTIFIER, ExperiencePointsCost.mapCodec(scope), List.of("xp"));
         scope.registerEffect(ExperienceLevelCost.IDENTIFIER, ExperienceLevelCost.mapCodec(scope), List.of("level"));
+        scope.registerEffect(HealthCost.IDENTIFIER, HealthCost.mapCodec(scope), List.of("health"));
         scope.registerEffect(HungerCost.IDENTIFIER, HungerCost.mapCodec(scope), List.of("hunger"));
 
         scope.registerEffect(HasCooldown.IDENTIFIER, HasCooldown.MAP_CODEC, List.of("identifier"));
