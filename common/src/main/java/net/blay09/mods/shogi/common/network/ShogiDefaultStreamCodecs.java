@@ -48,6 +48,7 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
         ShogiStreamCodecs.register(id("xp_points_cost"), ExperiencePointsCostInformation.class, ExperiencePointsCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("xp_level_cost"), ExperienceLevelCostInformation.class, ExperienceLevelCostInformation.STREAM_CODEC);
+        ShogiStreamCodecs.register(id("hunger_cost"), HungerCostInformation.class, HungerCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("item_cost"), ItemCostInformation.class, ItemCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("cooldown"), CooldownInformation.class, CooldownInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
