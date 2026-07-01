@@ -23,7 +23,7 @@ public record AddHunger(ShogiEffect<?> hunger) implements ShogiEffect<Integer> {
     @Override
     public Either<Integer, Object> apply(ShogiContext context) {
         final var player = context.requirePlayer();
-        final int hungerAmount = hunger.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
+        final int hungerAmount = hunger.apply(context).mapLeft(Coercion.INT).orThrow();
         final int previousHunger = player.getFoodData().getFoodLevel();
         context.execute(IDENTIFIER, () -> {
             final var foodData = player.getFoodData();
