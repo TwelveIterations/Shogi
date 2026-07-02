@@ -6,12 +6,12 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 public record IsBlockStateProperty(String property, String value) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_block_state_property");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_block_state_property");
     public static final MapCodec<IsBlockStateProperty> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("property").forGetter(it -> it.property),
             Codec.STRING.fieldOf("value").forGetter(it -> it.value)
@@ -28,7 +28,7 @@ public record IsBlockStateProperty(String property, String value) implements Sho
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

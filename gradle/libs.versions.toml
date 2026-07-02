@@ -1,14 +1,14 @@
 [versions]
-minecraft = "26.1.2"
-neoForm = "26.1.2-1"
-neoForge = "26.1.1.15-beta"
-forge = "63.0.2"
-fabricApi = "0.145.4+26.1.2"
-fabricLoader = "0.19.1"
+minecraft = "1.21.1"
+neoForm = "1.21.1-20240808.144430"
+neoForge = "21.1.8"
+forge = "52.1.0"
+fabricApi = "0.116.7+1.21.1"
+fabricLoader = "0.15.11"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
-parchment = { module = "org.parchmentmc.data:parchment-1.21.10", version = "2025.10.12" }
+parchment = { module = "org.parchmentmc.data:parchment-1.21.1", version = "2024.11.17" }
 
 neoForm = { module = "net.neoforged:neoform", version.ref = "neoForm" }
 neoForge = { module = "net.neoforged:neoforge", version.ref = "neoForge" }
@@ -18,12 +18,13 @@ fabricLoader = { module = "net.fabricmc:fabric-loader", version.ref = "fabricLoa
 
 mixin = { module = "org.spongepowered:mixin", version = "0.8.7" }
 mixinExtras = { module = "io.github.llamalad7:mixinextras-common", version = "0.5.2" }
+jspecify = { module = "org.jspecify:jspecify", version = "1.0.0" }
 
 [plugins]
-fabricLoom = { id = "net.fabricmc.fabric-loom", version = "1.14-SNAPSHOT" }
+fabricLoom = { id = "net.fabricmc.fabric-loom-remap", version = "1.14-SNAPSHOT" }
 modDevGradle = { id = "net.neoforged.moddev", version = "2.0.141" }
 forgeGradle = { id = "net.minecraftforge.gradle", version = "[7,8)" }
 forgeJarJar = { id = "net.minecraftforge.jarjar", version = "0.2.3" }
 mixin = { id = "org.spongepowered.mixin", version = "0.7-SNAPSHOT" }
-curseForgeGradle = { id = "net.darkhax.curseforgegradle", version = "1.1.26" }
+curseForgeGradle = { id = "net.darkhax.curseforgegradle", version = "1.1.18" }
 modrinthMinotaur = { id = "com.modrinth.minotaur", version = "2.+" }

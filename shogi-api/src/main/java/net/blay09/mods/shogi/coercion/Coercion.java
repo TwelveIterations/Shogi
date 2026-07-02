@@ -25,9 +25,9 @@ public final class Coercion {
      */
     public static final Function<Object, Object> FIRST = input -> switch (input) {
         case List<?> list when !list.isEmpty() -> list.getFirst();
-        case List<?> _ -> Either.right(new CoercionException(input, "Cannot retrieve first element of empty list"));
+        case List<?> ignored -> Either.right(new CoercionException(input, "Cannot retrieve first element of empty list"));
         case JsonArray array when !array.isEmpty() -> array.get(0);
-        case JsonArray _ -> Either.right(new CoercionException(input, "Cannot retrieve first element of empty json array"));
+        case JsonArray ignored -> Either.right(new CoercionException(input, "Cannot retrieve first element of empty json array"));
         default -> input;
     };
 
@@ -36,9 +36,9 @@ public final class Coercion {
      */
     public static final Function<Object, Object> LAST = input -> switch (input) {
         case List<?> list when !list.isEmpty() -> list.getLast();
-        case List<?> _ -> Either.right(new CoercionException(input, "Cannot retrieve last element of empty list"));
+        case List<?> ignored -> Either.right(new CoercionException(input, "Cannot retrieve last element of empty list"));
         case JsonArray array when !array.isEmpty() -> array.get(array.size() - 1);
-        case JsonArray _ -> Either.right(new CoercionException(input, "Cannot retrieve last element of empty json array"));
+        case JsonArray ignored -> Either.right(new CoercionException(input, "Cannot retrieve last element of empty json array"));
         default -> input;
     };
 

@@ -4,7 +4,7 @@ import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.context.executor.internal.DeferredEffectExecutorImpl;
 import net.blay09.mods.shogi.context.executor.internal.ImmediateEffectExecutor;
 import net.blay09.mods.shogi.context.executor.internal.SimulatedEffectExecutor;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -35,7 +35,7 @@ public interface EffectExecutor {
      * @param <T> aggregate value type
      * @param <R> aggregate operation return value type
      */
-    default <T, R> void overrideAggregate(Identifier identifier, BiFunction<Function<T, R>, T, R> override) {
+    default <T, R> void overrideAggregate(ResourceLocation identifier, BiFunction<Function<T, R>, T, R> override) {
     }
 
     /**
@@ -66,7 +66,7 @@ public interface EffectExecutor {
      * @param override override callback receiving the original operation and aggregate value
      * @param <T> aggregate value type
      */
-    default <T> void overrideConsume(Identifier identifier, BiConsumer<Consumer<T>, T> override) {
+    default <T> void overrideConsume(ResourceLocation identifier, BiConsumer<Consumer<T>, T> override) {
     }
 
     /**
@@ -75,7 +75,7 @@ public interface EffectExecutor {
      * @param identifier side effect identifier
      * @param runnable runnable invoked if the evaluation succeeded
      */
-    void execute(Identifier identifier, Runnable runnable);
+    void execute(ResourceLocation identifier, Runnable runnable);
 
     /**
      * Overrides how execute operations are executed for the given identifier.
@@ -83,7 +83,7 @@ public interface EffectExecutor {
      * @param identifier effect identifier
      * @param override override callback receiving the original runnable
      */
-    default void overrideExecute(Identifier identifier, Consumer<Runnable> override) {
+    default void overrideExecute(ResourceLocation identifier, Consumer<Runnable> override) {
     }
 
     static DeferredEffectExecutor deferred() {

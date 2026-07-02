@@ -9,12 +9,12 @@ import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public record HungerCost(ShogiEffect<?> hunger) implements ShogiEffect<HungerCostInformation> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "hunger_cost");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "hunger_cost");
     public static final AggregateKey<Integer> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
 
     public static MapCodec<HungerCost> mapCodec(ShogiScope scope) {
@@ -44,7 +44,7 @@ public record HungerCost(ShogiEffect<?> hunger) implements ShogiEffect<HungerCos
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

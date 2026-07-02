@@ -4,7 +4,7 @@ import net.blay09.mods.shogi.common.network.ShogiDefaultStreamCodecs;
 import net.blay09.mods.shogi.common.platform.ShogiEventListener;
 import net.blay09.mods.shogi.common.platform.ShogiRuntimeSpi;
 import net.blay09.mods.shogi.internal.ShogiScopeRegistry;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public class ShogiCommon implements ShogiEventListener {
@@ -28,7 +28,7 @@ public class ShogiCommon implements ShogiEventListener {
         }
     }
 
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath("shogi", path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath("shogi", path);
     }
 }

@@ -4,18 +4,18 @@ import com.mojang.datafixers.util.Either;
 import net.blay09.mods.shogi.ShogiValue;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ShogiValueImpl<TContext, TSuccess> implements ShogiValue<TContext, TSuccess> {
 
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
     private final ShogiScope scope;
     private final Function<TContext, Either<TSuccess, ?>> resolver;
 
-    public ShogiValueImpl(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> resolver) {
+    public ShogiValueImpl(ResourceLocation identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> resolver) {
         this.identifier = identifier;
         this.scope = scope;
         this.resolver = resolver;

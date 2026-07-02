@@ -15,7 +15,7 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -101,7 +101,7 @@ class CachedShogiRuleTest {
     }
 
     private static ShogiScope createScope() {
-        final ShogiScopeImpl scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
+        final ShogiScopeImpl scope = new ShogiScopeImpl(ResourceLocation.fromNamespaceAndPath("shogi", "test"));
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("name"));
@@ -112,7 +112,7 @@ class CachedShogiRuleTest {
     }
 
     private record XpPointsCostEffect(ShogiEffect<?> value) implements ShogiEffect<Object> {
-        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "xp_points_cost");
+        private static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "xp_points_cost");
 
         private static MapCodec<XpPointsCostEffect> mapCodec(ShogiScope scope) {
             return RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -121,7 +121,7 @@ class CachedShogiRuleTest {
         }
 
         @Override
-        public Identifier identifier() {
+        public ResourceLocation identifier() {
             return IDENTIFIER;
         }
 

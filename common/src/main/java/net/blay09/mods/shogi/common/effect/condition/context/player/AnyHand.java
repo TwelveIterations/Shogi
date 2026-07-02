@@ -6,13 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 
 public record AnyHand(ShogiEffect<?> condition) implements ShogiEffect<Boolean> {
 
     private static final InteractionHand[] HANDS = InteractionHand.values();
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "any_hand");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "any_hand");
 
     public static MapCodec<AnyHand> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -21,7 +21,7 @@ public record AnyHand(ShogiEffect<?> condition) implements ShogiEffect<Boolean> 
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

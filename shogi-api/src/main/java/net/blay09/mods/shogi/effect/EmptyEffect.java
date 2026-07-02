@@ -3,7 +3,7 @@ package net.blay09.mods.shogi.effect;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Effect that always resolves to a {@link ShogiEmpty} marker failure.
@@ -15,9 +15,9 @@ public class EmptyEffect implements ShogiEffect<Object>, ShogiEmpty {
      */
     public static final EmptyEffect INSTANCE = new EmptyEffect();
     /**
-     * Identifier used for the no-op effect type.
+     * ResourceLocation used for the no-op effect type.
      */
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "noop");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "noop");
     /**
      * Codec for serializing/deserializing no-op effects.
      */
@@ -27,7 +27,7 @@ public class EmptyEffect implements ShogiEffect<Object>, ShogiEmpty {
      * {@inheritDoc}
      */
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

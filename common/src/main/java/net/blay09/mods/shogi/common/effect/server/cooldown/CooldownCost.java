@@ -10,16 +10,16 @@ import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.util.ShogiDuration;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) implements ShogiEffect<CooldownInformation> {
+public record CooldownCost(ResourceLocation identifier, ShogiEffect<?> duration) implements ShogiEffect<CooldownInformation> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "cooldown_cost");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "cooldown_cost");
 
     public static MapCodec<CooldownCost> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Identifier.CODEC.fieldOf("identifier").forGetter(CooldownCost::identifier),
+                ResourceLocation.CODEC.fieldOf("identifier").forGetter(CooldownCost::identifier),
                 EffectArgumentCodecs.effectOrConstant(scope).fieldOf("duration").forGetter(CooldownCost::duration)
         ).apply(instance, CooldownCost::new));
     }
@@ -47,7 +47,7 @@ public record CooldownCost(Identifier identifier, ShogiEffect<?> duration) imple
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

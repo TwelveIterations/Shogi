@@ -9,13 +9,13 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 
 public record HasMobEffect(HolderSet<MobEffect> effect) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "has_mob_effect");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "has_mob_effect");
     public static final MapCodec<HasMobEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.MOB_EFFECT, BuiltInRegistries.MOB_EFFECT.holderByNameCodec(), false).fieldOf("effect").forGetter(HasMobEffect::effect)
     ).apply(instance, HasMobEffect::new));
@@ -30,7 +30,7 @@ public record HasMobEffect(HolderSet<MobEffect> effect) implements ShogiEffect<B
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

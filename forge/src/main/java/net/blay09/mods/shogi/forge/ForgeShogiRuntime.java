@@ -3,11 +3,10 @@ package net.blay09.mods.shogi.forge;
 import net.blay09.mods.shogi.common.platform.ShogiRuntime;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.PacketDistributor;
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ForgeShogiRuntime implements ShogiRuntime {
-    private final Map<Identifier, Function<HolderLookup.Provider, PreparableReloadListener>> reloadListeners = new LinkedHashMap<>();
+    private final Map<ResourceLocation, Function<HolderLookup.Provider, PreparableReloadListener>> reloadListeners = new LinkedHashMap<>();
 
     public ForgeShogiRuntime() {
         MinecraftForge.EVENT_BUS.addListener(this::onAddReloadListeners);
@@ -31,18 +30,18 @@ public class ForgeShogiRuntime implements ShogiRuntime {
     }
 
     @Override
-    public void registerServerReloadListener(Identifier listenerId, Function<HolderLookup.Provider, PreparableReloadListener> factory) {
+    public void registerServerReloadListener(ResourceLocation listenerId, Function<HolderLookup.Provider, PreparableReloadListener> factory) {
         reloadListeners.put(listenerId, factory);
     }
 
     @Override
     public void sendPacket(ServerPlayer player, CustomPacketPayload payload) {
-        PacketDistributor.sendToPlayer(player, payload);
+        ForgeShogi.CHANNEL.send(payload, PacketDistributor.PLAYER.with(player));
     }
 
     @Override
     public boolean isFakePlayer(Player player) {
-        return player instanceof FakePlayer;
+        return false;
     }
 
     private void onAddReloadListeners(AddReloadListenerEvent event) {

@@ -8,10 +8,10 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record IsDarkerThan(ShogiEffect<?> lightLevel) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_darker_than");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_darker_than");
 
     public static MapCodec<IsDarkerThan> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -20,7 +20,7 @@ public record IsDarkerThan(ShogiEffect<?> lightLevel) implements ShogiEffect<Boo
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

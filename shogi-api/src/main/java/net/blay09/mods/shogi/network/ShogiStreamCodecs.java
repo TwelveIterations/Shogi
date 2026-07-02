@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +20,14 @@ public final class ShogiStreamCodecs {
     private static final Logger logger = LoggerFactory.getLogger(ShogiStreamCodecs.class);
     private static final Object UNKNOWN_VALUE = new Object();
 
-    private record Entry(Identifier id, Class<?> type, StreamCodec<RegistryFriendlyByteBuf, Object> codec) {
+    private record Entry(ResourceLocation id, Class<?> type, StreamCodec<RegistryFriendlyByteBuf, Object> codec) {
     }
 
     private static final Map<Class<?>, Entry> byClass = new LinkedHashMap<>();
-    private static final Map<Identifier, Entry> byIdentifier = new LinkedHashMap<>();
+    private static final Map<ResourceLocation, Entry> byIdentifier = new LinkedHashMap<>();
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Object> UNKNOWN_CODEC = StreamCodec.unit(UNKNOWN_VALUE);
-    private static final StreamCodec<RegistryFriendlyByteBuf, Identifier> IDENTIFIER_STREAM_CODEC = Identifier.STREAM_CODEC.cast();
+    private static final StreamCodec<RegistryFriendlyByteBuf, ResourceLocation> IDENTIFIER_STREAM_CODEC = ResourceLocation.STREAM_CODEC.cast();
 
     /**
      * Dynamic object stream codec that dispatches by registered runtime type identifier.
@@ -54,7 +54,7 @@ public final class ShogiStreamCodecs {
      * @param <T> payload type
      * @throws IllegalArgumentException if the class or identifier was already registered
      */
-    public static synchronized <T> void register(Identifier typeId, Class<? super T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
+    public static synchronized <T> void register(ResourceLocation typeId, Class<? super T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
         if (byClass.containsKey(type)) {
             throw new IllegalArgumentException("A synced payload codec is already registered for class " + type.getName());
         }
@@ -144,7 +144,7 @@ public final class ShogiStreamCodecs {
         return null;
     }
 
-    private static Identifier identifierForValue(Object value) {
+    private static ResourceLocation identifierForValue(Object value) {
         final Entry entry = findEntryForClass(value.getClass());
         if (entry == null) {
             throw new IllegalArgumentException("No synced payload codec registered for class: " + value.getClass().getName());
@@ -152,7 +152,7 @@ public final class ShogiStreamCodecs {
         return entry.id();
     }
 
-    private static StreamCodec<RegistryFriendlyByteBuf, Object> codecForIdentifier(Identifier typeId) {
+    private static StreamCodec<RegistryFriendlyByteBuf, Object> codecForIdentifier(ResourceLocation typeId) {
         final Entry entry = byIdentifier.get(typeId);
         if (entry == null) {
             logger.warn("Ignoring synced payload with unknown type id '{}'", typeId);

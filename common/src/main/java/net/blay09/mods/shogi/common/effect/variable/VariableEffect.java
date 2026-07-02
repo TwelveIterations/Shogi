@@ -6,17 +6,17 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record VariableEffect(String name) implements ShogiEffect<Object> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "variable");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "variable");
     public static final MapCodec<VariableEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             Codec.STRING.fieldOf("name").forGetter(VariableEffect::name)
     ).apply(builder, VariableEffect::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

@@ -21,7 +21,7 @@ import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -152,7 +152,7 @@ class ShogiRuleParserTest {
     @Test
     void parsesEffectAliasUsingCanonicalOrdinals() {
         final var scope = createScope();
-        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("shogi", "math"), BinaryOpEffect.IDENTIFIER);
+        scope.registerEffectAlias(ResourceLocation.fromNamespaceAndPath("shogi", "math"), BinaryOpEffect.IDENTIFIER);
 
         final var effect = parseOk(scope, "math('+', 1, 2)");
         final var binary = assertInstanceOf(BinaryOpEffect.class, effect);
@@ -186,7 +186,7 @@ class ShogiRuleParserTest {
     void parsesUseEffect() {
         final var effect = parseOk(createScope(), "use('test:other_rule')");
         final var imported = assertInstanceOf(UseEffect.class, effect);
-        assertEquals(Identifier.fromNamespaceAndPath("test", "other_rule"), imported.importedIdentifier());
+        assertEquals(ResourceLocation.fromNamespaceAndPath("test", "other_rule"), imported.importedIdentifier());
     }
 
     @Test
@@ -364,7 +364,7 @@ class ShogiRuleParserTest {
     @Test
     void usesProvidedDefaultNamespaceForUnqualifiedIdentifier() {
         final var scope = createScopeWithoutNoop();
-        scope.registerEffect(Identifier.fromNamespaceAndPath("custom", "foo"), EmptyEffect.MAP_CODEC);
+        scope.registerEffect(ResourceLocation.fromNamespaceAndPath("custom", "foo"), EmptyEffect.MAP_CODEC);
         final var effect = parseOk(scope, "foo", "custom");
         assertInstanceOf(EmptyEffect.class, effect);
     }
@@ -393,7 +393,7 @@ class ShogiRuleParserTest {
     @Test
     void parsesAliasFromExplicitNamespaceAsCanonicalType() {
         final var scope = createScope();
-        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+        scope.registerEffectAlias(ResourceLocation.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
 
         final var parsed = parseOk(scope, "custom:sky");
         assertInstanceOf(CanSeeSky.class, parsed);
@@ -403,7 +403,7 @@ class ShogiRuleParserTest {
     void parsesAliasFromDefaultNamespaceAsCanonicalType() {
         final var scope = createScopeWithoutNoop();
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
-        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+        scope.registerEffectAlias(ResourceLocation.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
         scope.setDefaultNamespaces(List.of("custom", "shogi"));
 
         final var parsed = parseOk(scope, "sky");
@@ -413,7 +413,7 @@ class ShogiRuleParserTest {
     @Test
     void writesCanonicalTypeForAliasCalls() {
         final var scope = createScope();
-        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
+        scope.registerEffectAlias(ResourceLocation.fromNamespaceAndPath("custom", "sky"), CanSeeSky.IDENTIFIER);
 
         final var result = ShogiRuleParser.parse(scope, JsonOps.INSTANCE, "custom:sky");
         final var encoded = scope.getEffectCodec().encodeStart(JsonOps.INSTANCE, result.result().orElseThrow()).result().orElseThrow();
@@ -466,13 +466,13 @@ class ShogiRuleParserTest {
     }
 
     private static ShogiScope createScope() {
-        final ShogiScopeImpl scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
+        final ShogiScopeImpl scope = new ShogiScopeImpl(ResourceLocation.fromNamespaceAndPath("shogi", "test"));
         registerParserEffects(scope, true);
         return scope;
     }
 
     private static ShogiScope createScopeWithoutNoop() {
-        final ShogiScopeImpl scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
+        final ShogiScopeImpl scope = new ShogiScopeImpl(ResourceLocation.fromNamespaceAndPath("shogi", "test"));
         registerParserEffects(scope, false);
         return scope;
     }
@@ -522,11 +522,11 @@ class ShogiRuleParserTest {
     }
 
     private record WaystonesFooEffect() implements ShogiEffect<Object> {
-        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("waystones", "foo");
+        private static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("waystones", "foo");
         private static final MapCodec<WaystonesFooEffect> MAP_CODEC = MapCodec.unit(new WaystonesFooEffect());
 
         @Override
-        public Identifier identifier() {
+        public ResourceLocation identifier() {
             return IDENTIFIER;
         }
 
@@ -537,11 +537,11 @@ class ShogiRuleParserTest {
     }
 
     private record ShogiFooEffect() implements ShogiEffect<Object> {
-        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "foo");
+        private static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "foo");
         private static final MapCodec<ShogiFooEffect> MAP_CODEC = MapCodec.unit(new ShogiFooEffect());
 
         @Override
-        public Identifier identifier() {
+        public ResourceLocation identifier() {
             return IDENTIFIER;
         }
 

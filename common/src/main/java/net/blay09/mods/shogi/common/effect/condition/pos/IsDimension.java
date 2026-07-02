@@ -6,13 +6,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
 public record IsDimension(ResourceKey<Level> dimension) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_dimension");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_dimension");
     public static final MapCodec<IsDimension> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceKey.codec(Registries.DIMENSION).fieldOf("dimension").forGetter(it -> it.dimension)
     ).apply(instance, IsDimension::new));
@@ -24,7 +24,7 @@ public record IsDimension(ResourceKey<Level> dimension) implements ShogiEffect<B
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

@@ -7,11 +7,11 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record Refuse(Component message) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "refuse");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "refuse");
     public static final MapCodec<Refuse> MAP_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             ComponentSerialization.CODEC.fieldOf("message").orElse(Component.empty()).forGetter(Refuse::message)
     ).apply(builder, Refuse::new));
@@ -22,7 +22,7 @@ public record Refuse(Component message) implements ShogiEffect<Boolean> {
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

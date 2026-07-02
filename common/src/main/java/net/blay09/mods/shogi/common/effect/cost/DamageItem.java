@@ -8,7 +8,7 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +17,7 @@ import org.jspecify.annotations.Nullable;
 
 public record DamageItem(ShogiEffect<?> amount) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "damage_item");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "damage_item");
 
     public static MapCodec<DamageItem> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -43,7 +43,7 @@ public record DamageItem(ShogiEffect<?> amount) implements ShogiEffect<Boolean> 
             if (equipmentSlot != null) {
                 itemStack.hurtAndBreak(damageAmount, livingEntity, equipmentSlot);
             } else if (entity instanceof ServerPlayer serverPlayer) {
-                itemStack.hurtAndBreak(damageAmount, serverPlayer.level(), serverPlayer, _ -> {
+                itemStack.hurtAndBreak(damageAmount, serverPlayer.serverLevel(), serverPlayer, ignored -> {
                 });
             }
         });
@@ -62,7 +62,7 @@ public record DamageItem(ShogiEffect<?> amount) implements ShogiEffect<Boolean> 
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

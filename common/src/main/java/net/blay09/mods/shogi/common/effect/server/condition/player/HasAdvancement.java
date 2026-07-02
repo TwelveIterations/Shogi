@@ -8,13 +8,13 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 
 public record HasAdvancement(ResourceKey<Advancement> advancement) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "has_advancement");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "has_advancement");
     public static final MapCodec<HasAdvancement> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ResourceKey.codec(Registries.ADVANCEMENT).fieldOf("advancement").forGetter(it -> it.advancement)
     ).apply(instance, HasAdvancement::new));
@@ -22,7 +22,7 @@ public record HasAdvancement(ResourceKey<Advancement> advancement) implements Sh
     @Override
     public Either<Boolean, ?> apply(ShogiContext context) {
         if (context.requirePlayer() instanceof ServerPlayer player) {
-            final var resolvedAdvancement = player.level().getServer().getAdvancements().get(advancement.identifier());
+            final var resolvedAdvancement = player.level().getServer().getAdvancements().get(advancement.location());
             if (resolvedAdvancement != null) {
                 return Either.left(player.getAdvancements().getOrStartProgress(resolvedAdvancement).isDone());
             }
@@ -32,7 +32,7 @@ public record HasAdvancement(ResourceKey<Advancement> advancement) implements Sh
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

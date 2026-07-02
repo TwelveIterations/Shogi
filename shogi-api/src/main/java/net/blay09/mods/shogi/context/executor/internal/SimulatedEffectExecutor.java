@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.context.executor.internal;
 
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
@@ -11,6 +11,6 @@ public class SimulatedEffectExecutor extends AbstractEffectExecutor {
     }
 
     @Override
-    public void execute(Identifier identifier, Runnable runnable) {
+    public void execute(ResourceLocation identifier, Runnable runnable) {
     }
 }

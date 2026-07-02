@@ -4,11 +4,11 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class GetLightLevel implements ShogiEffect<Integer> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "get_light_level");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "get_light_level");
     private static final GetLightLevel INSTANCE = new GetLightLevel();
     public static final MapCodec<GetLightLevel> MAP_CODEC = MapCodec.unit(INSTANCE);
 
@@ -20,7 +20,7 @@ public class GetLightLevel implements ShogiEffect<Integer> {
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

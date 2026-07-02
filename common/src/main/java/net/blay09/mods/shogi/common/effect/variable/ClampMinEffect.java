@@ -8,11 +8,11 @@ import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record ClampMinEffect(ShogiEffect<?> value, ShogiEffect<?> min) implements ShogiEffect<Object> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "clamp_min");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "clamp_min");
 
     public static MapCodec<ClampMinEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -22,7 +22,7 @@ public record ClampMinEffect(ShogiEffect<?> value, ShogiEffect<?> min) implement
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

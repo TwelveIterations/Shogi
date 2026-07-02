@@ -8,11 +8,11 @@ import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record ClampMaxEffect(ShogiEffect<?> value, ShogiEffect<?> max) implements ShogiEffect<Object> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "clamp_max");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "clamp_max");
 
     public static MapCodec<ClampMaxEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -22,7 +22,7 @@ public record ClampMaxEffect(ShogiEffect<?> value, ShogiEffect<?> max) implement
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

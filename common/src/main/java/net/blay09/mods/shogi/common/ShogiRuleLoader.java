@@ -10,7 +10,7 @@ import net.blay09.mods.shogi.common.parse.ShogiRuleParser;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.RegistryOps;
@@ -34,8 +34,8 @@ public final class ShogiRuleLoader {
     private ShogiRuleLoader() {
     }
 
-    public static Map<Identifier, ShogiEffect<?>> loadConfigRules(HolderLookup.Provider registries, ShogiScope scope, Path configDirectory) {
-        final Map<Identifier, ShogiEffect<?>> parsedOverrides = new HashMap<>();
+    public static Map<ResourceLocation, ShogiEffect<?>> loadConfigRules(HolderLookup.Provider registries, ShogiScope scope, Path configDirectory) {
+        final Map<ResourceLocation, ShogiEffect<?>> parsedOverrides = new HashMap<>();
         final var path = configPath(configDirectory, scope);
         if (!Files.exists(path)) {
             return parsedOverrides;
@@ -54,7 +54,7 @@ public final class ShogiRuleLoader {
 
         final var registryJsonOps = RegistryOps.create(JsonOps.INSTANCE, registries);
         for (final var ruleEntry : rootObject.entrySet()) {
-            final var valueIdentifier = Identifier.tryParse(ruleEntry.getKey());
+            final var valueIdentifier = ResourceLocation.tryParse(ruleEntry.getKey());
             if (valueIdentifier == null) {
                 logger.warn("Skipping invalid Shogi value identifier '{}' in {}", ruleEntry.getKey(), path);
                 continue;
@@ -66,8 +66,8 @@ public final class ShogiRuleLoader {
         return parsedOverrides;
     }
 
-    public static Map<Identifier, ShogiEffect<?>> loadDatapackRules(HolderLookup.Provider registries, ShogiScope scope, ResourceManager resourceManager) {
-        final Map<Identifier, ShogiEffect<?>> parsedRules = new HashMap<>();
+    public static Map<ResourceLocation, ShogiEffect<?>> loadDatapackRules(HolderLookup.Provider registries, ShogiScope scope, ResourceManager resourceManager) {
+        final Map<ResourceLocation, ShogiEffect<?>> parsedRules = new HashMap<>();
         final var registryJsonOps = RegistryOps.create(JsonOps.INSTANCE, registries);
         final var resourcePrefix = datapackScopePrefix(scope);
         final var resources = resourceManager.listResources(resourcePrefix, path -> path.getPath().endsWith(".json"));
@@ -144,7 +144,7 @@ public final class ShogiRuleLoader {
     }
 
     @Nullable
-    private static Identifier toRuleIdentifier(ShogiScope scope, Identifier resourceLocation) {
+    private static ResourceLocation toRuleIdentifier(ShogiScope scope, ResourceLocation resourceLocation) {
         final var resourcePath = resourceLocation.getPath();
         final var scopePrefix = datapackScopePrefix(scope) + "/";
         if (!resourcePath.startsWith(scopePrefix) || !resourcePath.endsWith(".json")) {
@@ -155,10 +155,10 @@ public final class ShogiRuleLoader {
         if (rulePath.isEmpty()) {
             return null;
         }
-        if (!Identifier.isValidPath(rulePath)) {
+        if (!ResourceLocation.isValidPath(rulePath)) {
             return null;
         }
 
-        return Identifier.fromNamespaceAndPath(resourceLocation.getNamespace(), rulePath);
+        return ResourceLocation.fromNamespaceAndPath(resourceLocation.getNamespace(), rulePath);
     }
 }

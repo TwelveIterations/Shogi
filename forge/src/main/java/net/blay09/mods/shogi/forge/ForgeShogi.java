@@ -11,28 +11,44 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.event.RegisterPayloadHandlersEvent;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.SimpleChannel;
 
 @Mod(value = "shogi")
 public class ForgeShogi {
+    public static final SimpleChannel CHANNEL = ChannelBuilder
+            .named(ShogiValueResultPayload.TYPE.id())
+            .networkProtocolVersion(1)
+            .optional()
+            .simpleChannel();
+
     private final ShogiEventListener events;
 
     public ForgeShogi(FMLJavaModLoadingContext context) {
         events = ShogiCommon.initialize();
-        context.getModEventBus().addListener(this::onRegisterPayloadHandlers);
+        registerPayloadHandlers();
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
         if (FMLEnvironment.dist.isClient()) {
             ForgeShogiClient.init(context.getModEventBus());
         }
+        CHANNEL.build();
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
         ShogiCommand.register(event.getDispatcher());
     }
 
-    private void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playToClient(ShogiValueResultPayload.TYPE, ShogiValueResultPayload.STREAM_CODEC);
+    private void registerPayloadHandlers() {
+        CHANNEL.messageBuilder(ShogiValueResultPayload.class, 0, NetworkDirection.PLAY_TO_CLIENT)
+                .codec(ShogiValueResultPayload.STREAM_CODEC)
+                .consumerMainThread((payload, context) -> {
+                    if (context.isClientSide()) {
+                        ForgeShogiClient.handleValueResult(payload);
+                    }
+                })
+                .add();
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {

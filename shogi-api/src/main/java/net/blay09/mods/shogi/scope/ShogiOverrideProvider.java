@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.scope;
 
 import net.blay09.mods.shogi.effect.ShogiEffect;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Optional;
 
@@ -15,5 +15,5 @@ public interface ShogiOverrideProvider {
      * @param identifier value identifier
      * @return override effect, or empty if none applies
      */
-    Optional<ShogiEffect<?>> getOverride(Identifier identifier);
+    Optional<ShogiEffect<?>> getOverride(ResourceLocation identifier);
 }

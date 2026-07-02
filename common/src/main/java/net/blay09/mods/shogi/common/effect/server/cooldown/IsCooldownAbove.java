@@ -10,23 +10,23 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.util.ShogiDuration;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
-public record IsCooldownAbove(Identifier cooldown, ShogiEffect<?> duration) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = id("is_cooldown_above");
+public record IsCooldownAbove(ResourceLocation cooldown, ShogiEffect<?> duration) implements ShogiEffect<Boolean> {
+    public static final ResourceLocation IDENTIFIER = id("is_cooldown_above");
 
     public static MapCodec<IsCooldownAbove> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Identifier.CODEC.fieldOf("cooldown").forGetter(IsCooldownAbove::cooldown),
+                ResourceLocation.CODEC.fieldOf("cooldown").forGetter(IsCooldownAbove::cooldown),
                 EffectArgumentCodecs.effectOrConstant(scope).fieldOf("duration").forGetter(IsCooldownAbove::duration)
         ).apply(instance, IsCooldownAbove::new));
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

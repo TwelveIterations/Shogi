@@ -11,19 +11,19 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public record FindBlockEntity(HolderSet<BlockEntityType<?>> blockEntityType, float distance) implements ShogiEffect<BlockEntity> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "find_block_entity");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "find_block_entity");
     public static final MapCodec<FindBlockEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.BLOCK_ENTITY_TYPE, BuiltInRegistries.BLOCK_ENTITY_TYPE.holderByNameCodec(), false).fieldOf("block_entity_type").forGetter(FindBlockEntity::blockEntityType),
             Codec.FLOAT.fieldOf("distance").forGetter(FindBlockEntity::distance)
     ).apply(instance, FindBlockEntity::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 
@@ -47,7 +47,7 @@ public record FindBlockEntity(HolderSet<BlockEntityType<?>> blockEntityType, flo
                     }
 
                     final var nearbyBlockEntity = level.getBlockEntity(blockEntityPos);
-                    if (nearbyBlockEntity != null && nearbyBlockEntity.is(blockEntityType)) {
+                    if (nearbyBlockEntity != null && blockEntityType.contains(nearbyBlockEntity.getType().builtInRegistryHolder())) {
                         return Either.left(nearbyBlockEntity);
                     }
                 }

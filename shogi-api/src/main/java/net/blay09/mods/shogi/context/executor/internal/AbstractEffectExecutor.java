@@ -2,7 +2,7 @@ package net.blay09.mods.shogi.context.executor.internal;
 
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import java.util.function.*;
 public abstract class AbstractEffectExecutor implements EffectExecutor {
 
     protected final Map<AggregateKey<?>, Object> aggregates = new HashMap<>();
-    private final Map<Identifier, BiFunction<?, ?, ?>> aggregateOverrides = new HashMap<>();
-    private final Map<Identifier, BiConsumer<?, ?>> consumeOverrides = new HashMap<>();
-    private final Map<Identifier, Consumer<Runnable>> executeOverrides = new HashMap<>();
+    private final Map<ResourceLocation, BiFunction<?, ?, ?>> aggregateOverrides = new HashMap<>();
+    private final Map<ResourceLocation, BiConsumer<?, ?>> consumeOverrides = new HashMap<>();
+    private final Map<ResourceLocation, Consumer<Runnable>> executeOverrides = new HashMap<>();
 
     public AbstractEffectExecutor() {
         this(null);
@@ -41,7 +41,7 @@ public abstract class AbstractEffectExecutor implements EffectExecutor {
     }
 
     @Override
-    public <T, R> void overrideAggregate(Identifier identifier, BiFunction<Function<T, R>, T, R> override) {
+    public <T, R> void overrideAggregate(ResourceLocation identifier, BiFunction<Function<T, R>, T, R> override) {
         aggregateOverrides.put(identifier, override);
     }
 
@@ -57,12 +57,12 @@ public abstract class AbstractEffectExecutor implements EffectExecutor {
     }
 
     @Override
-    public <T> void overrideConsume(Identifier identifier, BiConsumer<Consumer<T>, T> override) {
+    public <T> void overrideConsume(ResourceLocation identifier, BiConsumer<Consumer<T>, T> override) {
         consumeOverrides.put(identifier, override);
     }
 
     @Override
-    public void overrideExecute(Identifier identifier, Consumer<Runnable> override) {
+    public void overrideExecute(ResourceLocation identifier, Consumer<Runnable> override) {
         executeOverrides.put(identifier, override);
     }
 
@@ -86,7 +86,7 @@ public abstract class AbstractEffectExecutor implements EffectExecutor {
         }
     }
 
-    protected void applyExecuteOverride(Identifier identifier, Runnable runnable) {
+    protected void applyExecuteOverride(ResourceLocation identifier, Runnable runnable) {
         final var override = executeOverrides.get(identifier);
         if (override != null) {
             override.accept(runnable);

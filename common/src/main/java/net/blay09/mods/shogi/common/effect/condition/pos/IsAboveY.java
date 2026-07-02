@@ -6,16 +6,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record IsAboveY(int y) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_above_y");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_above_y");
     public static final MapCodec<IsAboveY> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.INT.fieldOf("y").forGetter(IsAboveY::y)
     ).apply(instance, IsAboveY::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

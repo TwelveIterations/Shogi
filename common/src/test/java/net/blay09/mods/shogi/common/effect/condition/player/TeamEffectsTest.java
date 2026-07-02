@@ -5,8 +5,11 @@ import com.mojang.serialization.JsonOps;
 import net.blay09.mods.shogi.common.parse.ShogiRuleParser;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
-import net.minecraft.resources.Identifier;
+import net.minecraft.SharedConstants;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.world.scores.Scoreboard;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -17,6 +20,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TeamEffectsTest {
+
+    @BeforeAll
+    static void bootstrapMinecraft() {
+        SharedConstants.tryDetectVersion();
+        Bootstrap.bootStrap();
+    }
 
     @Test
     void matchesPlayerTeamByName() {
@@ -40,7 +49,7 @@ class TeamEffectsTest {
 
     @Test
     void parsesTeamEffects() {
-        final var scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
+        final var scope = new ShogiScopeImpl(ResourceLocation.fromNamespaceAndPath("shogi", "test"));
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(IsInTeam.IDENTIFIER, IsInTeam.mapCodec(scope), List.of("team"));
         scope.registerEffect(LookupTeam.IDENTIFIER, LookupTeam.mapCodec(scope), List.of("username"));

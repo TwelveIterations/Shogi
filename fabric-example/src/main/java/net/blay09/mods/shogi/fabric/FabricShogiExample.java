@@ -4,21 +4,21 @@ import net.blay09.mods.shogi.Shogi;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public class FabricShogiExample implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        final var intValue = Shogi.intValue(id("int"), _ -> 123);
-        final var floatValue = Shogi.floatValue(id("float"), _ -> 13.37f);
-        final var stringValue = Shogi.stringValue(id("string"), _ -> "Hello World");
-        final var booleanValue = Shogi.booleanValue(id("boolean"), _ -> false).networked();
+        final var intValue = Shogi.intValue(id("int"), ignored -> 123);
+        final var floatValue = Shogi.floatValue(id("float"), ignored -> 13.37f);
+        final var stringValue = Shogi.stringValue(id("string"), ignored -> "Hello World");
+        final var booleanValue = Shogi.booleanValue(id("boolean"), ignored -> false).networked();
         final var nameValue = Shogi.componentValue(id("name"), Player::getName);
 
         final var clientScope = Shogi.scope(id("client"), ShogiScope::loadOnClient);
-        final var clientIntValue = clientScope.intValue(id("int"), _ -> 1337);
+        final var clientIntValue = clientScope.intValue(id("int"), ignored -> 1337);
 
         ServerTickEvents.START_SERVER_TICK.register(server -> {
             for (final var player : server.getPlayerList().getPlayers()) {
@@ -34,7 +34,7 @@ public class FabricShogiExample implements ModInitializer {
         });
     }
 
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath("shogi", path);
+    public static ResourceLocation id(String path) {
+        return ResourceLocation.fromNamespaceAndPath("shogi", path);
     }
 }

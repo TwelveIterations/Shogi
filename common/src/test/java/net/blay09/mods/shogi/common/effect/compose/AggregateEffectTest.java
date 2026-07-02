@@ -18,7 +18,7 @@ import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -29,7 +29,7 @@ class AggregateEffectTest {
 
     @Test
     void autoAppliesSingleParameterEffectFromAssignedVariable() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(
                 parseOk(scope, "$xp_points_cost = 12"),
                 parseOk(scope, "$xp_points_cost * 2")
@@ -45,7 +45,7 @@ class AggregateEffectTest {
 
     @Test
     void doesNotAutoApplyForMultiParameterEffects() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$binary_op = 12"));
 
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
@@ -54,7 +54,7 @@ class AggregateEffectTest {
 
     @Test
     void usesScopeNamespaceForUnqualifiedVariableNames() {
-        final var customScope = createScope(Identifier.fromNamespaceAndPath("custom", "test"), true);
+        final var customScope = createScope(ResourceLocation.fromNamespaceAndPath("custom", "test"), true);
         final List<ShogiEffect<?>> effects = List.of(parseOk(customScope, "$xp_points_cost = 12"));
 
         final var aggregate = AggregateEffect.withAutoApplied(customScope, JsonOps.INSTANCE, effects);
@@ -64,7 +64,7 @@ class AggregateEffectTest {
 
     @Test
     void usesOrderedDefaultNamespacesForAutoApply() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), true);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), true);
         scope.setDefaultNamespaces(List.of("custom", "shogi"));
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
 
@@ -75,7 +75,7 @@ class AggregateEffectTest {
 
     @Test
     void usesFirstAutoApplicableMatchAcrossDefaultNamespaces() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), false);
         scope.registerEffect(CustomScopeBinaryEffect.IDENTIFIER, CustomScopeBinaryEffect.mapCodec(scope), List.of("left", "right"));
         scope.setDefaultNamespaces(List.of("custom", "shogi"));
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$xp_points_cost = 12"));
@@ -87,7 +87,7 @@ class AggregateEffectTest {
 
     @Test
     void skipsAutoApplyForInvalidVariablePaths() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$XP_Points_Cost = 12"));
 
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
@@ -97,7 +97,7 @@ class AggregateEffectTest {
 
     @Test
     void codecDoesNotAutoApplyForExplicitAggregateJson() {
-        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final var scope = createScope(ResourceLocation.fromNamespaceAndPath("shogi", "test"), false);
 
         final var assignment = parseOk(scope, "$xp_points_cost = 12");
         final var computed = parseOk(scope, "$xp_points_cost * 2");
@@ -115,7 +115,7 @@ class AggregateEffectTest {
         assertEquals(2, aggregate.effects().size());
     }
 
-    private static ShogiScope createScope(Identifier scopeIdentifier, boolean includeCustomNamespaceUnary) {
+    private static ShogiScope createScope(ResourceLocation scopeIdentifier, boolean includeCustomNamespaceUnary) {
         final ShogiScopeImpl scope = new ShogiScopeImpl(scopeIdentifier);
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
@@ -144,7 +144,7 @@ class AggregateEffectTest {
     }
 
     private record CustomScopeUnaryEffect(ShogiEffect<?> value) implements ShogiEffect<Object> {
-        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("custom", "xp_points_cost");
+        private static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("custom", "xp_points_cost");
 
         private static MapCodec<CustomScopeUnaryEffect> mapCodec(ShogiScope scope) {
             return RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -153,7 +153,7 @@ class AggregateEffectTest {
         }
 
         @Override
-        public Identifier identifier() {
+        public ResourceLocation identifier() {
             return IDENTIFIER;
         }
 
@@ -164,7 +164,7 @@ class AggregateEffectTest {
     }
 
     private record CustomScopeBinaryEffect(ShogiEffect<?> left, ShogiEffect<?> right) implements ShogiEffect<Object> {
-        private static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("custom", "xp_points_cost");
+        private static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("custom", "xp_points_cost");
 
         private static MapCodec<CustomScopeBinaryEffect> mapCodec(ShogiScope scope) {
             return RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -174,7 +174,7 @@ class AggregateEffectTest {
         }
 
         @Override
-        public Identifier identifier() {
+        public ResourceLocation identifier() {
             return IDENTIFIER;
         }
 

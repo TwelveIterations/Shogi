@@ -10,8 +10,12 @@ plugins {
 
 dependencies {
     minecraft libs.minecraft
-    implementation libs.fabricLoader
-    implementation libs.fabricApi
+    mappings loom.layered {
+        officialMojangMappings()
+        parchment(libs.parchment.get().toString() + "@zip")
+    }
+    modImplementation libs.fabricLoader
+    modImplementation libs.fabricApi
 }
 
 apply from: rootProject.file('repositories.gradle')

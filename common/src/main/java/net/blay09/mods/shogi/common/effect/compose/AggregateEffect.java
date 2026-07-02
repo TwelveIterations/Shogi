@@ -15,7 +15,7 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
 import net.blay09.mods.shogi.effect.failure.ShogiFatalFailure;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffect<List<Object>> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "aggregate");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "aggregate");
 
     public static MapCodec<AggregateEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -68,7 +68,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

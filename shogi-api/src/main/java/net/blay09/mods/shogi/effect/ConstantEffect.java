@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 
 /**
@@ -16,9 +16,9 @@ import net.minecraft.util.ExtraCodecs;
 public record ConstantEffect(JsonElement value) implements ShogiEffect<Object> {
 
     /**
-     * Identifier used for the constant effect type.
+     * ResourceLocation used for the constant effect type.
      */
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "constant");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "constant");
     /**
      * Codec for serializing/deserializing constant effects.
      */
@@ -30,7 +30,7 @@ public record ConstantEffect(JsonElement value) implements ShogiEffect<Object> {
      * {@inheritDoc}
      */
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

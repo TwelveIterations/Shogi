@@ -6,19 +6,19 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.AABB;
 
 public record IsMobNearby(float distance, int min) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_mob_nearby");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_mob_nearby");
     public static final MapCodec<IsMobNearby> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.FLOAT.fieldOf("distance").forGetter(IsMobNearby::distance),
             Codec.INT.fieldOf("min").orElse(1).forGetter(IsMobNearby::min)
     ).apply(instance, IsMobNearby::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

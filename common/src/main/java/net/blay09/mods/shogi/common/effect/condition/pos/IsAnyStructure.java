@@ -5,12 +5,12 @@ import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 
 public class IsAnyStructure implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_any_structure");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_any_structure");
     private static final IsAnyStructure INSTANCE = new IsAnyStructure();
     public static final MapCodec<IsAnyStructure> MAP_CODEC = MapCodec.unit(INSTANCE);
 
@@ -34,7 +34,7 @@ public class IsAnyStructure implements ShogiEffect<Boolean> {
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

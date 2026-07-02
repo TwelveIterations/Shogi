@@ -10,13 +10,13 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
 
 public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
                              int min) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_entity_nearby");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_entity_nearby");
     public static final MapCodec<IsEntityNearby> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("entity").forGetter(IsEntityNearby::entity),
             Codec.FLOAT.fieldOf("distance").forGetter(IsEntityNearby::distance),
@@ -24,7 +24,7 @@ public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
     ).apply(instance, IsEntityNearby::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 
@@ -33,7 +33,7 @@ public record IsEntityNearby(HolderSet<EntityType<?>> entity, float distance,
         final var selfEntity = context.entity();
         final var level = context.requireLevel();
         final var pos = context.requireBlockPos();
-        final var entities = level.getEntities(selfEntity, AABB.ofSize(pos.getCenter(), distance, distance, distance), it -> entity.contains(it.typeHolder()));
+        final var entities = level.getEntities(selfEntity, AABB.ofSize(pos.getCenter(), distance, distance, distance), it -> entity.contains(it.getType().builtInRegistryHolder()));
         return Either.left(entities.size() >= min);
     }
 }

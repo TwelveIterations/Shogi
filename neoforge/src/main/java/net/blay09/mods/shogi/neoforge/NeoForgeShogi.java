@@ -1,9 +1,11 @@
 package net.blay09.mods.shogi.neoforge;
 
+import net.blay09.mods.shogi.client.ShogiClient;
 import net.blay09.mods.shogi.common.ShogiCommon;
 import net.blay09.mods.shogi.common.command.ShogiCommand;
 import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
 import net.blay09.mods.shogi.common.platform.ShogiEventListener;
+import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -28,7 +30,11 @@ public class NeoForgeShogi {
     }
 
     private void onRegisterPayloadHandlers(RegisterPayloadHandlersEvent event) {
-        event.registrar("1").playToClient(ShogiValueResultPayload.TYPE, ShogiValueResultPayload.STREAM_CODEC);
+        event.registrar("1").playToClient(ShogiValueResultPayload.TYPE, ShogiValueResultPayload.STREAM_CODEC, (payload, context) -> {
+            if (!ShogiStreamCodecs.containsUnknown(payload.payload())) {
+                ShogiClient.initialize().onValueReceived(payload.scope(), payload.identifier(), payload.payload());
+            }
+        });
     }
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {

@@ -3,14 +3,14 @@ package net.blay09.mods.shogi.neoforge;
 import net.blay09.mods.shogi.common.platform.ShogiRuntime;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.nio.file.Path;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class NeoForgeShogiRuntime implements ShogiRuntime {
-    private final Map<Identifier, Function<HolderLookup.Provider, PreparableReloadListener>> reloadListeners = new LinkedHashMap<>();
+    private final Map<ResourceLocation, Function<HolderLookup.Provider, PreparableReloadListener>> reloadListeners = new LinkedHashMap<>();
 
     public NeoForgeShogiRuntime() {
         NeoForge.EVENT_BUS.addListener(this::onAddServerReloadListeners);
@@ -31,7 +31,7 @@ public class NeoForgeShogiRuntime implements ShogiRuntime {
     }
 
     @Override
-    public void registerServerReloadListener(Identifier listenerId, Function<HolderLookup.Provider, PreparableReloadListener> factory) {
+    public void registerServerReloadListener(ResourceLocation listenerId, Function<HolderLookup.Provider, PreparableReloadListener> factory) {
         reloadListeners.put(listenerId, factory);
     }
 
@@ -45,7 +45,7 @@ public class NeoForgeShogiRuntime implements ShogiRuntime {
         return player instanceof FakePlayer;
     }
 
-    private void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-        reloadListeners.forEach((id, factory) -> event.addListener(id, factory.apply(event.getServerResources().getRegistryLookup())));
+    private void onAddServerReloadListeners(AddReloadListenerEvent event) {
+        reloadListeners.forEach((id, factory) -> event.addListener(factory.apply(event.getRegistryAccess())));
     }
 }

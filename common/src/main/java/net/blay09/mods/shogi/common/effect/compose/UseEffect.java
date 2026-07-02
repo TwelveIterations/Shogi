@@ -9,7 +9,7 @@ import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,30 +17,30 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class UseEffect implements ShogiEffect<Object> {
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "use");
-    private static final AggregateKey<Deque<Identifier>> IMPORT_STACK = AggregateKey.of(Identifier.fromNamespaceAndPath("shogi", "import_stack"));
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "use");
+    private static final AggregateKey<Deque<ResourceLocation>> IMPORT_STACK = AggregateKey.of(ResourceLocation.fromNamespaceAndPath("shogi", "import_stack"));
     private static final Logger logger = LoggerFactory.getLogger(UseEffect.class);
 
     private final ShogiScope scope;
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
 
-    public UseEffect(ShogiScope scope, Identifier identifier) {
+    public UseEffect(ShogiScope scope, ResourceLocation identifier) {
         this.scope = scope;
         this.identifier = identifier;
     }
 
     public static MapCodec<UseEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Identifier.CODEC.fieldOf("identifier").forGetter(UseEffect::importedIdentifier)
+                ResourceLocation.CODEC.fieldOf("identifier").forGetter(UseEffect::importedIdentifier)
         ).apply(instance, identifier -> new UseEffect(scope, identifier)));
     }
 
-    public Identifier importedIdentifier() {
+    public ResourceLocation importedIdentifier() {
         return identifier;
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

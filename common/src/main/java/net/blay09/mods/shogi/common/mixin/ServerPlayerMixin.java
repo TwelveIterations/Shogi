@@ -2,9 +2,8 @@ package net.blay09.mods.shogi.common.mixin;
 
 import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldownsAccess;
 import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldowns;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,12 +17,12 @@ public class ServerPlayerMixin implements ShogiCooldownsAccess {
     private final ShogiCooldowns shogi$cooldowns = new ShogiCooldowns();
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    private void shogi$readAdditionalSaveData(ValueInput input, CallbackInfo ci) {
+    private void shogi$readAdditionalSaveData(CompoundTag input, CallbackInfo ci) {
         shogi$cooldowns.load(input);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    private void shogi$addAdditionalSaveData(ValueOutput output, CallbackInfo ci) {
+    private void shogi$addAdditionalSaveData(CompoundTag output, CallbackInfo ci) {
         shogi$cooldowns.save(output);
     }
 

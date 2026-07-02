@@ -6,7 +6,7 @@ import net.blay09.mods.shogi.common.platform.ShogiRuntimeSpi;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.scope.ShogiNetworkCache;
 import net.blay09.mods.shogi.network.ShogiStreamCodecs;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
@@ -18,33 +18,33 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShogiServerNetworkNetworkCache implements ShogiNetworkCache {
     private static final Logger logger = LoggerFactory.getLogger(ShogiServerNetworkNetworkCache.class);
 
-    private record CacheKey(Identifier identifier, UUID playerId) {
-        public static CacheKey of(Identifier identifier, ServerPlayer player) {
+    private record CacheKey(ResourceLocation identifier, UUID playerId) {
+        public static CacheKey of(ResourceLocation identifier, ServerPlayer player) {
             return new CacheKey(identifier, player.getUUID());
         }
     }
 
-    private final Set<Identifier> networkedValues = Sets.newConcurrentHashSet();
+    private final Set<ResourceLocation> networkedValues = Sets.newConcurrentHashSet();
     private final Map<CacheKey, Object> cache = new ConcurrentHashMap<>();
-    private final Identifier scopeId;
+    private final ResourceLocation scopeId;
 
-    public ShogiServerNetworkNetworkCache(Identifier scopeId) {
+    public ShogiServerNetworkNetworkCache(ResourceLocation scopeId) {
         this.scopeId = scopeId;
     }
 
     @Override
-    public Optional<Either<?, ?>> getRemoteValue(Identifier identifier, ShogiContext context) {
+    public Optional<Either<?, ?>> getRemoteValue(ResourceLocation identifier, ShogiContext context) {
         // We always return empty because we don't want cached values to be used on the server.
         return Optional.empty();
     }
 
     @Override
-    public void addNetworkedValue(Identifier identifier) {
+    public void addNetworkedValue(ResourceLocation identifier) {
         networkedValues.add(identifier);
     }
 
     @Override
-    public <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(Identifier identifier, ShogiContext context, Either<TSuccess, TFailure> value) {
+    public <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(ResourceLocation identifier, ShogiContext context, Either<TSuccess, TFailure> value) {
         if (!networkedValues.contains(identifier)) {
             return value;
         }
@@ -67,7 +67,7 @@ public class ShogiServerNetworkNetworkCache implements ShogiNetworkCache {
     }
 
     @Override
-    public void valueReceived(Identifier identifier, Either<?, ?> payload) {
+    public void valueReceived(ResourceLocation identifier, Either<?, ?> payload) {
     }
 
     @Override

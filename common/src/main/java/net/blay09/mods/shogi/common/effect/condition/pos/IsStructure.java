@@ -9,13 +9,13 @@ import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 public record IsStructure(HolderSet<Structure> structure) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_structure");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_structure");
     public static final MapCodec<IsStructure> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             RegistryCodecs.homogeneousList(Registries.STRUCTURE, false).fieldOf("structure").forGetter(IsStructure::structure)
     ).apply(instance, IsStructure::new));
@@ -33,7 +33,7 @@ public record IsStructure(HolderSet<Structure> structure) implements ShogiEffect
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

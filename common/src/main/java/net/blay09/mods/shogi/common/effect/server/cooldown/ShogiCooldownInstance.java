@@ -2,31 +2,31 @@ package net.blay09.mods.shogi.common.effect.server.cooldown;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class ShogiCooldownInstance {
 
     public static final Codec<ShogiCooldownInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Identifier.CODEC.fieldOf("identifier").forGetter(ShogiCooldownInstance::identifier),
+            ResourceLocation.CODEC.fieldOf("identifier").forGetter(ShogiCooldownInstance::identifier),
             Codec.INT.fieldOf("total_duration").forGetter(ShogiCooldownInstance::totalDuration),
             Codec.INT.fieldOf("remaining_ticks").forGetter(ShogiCooldownInstance::remainingTicks)
     ).apply(instance, ShogiCooldownInstance::new));
 
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
     private final int totalDuration;
     private int remainingTicks;
 
-    public ShogiCooldownInstance(Identifier identifier, int totalDuration) {
+    public ShogiCooldownInstance(ResourceLocation identifier, int totalDuration) {
         this(identifier, totalDuration, totalDuration);
     }
 
-    public ShogiCooldownInstance(Identifier identifier, int totalDuration, int remainingTicks) {
+    public ShogiCooldownInstance(ResourceLocation identifier, int totalDuration, int remainingTicks) {
         this.identifier = identifier;
         this.totalDuration = totalDuration;
         this.remainingTicks = remainingTicks;
     }
 
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return identifier;
     }
 

@@ -9,12 +9,12 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public record IsBlockEntity(HolderSet<BlockEntityType<?>> blockEntityType) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_block_entity");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_block_entity");
     public static final MapCodec<IsBlockEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.BLOCK_ENTITY_TYPE, BuiltInRegistries.BLOCK_ENTITY_TYPE.holderByNameCodec(), false).fieldOf("block_entity_type").forGetter(IsBlockEntity::blockEntityType)
     ).apply(instance, IsBlockEntity::new));
@@ -22,11 +22,11 @@ public record IsBlockEntity(HolderSet<BlockEntityType<?>> blockEntityType) imple
     @Override
     public Either<? extends Boolean, ?> apply(ShogiContext context) {
         final var blockEntity = context.requireBlockEntity();
-        return Either.left(blockEntity.is(blockEntityType));
+        return Either.left(blockEntityType.contains(blockEntity.getType().builtInRegistryHolder()));
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

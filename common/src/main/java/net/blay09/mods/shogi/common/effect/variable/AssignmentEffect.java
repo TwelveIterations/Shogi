@@ -10,11 +10,11 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record AssignmentEffect(String variable, ShogiEffect<?> value) implements ShogiEffect<Object> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "assignment");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "assignment");
 
     public static MapCodec<AssignmentEffect> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -24,7 +24,7 @@ public record AssignmentEffect(String variable, ShogiEffect<?> value) implements
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

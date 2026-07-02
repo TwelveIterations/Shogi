@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.context.executor.internal;
 
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -19,7 +19,7 @@ class DeferredEffectExecutorImplTest {
     void executeDoesNotRecurseWhenRunnableCallsExecuteAgain() {
         final var executor = new DeferredEffectExecutorImpl();
         final var didRun = new AtomicBoolean(false);
-        executor.execute(Identifier.fromNamespaceAndPath("shogi", "reentrant"), () -> {
+        executor.execute(ResourceLocation.fromNamespaceAndPath("shogi", "reentrant"), () -> {
             didRun.set(true);
             executor.execute();
         });
@@ -31,11 +31,11 @@ class DeferredEffectExecutorImplTest {
     @Test
     void executeUsesOverrideExecute() {
         final var executor = new DeferredEffectExecutorImpl();
-        final var identifier = Identifier.fromNamespaceAndPath("shogi", "test_execute");
+        final var identifier = ResourceLocation.fromNamespaceAndPath("shogi", "test_execute");
         final var didRun = new AtomicBoolean(false);
 
         executor.execute(identifier, () -> didRun.set(true));
-        executor.overrideExecute(identifier, _ -> {
+        executor.overrideExecute(identifier, ignored -> {
         });
         executor.execute();
 
@@ -45,7 +45,7 @@ class DeferredEffectExecutorImplTest {
     @Test
     void executeUsesOverrideConsume() {
         final var executor = new DeferredEffectExecutorImpl();
-        final var aggregateKey = AggregateKey.<Integer>of(Identifier.fromNamespaceAndPath("shogi", "test_consume"));
+        final var aggregateKey = AggregateKey.<Integer>of(ResourceLocation.fromNamespaceAndPath("shogi", "test_consume"));
         final var consumed = new AtomicInteger(0);
 
         executor.aggregate(aggregateKey, () -> 0, it -> 3);
@@ -59,7 +59,7 @@ class DeferredEffectExecutorImplTest {
     @Test
     void latestOverrideWins() {
         final var executor = new DeferredEffectExecutorImpl();
-        final var identifier = Identifier.fromNamespaceAndPath("shogi", "test_latest");
+        final var identifier = ResourceLocation.fromNamespaceAndPath("shogi", "test_latest");
         final var runs = new AtomicInteger(0);
 
         executor.execute(identifier, runs::incrementAndGet);

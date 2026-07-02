@@ -9,12 +9,12 @@ import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.effect.EffectArgumentCodecs;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<ExperienceLevelCostInformation> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "xp_level_cost");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "xp_level_cost");
     public static final AggregateKey<Integer> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
 
     public static MapCodec<ExperienceLevelCost> mapCodec(ShogiScope scope) {
@@ -43,7 +43,7 @@ public record ExperienceLevelCost(ShogiEffect<?> level) implements ShogiEffect<E
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }

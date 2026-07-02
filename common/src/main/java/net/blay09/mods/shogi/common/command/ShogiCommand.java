@@ -6,9 +6,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Collection;
@@ -21,13 +21,13 @@ public final class ShogiCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("shogi")
-                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .requires(source -> source.hasPermission(Commands.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("cooldown")
                         .then(Commands.literal("reset")
                                 .then(Commands.argument("targets", EntityArgument.players())
                                         .then(Commands.literal("all")
                                                 .executes(context -> resetAllCooldowns(context.getSource(), EntityArgument.getPlayers(context, "targets"))))
-                                        .then(Commands.argument("identifier", IdentifierArgument.id())
+                                        .then(Commands.argument("identifier", ResourceLocationArgument.id())
                                                 .suggests((context, builder) -> {
                                                     final var targets = EntityArgument.getPlayers(context, "targets");
                                                     final var keys = new HashSet<String>();
@@ -42,7 +42,7 @@ public final class ShogiCommand {
                                                 .executes(context -> resetCooldown(
                                                         context.getSource(),
                                                         EntityArgument.getPlayers(context, "targets"),
-                                                        IdentifierArgument.getId(context, "identifier"))))))));
+                                                        ResourceLocationArgument.getId(context, "identifier"))))))));
     }
 
     private static int resetAllCooldowns(CommandSourceStack source, Collection<ServerPlayer> targets) {
@@ -57,7 +57,7 @@ public final class ShogiCommand {
         return removed;
     }
 
-    private static int resetCooldown(CommandSourceStack source, Collection<ServerPlayer> targets, Identifier identifier) {
+    private static int resetCooldown(CommandSourceStack source, Collection<ServerPlayer> targets, ResourceLocation identifier) {
         int removed = 0;
         for (final var target : targets) {
             final var cooldowns = ((ShogiCooldownsAccess) target).shogi$getCooldowns();

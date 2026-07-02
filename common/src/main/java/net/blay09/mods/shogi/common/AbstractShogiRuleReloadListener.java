@@ -6,7 +6,7 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.internal.ShogiScopeRegistry;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -61,6 +61,6 @@ abstract class AbstractShogiRuleReloadListener extends SimplePreparableReloadLis
         loadedRules.forEach(it -> it.repository().apply(it.configRules(), it.datapackRules()));
     }
 
-    protected record ScopeRules(ShogiRuleRepository repository, Map<Identifier, ShogiEffect<?>> configRules, Map<Identifier, ShogiEffect<?>> datapackRules) {
+    protected record ScopeRules(ShogiRuleRepository repository, Map<ResourceLocation, ShogiEffect<?>> configRules, Map<ResourceLocation, ShogiEffect<?>> datapackRules) {
     }
 }

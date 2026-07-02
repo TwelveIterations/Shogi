@@ -2,7 +2,7 @@ package net.blay09.mods.shogi.scope;
 
 import com.mojang.datafixers.util.Either;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Optional;
@@ -16,7 +16,7 @@ public interface ShogiNetworkCache {
      *
      * @param identifier value identifier
      */
-    void addNetworkedValue(Identifier identifier);
+    void addNetworkedValue(ResourceLocation identifier);
 
     /**
      * Called after a value is resolved to allow caching or substitution.
@@ -28,7 +28,7 @@ public interface ShogiNetworkCache {
      * @param <TFailure> failure type
      * @return payload to continue using for this resolution
      */
-    <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(Identifier identifier, ShogiContext context, Either<TSuccess, TFailure> value);
+    <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(ResourceLocation identifier, ShogiContext context, Either<TSuccess, TFailure> value);
 
     /**
      * Stores a payload received from a remote source.
@@ -36,7 +36,7 @@ public interface ShogiNetworkCache {
      * @param identifier value identifier
      * @param payload received payload
      */
-    void valueReceived(Identifier identifier, Either<?, ?> payload);
+    void valueReceived(ResourceLocation identifier, Either<?, ?> payload);
 
     /**
      * Looks up the latest remote payload for a value and context.
@@ -45,7 +45,7 @@ public interface ShogiNetworkCache {
      * @param context lookup context
      * @return the remote payload if available
      */
-    Optional<Either<?, ?>> getRemoteValue(Identifier identifier, ShogiContext context);
+    Optional<Either<?, ?>> getRemoteValue(ResourceLocation identifier, ShogiContext context);
 
     /**
      * Invalidates all cached payloads.
@@ -64,16 +64,16 @@ public interface ShogiNetworkCache {
      */
     ShogiNetworkCache NONE = new ShogiNetworkCache() {
         @Override
-        public <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(Identifier identifier, ShogiContext context, Either<TSuccess, TFailure> value) {
+        public <TSuccess, TFailure> Either<TSuccess, TFailure> valueResolved(ResourceLocation identifier, ShogiContext context, Either<TSuccess, TFailure> value) {
             return value;
         }
 
         @Override
-        public void valueReceived(Identifier identifier, Either<?, ?> payload) {
+        public void valueReceived(ResourceLocation identifier, Either<?, ?> payload) {
         }
 
         @Override
-        public Optional<Either<?, ?>> getRemoteValue(Identifier identifier, ShogiContext context) {
+        public Optional<Either<?, ?>> getRemoteValue(ResourceLocation identifier, ShogiContext context) {
             return Optional.empty();
         }
 
@@ -86,7 +86,7 @@ public interface ShogiNetworkCache {
         }
 
         @Override
-        public void addNetworkedValue(Identifier identifier) {
+        public void addNetworkedValue(ResourceLocation identifier) {
             throw new UnsupportedOperationException("Unable to add networked value on NO-OP network cache.");
         }
     };

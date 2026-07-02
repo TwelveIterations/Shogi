@@ -3,7 +3,7 @@ package net.blay09.mods.shogi.effect;
 import com.mojang.datafixers.util.Either;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.context.ShogiContext;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,7 +20,7 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
      *
      * @return effect identifier
      */
-    Identifier identifier();
+    ResourceLocation identifier();
 
     /**
      * Evaluates this effect as a boolean predicate.
@@ -39,10 +39,10 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
         }
     }
 
-    static <T> ShogiEffect<T> simple(Identifier identifier, Function<ShogiContext, T> function) {
+    static <T> ShogiEffect<T> simple(ResourceLocation identifier, Function<ShogiContext, T> function) {
         return new ShogiEffect<>() {
             @Override
-            public Identifier identifier() {
+            public ResourceLocation identifier() {
                 return identifier;
             }
 
@@ -53,10 +53,10 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
         };
     }
 
-    static <T> ShogiEffect<T> simple(Identifier identifier, Supplier<T> supplier) {
+    static <T> ShogiEffect<T> simple(ResourceLocation identifier, Supplier<T> supplier) {
         return new ShogiEffect<>() {
             @Override
-            public Identifier identifier() {
+            public ResourceLocation identifier() {
                 return identifier;
             }
 

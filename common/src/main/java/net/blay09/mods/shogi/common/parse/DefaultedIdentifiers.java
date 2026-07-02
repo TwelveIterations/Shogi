@@ -1,6 +1,6 @@
 package net.blay09.mods.shogi.common.parse;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -8,45 +8,45 @@ import java.util.function.Predicate;
 
 public class DefaultedIdentifiers {
     @Nullable
-    public static Identifier parse(String identifier, String defaultNamespace) {
+    public static ResourceLocation parse(String identifier, String defaultNamespace) {
         return parse(identifier, List.of(defaultNamespace), it -> true);
     }
 
     @Nullable
-    public static Identifier parse(String identifier, List<String> defaultNamespaces) {
-        return parse(identifier, defaultNamespaces, _ -> true);
+    public static ResourceLocation parse(String identifier, List<String> defaultNamespaces) {
+        return parse(identifier, defaultNamespaces, ignored -> true);
     }
 
     @Nullable
-    public static Identifier parse(String identifier, List<String> defaultNamespaces, Predicate<Identifier> matcher) {
+    public static ResourceLocation parse(String identifier, List<String> defaultNamespaces, Predicate<ResourceLocation> matcher) {
         final var separatorIndex = identifier.indexOf(':');
         if (separatorIndex >= 0) {
             final var path = identifier.substring(separatorIndex + 1);
-            if (!Identifier.isValidPath(path)) {
+            if (!ResourceLocation.isValidPath(path)) {
                 return null;
             } else if (separatorIndex != 0) {
                 final String namespace = identifier.substring(0, separatorIndex);
-                if (!Identifier.isValidNamespace(namespace)) {
+                if (!ResourceLocation.isValidNamespace(namespace)) {
                     return null;
                 }
-                final var resolved = Identifier.fromNamespaceAndPath(namespace, path);
+                final var resolved = ResourceLocation.fromNamespaceAndPath(namespace, path);
                 return matcher.test(resolved) ? resolved : null;
             } else {
                 return firstMatching(path, defaultNamespaces, matcher);
             }
         } else {
-            return Identifier.isValidPath(identifier) ? firstMatching(identifier, defaultNamespaces, matcher) : null;
+            return ResourceLocation.isValidPath(identifier) ? firstMatching(identifier, defaultNamespaces, matcher) : null;
         }
     }
 
     @Nullable
-    private static Identifier firstMatching(String path, List<String> defaultNamespaces, Predicate<Identifier> matcher) {
+    private static ResourceLocation firstMatching(String path, List<String> defaultNamespaces, Predicate<ResourceLocation> matcher) {
         for (final var namespace : defaultNamespaces) {
-            if (!Identifier.isValidNamespace(namespace)) {
+            if (!ResourceLocation.isValidNamespace(namespace)) {
                 continue;
             }
 
-            final var resolved = Identifier.fromNamespaceAndPath(namespace, path);
+            final var resolved = ResourceLocation.fromNamespaceAndPath(namespace, path);
             if (matcher.test(resolved)) {
                 return resolved;
             }

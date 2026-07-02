@@ -11,29 +11,29 @@ import net.blay09.mods.shogi.effect.ShogiEmpty;
 import net.blay09.mods.shogi.scope.ShogiNetworkCache;
 import net.blay09.mods.shogi.scope.ShogiOverrideProvider;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 import java.util.function.Function;
 
 public class ShogiScopeImpl implements ShogiScope {
-    private final Identifier identifier;
+    private final ResourceLocation identifier;
     private List<String> defaultNamespaces;
     private boolean loadedOnClient;
 
-    public ShogiScopeImpl(Identifier identifier) {
+    public ShogiScopeImpl(ResourceLocation identifier) {
         this.identifier = identifier;
         this.defaultNamespaces = List.of(identifier.getNamespace());
     }
 
-    record ShogiEffectType(Identifier identifier, MapCodec<? extends ShogiEffect<?>> mapCodec) {
+    record ShogiEffectType(ResourceLocation identifier, MapCodec<? extends ShogiEffect<?>> mapCodec) {
     }
 
-    private final Map<Identifier, ShogiEffectType> effectTypeById = new HashMap<>();
-    private final Map<Identifier, Identifier> effectAliasById = new HashMap<>();
-    private final Map<Identifier, List<String>> ordinalParametersById = new HashMap<>();
+    private final Map<ResourceLocation, ShogiEffectType> effectTypeById = new HashMap<>();
+    private final Map<ResourceLocation, ResourceLocation> effectAliasById = new HashMap<>();
+    private final Map<ResourceLocation, List<String>> ordinalParametersById = new HashMap<>();
     private final List<ShogiOverrideProvider> overrideProviders = new ArrayList<>();
-    private final Codec<ShogiEffectType> effectTypeByNameCodec = Identifier.CODEC.flatXmap((identifier) -> resolveEffectIdentifier(identifier)
+    private final Codec<ShogiEffectType> effectTypeByNameCodec = ResourceLocation.CODEC.flatXmap((identifier) -> resolveEffectIdentifier(identifier)
             .map(effectTypeById::get)
             .map(DataResult::success)
             .orElseGet(() -> DataResult.error(() -> "Unknown effect: " + identifier)), (type) -> DataResult.success(type.identifier()));
@@ -42,7 +42,7 @@ public class ShogiScopeImpl implements ShogiScope {
     private ShogiNetworkCache cache = ShogiNetworkCache.NONE;
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return identifier;
     }
 
@@ -57,7 +57,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public void registerEffect(Identifier id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters) {
+    public void registerEffect(ResourceLocation id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters) {
         if (effectAliasById.containsKey(id)) {
             throw new IllegalArgumentException("Effect identifier collides with existing alias: " + id);
         }
@@ -66,7 +66,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public void registerEffectAlias(Identifier alias, Identifier target) {
+    public void registerEffectAlias(ResourceLocation alias, ResourceLocation target) {
         final var canonicalTarget = resolveEffectIdentifier(target)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown target effect for alias '" + alias + "': " + target));
         if (effectTypeById.containsKey(alias)) {
@@ -76,7 +76,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public Optional<Identifier> resolveEffectIdentifier(Identifier identifier) {
+    public Optional<ResourceLocation> resolveEffectIdentifier(ResourceLocation identifier) {
         if (effectTypeById.containsKey(identifier)) {
             return Optional.of(identifier);
         }
@@ -90,14 +90,14 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public List<String> getOrdinalParameters(Identifier identifier) {
+    public List<String> getOrdinalParameters(ResourceLocation identifier) {
         return resolveEffectIdentifier(identifier)
                 .map(it -> ordinalParametersById.getOrDefault(it, List.of()))
                 .orElse(List.of());
     }
 
     @Override
-    public boolean hasEffect(Identifier identifier) {
+    public boolean hasEffect(ResourceLocation identifier) {
         return effectTypeById.containsKey(identifier) || effectAliasById.containsKey(identifier);
     }
 
@@ -110,7 +110,7 @@ public class ShogiScopeImpl implements ShogiScope {
     public void setDefaultNamespaces(List<String> namespaces) {
         final Set<String> deduplicated = new LinkedHashSet<>();
         for (final var namespace : namespaces) {
-            if (!Identifier.isValidNamespace(namespace)) {
+            if (!ResourceLocation.isValidNamespace(namespace)) {
                 throw new IllegalArgumentException("Invalid namespace: " + namespace);
             }
             deduplicated.add(namespace);
@@ -135,7 +135,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
+    public <TContext, TSuccess> Either<?, ?> resolve(ResourceLocation identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
         final var normalizedContext = MutableShogiContext.of(context);
         final var cached = cache.getRemoteValue(identifier, normalizedContext);
         if (cached.isPresent()) {
@@ -145,7 +145,7 @@ public class ShogiScopeImpl implements ShogiScope {
         return cache.valueResolved(identifier, normalizedContext, resolveWithoutCache(identifier, normalizedContext, context, defaultProvider));
     }
 
-    private <TContext, TSuccess> Either<?, ?> resolveWithoutCache(Identifier identifier, ShogiContext normalizedContext, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
+    private <TContext, TSuccess> Either<?, ?> resolveWithoutCache(ResourceLocation identifier, ShogiContext normalizedContext, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider) {
         final var override = getOverride(identifier).orElse(null);
         if (override != null) {
             try {
@@ -171,7 +171,7 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
-    public Optional<ShogiEffect<?>> getOverride(Identifier identifier) {
+    public Optional<ShogiEffect<?>> getOverride(ResourceLocation identifier) {
         ShogiEffect<?> override = null;
         for (final var provider : overrideProviders) {
             final var providerOverride = provider.getOverride(identifier).orElse(null);

@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.common.network;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import net.blay09.mods.shogi.common.effect.cost.*;
 import net.blay09.mods.shogi.common.effect.failure.FailureInformation;
 import net.blay09.mods.shogi.common.effect.failure.RefusalInformation;
@@ -25,6 +26,9 @@ public final class ShogiDefaultStreamCodecs {
     private static final StreamCodec<RegistryFriendlyByteBuf, Throwable> THROWABLE_CODEC = StreamCodec.unit(new Exception());
     private static final StreamCodec<RegistryFriendlyByteBuf, ShogiDeferred> DEFERRED_CODEC = StreamCodec.unit(ShogiDeferred.INSTANCE);
     private static final StreamCodec<RegistryFriendlyByteBuf, ShogiEmpty> EMPTY_CODEC = StreamCodec.unit(EmptyEffect.INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, JsonElement> JSON_CODEC = ByteBufCodecs.STRING_UTF8
+            .map(JsonParser::parseString, JsonElement::toString)
+            .cast();
 
     private ShogiDefaultStreamCodecs() {
     }
@@ -39,7 +43,7 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("float"), Float.class, ByteBufCodecs.FLOAT.cast());
         ShogiStreamCodecs.register(id("bool"), Boolean.class, ByteBufCodecs.BOOL.cast());
         ShogiStreamCodecs.register(id("string"), String.class, ByteBufCodecs.STRING_UTF8.cast());
-        ShogiStreamCodecs.register(id("json"), JsonElement.class, ByteBufCodecs.lenientJson(Short.MAX_VALUE).cast());
+        ShogiStreamCodecs.register(id("json"), JsonElement.class, JSON_CODEC);
         ShogiStreamCodecs.register(id("component"), Component.class, ComponentSerialization.STREAM_CODEC);
         ShogiStreamCodecs.register(id("throwable"), Throwable.class, THROWABLE_CODEC);
         ShogiStreamCodecs.register(id("list"), List.class, ShogiStreamCodecs.LIST_STREAM_CODEC);

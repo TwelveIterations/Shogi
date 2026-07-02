@@ -3,7 +3,7 @@ package net.blay09.mods.shogi.context;
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -235,7 +235,7 @@ public interface ShogiContext {
      * @param identifier side effect identifier
      * @param runnable runnable invoked if the evaluation succeeded
      */
-    default void execute(Identifier identifier, Runnable runnable) {
+    default void execute(ResourceLocation identifier, Runnable runnable) {
         executor().execute(identifier, runnable);
     }
 }

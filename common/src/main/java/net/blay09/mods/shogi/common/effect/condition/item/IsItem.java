@@ -9,12 +9,12 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 public record IsItem(HolderSet<Item> item) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_item");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "is_item");
     public static final MapCodec<IsItem> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.ITEM, BuiltInRegistries.ITEM.holderByNameCodec(), false).fieldOf("item").forGetter(IsItem::item)
     ).apply(instance, IsItem::new));
@@ -26,7 +26,7 @@ public record IsItem(HolderSet<Item> item) implements ShogiEffect<Boolean> {
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

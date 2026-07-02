@@ -7,11 +7,11 @@ import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record WithContext<T>(ShogiEffect<?> contextEffect, ShogiEffect<T> effect) implements ShogiEffect<T> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "with");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "with");
 
     public static MapCodec<WithContext<?>> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(builder -> builder.group(
@@ -21,7 +21,7 @@ public record WithContext<T>(ShogiEffect<?> contextEffect, ShogiEffect<T> effect
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

@@ -11,7 +11,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 public class FabricShogi implements ModInitializer {
     @Override
     public void onInitialize() {
-        PayloadTypeRegistry.clientboundPlay().register(ShogiValueResultPayload.TYPE, ShogiValueResultPayload.STREAM_CODEC);
+        PayloadTypeRegistry.playS2C().register(ShogiValueResultPayload.TYPE, ShogiValueResultPayload.STREAM_CODEC);
 
         final var eventListener = ShogiCommon.initialize();
 

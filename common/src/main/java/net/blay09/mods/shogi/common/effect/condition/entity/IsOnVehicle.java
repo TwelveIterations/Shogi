@@ -9,19 +9,19 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
 import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 public record IsOnVehicle(HolderSet<EntityType<?>> vehicle) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = id("is_on_vehicle");
+    public static final ResourceLocation IDENTIFIER = id("is_on_vehicle");
     public static final MapCodec<IsOnVehicle> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             HolderSetCodec.create(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE.holderByNameCodec(), false).fieldOf("vehicle").forGetter(IsOnVehicle::vehicle)
     ).apply(instance, IsOnVehicle::new));
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 
@@ -32,6 +32,6 @@ public record IsOnVehicle(HolderSet<EntityType<?>> vehicle) implements ShogiEffe
         if (mountedVehicle == null) {
             return Either.left(false);
         }
-        return Either.left(mountedVehicle.is(vehicle));
+        return Either.left(vehicle.contains(mountedVehicle.getType().builtInRegistryHolder()));
     }
 }

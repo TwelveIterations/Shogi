@@ -1,7 +1,7 @@
 package net.blay09.mods.shogi.context.executor.internal;
 
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -16,10 +16,10 @@ class ImmediateEffectExecutorTest {
     @Test
     void executeUsesOverrideExecute() {
         final var executor = new ImmediateEffectExecutor();
-        final var identifier = Identifier.fromNamespaceAndPath("shogi", "test_execute");
+        final var identifier = ResourceLocation.fromNamespaceAndPath("shogi", "test_execute");
         final var didRun = new AtomicBoolean(false);
 
-        executor.overrideExecute(identifier, _ -> {
+        executor.overrideExecute(identifier, ignored -> {
         });
         executor.execute(identifier, () -> didRun.set(true));
 
@@ -29,7 +29,7 @@ class ImmediateEffectExecutorTest {
     @Test
     void consumeUsesOverrideConsume() {
         final var executor = new ImmediateEffectExecutor();
-        final var aggregateKey = AggregateKey.<Integer>of(Identifier.fromNamespaceAndPath("shogi", "test_consume"));
+        final var aggregateKey = AggregateKey.<Integer>of(ResourceLocation.fromNamespaceAndPath("shogi", "test_consume"));
         final var consumed = new AtomicInteger(0);
 
         executor.aggregate(aggregateKey, () -> 0, it -> 4);

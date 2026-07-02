@@ -8,7 +8,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -301,7 +301,7 @@ public class ShogiRuleParser {
         }
 
         private JsonObject buildFunctionCall(String identifier, List<Expr> positional, Map<String, Expr> named) throws ParseException {
-            final Identifier resolvedIdentifier = DefaultedIdentifiers.parse(identifier, defaultNamespaces, scope::hasEffect);
+            final ResourceLocation resolvedIdentifier = DefaultedIdentifiers.parse(identifier, defaultNamespaces, scope::hasEffect);
             if (resolvedIdentifier == null) {
                 throw error("Invalid effect identifier: " + identifier);
             }

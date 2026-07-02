@@ -16,7 +16,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,7 +28,7 @@ import java.util.function.Predicate;
 
 public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements ShogiEffect<ItemCostInformation> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "item_cost");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "item_cost");
     public static final AggregateKey<AggregatedItemCost> AGGREGATE_KEY = AggregateKey.of(IDENTIFIER);
 
     public static MapCodec<ItemCost> mapCodec(ShogiScope scope) {
@@ -63,7 +63,7 @@ public record ItemCost(HolderSet<Item> item, ShogiEffect<?> count) implements Sh
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 

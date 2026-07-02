@@ -4,7 +4,7 @@ import net.blay09.mods.shogi.internal.MinimalShogiFactories;
 import net.blay09.mods.shogi.internal.ShogiScopeRegistry;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Consumer;
 
@@ -12,12 +12,12 @@ import java.util.function.Consumer;
 public class ShogiFactoriesImpl extends MinimalShogiFactories {
 
     @Override
-    public ShogiScope scope(Identifier identifier) {
+    public ShogiScope scope(ResourceLocation identifier) {
         return ShogiScopeRegistry.getOrCreate(identifier, (id) -> ShogiDefaults.registerDefaults(new ShogiScopeImpl(id)));
     }
 
     @Override
-    public ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure) {
+    public ShogiScope scope(ResourceLocation identifier, Consumer<ShogiScope> configure) {
         final var scope = ShogiScopeRegistry.getOrCreate(identifier, (id) -> ShogiDefaults.registerDefaults(new ShogiScopeImpl(id)));
         configure.accept(scope);
         return scope;

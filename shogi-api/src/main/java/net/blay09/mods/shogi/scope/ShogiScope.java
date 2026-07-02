@@ -9,7 +9,7 @@ import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public interface ShogiScope {
      *
      * @return scope identifier
      */
-    Identifier identifier();
+    ResourceLocation identifier();
 
     /**
      * Registers a simple, infallible effect with no parameters.
@@ -33,7 +33,7 @@ public interface ShogiScope {
      * @param id effect identifier
      * @param supplier result supplier
      */
-    default <T> void registerSimpleEffect(Identifier id, Supplier<T> supplier) {
+    default <T> void registerSimpleEffect(ResourceLocation id, Supplier<T> supplier) {
         final var effect = ShogiEffect.simple(id, supplier);
         registerEffect(id, MapCodec.unit(effect), List.of());
     }
@@ -44,7 +44,7 @@ public interface ShogiScope {
      * @param id effect identifier
      * @param function result function
      */
-    default <T> void registerSimpleEffect(Identifier id, Function<ShogiContext, T> function) {
+    default <T> void registerSimpleEffect(ResourceLocation id, Function<ShogiContext, T> function) {
         final var effect = ShogiEffect.simple(id, function);
         registerEffect(id, MapCodec.unit(effect), List.of());
     }
@@ -55,7 +55,7 @@ public interface ShogiScope {
      * @param id effect identifier
      * @param effectCodec effect codec
      */
-    default void registerEffect(Identifier id, MapCodec<? extends ShogiEffect<?>> effectCodec) {
+    default void registerEffect(ResourceLocation id, MapCodec<? extends ShogiEffect<?>> effectCodec) {
         registerEffect(id, effectCodec, List.of());
     }
 
@@ -65,7 +65,7 @@ public interface ShogiScope {
      * @param alias alternate identifier accepted during lookup and decoding
      * @param target canonical registered effect identifier
      */
-    void registerEffectAlias(Identifier alias, Identifier target);
+    void registerEffectAlias(ResourceLocation alias, ResourceLocation target);
 
     /**
      * Registers an effect codec with optional ordinal parameter aliases.
@@ -74,7 +74,7 @@ public interface ShogiScope {
      * @param effectCodec effect codec
      * @param ordinalParameters parameter names used for positional argument decoding
      */
-    void registerEffect(Identifier id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters);
+    void registerEffect(ResourceLocation id, MapCodec<? extends ShogiEffect<?>> effectCodec, List<String> ordinalParameters);
 
     /**
      * Resolves the given effect identifier to its canonical registered identifier.
@@ -82,7 +82,7 @@ public interface ShogiScope {
      * @param identifier canonical id or alias
      * @return canonical effect identifier, or empty when unresolved
      */
-    Optional<Identifier> resolveEffectIdentifier(Identifier identifier);
+    Optional<ResourceLocation> resolveEffectIdentifier(ResourceLocation identifier);
 
     /**
      * Returns the polymorphic effect codec for all effects registered in this scope.
@@ -97,7 +97,7 @@ public interface ShogiScope {
      * @param identifier effect identifier
      * @return ordered list of ordinal parameter names
      */
-    List<String> getOrdinalParameters(Identifier identifier);
+    List<String> getOrdinalParameters(ResourceLocation identifier);
 
     /**
      * Returns whether an effect is registered for the given identifier.
@@ -105,7 +105,7 @@ public interface ShogiScope {
      * @param identifier effect identifier
      * @return true if the effect is registered in this scope
      */
-    boolean hasEffect(Identifier identifier);
+    boolean hasEffect(ResourceLocation identifier);
 
     /**
      * Returns ordered default namespaces used for unqualified identifiers.
@@ -150,7 +150,7 @@ public interface ShogiScope {
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to an integer
      */
-    default <TContext> ShogiValue<TContext, Integer> intValue(Identifier identifier, Function<TContext, Integer> defaultValue) {
+    default <TContext> ShogiValue<TContext, Integer> intValue(ResourceLocation identifier, Function<TContext, Integer> defaultValue) {
         return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.INT);
     }
 
@@ -162,7 +162,7 @@ public interface ShogiScope {
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a float
      */
-    default <TContext> ShogiValue<TContext, Float> floatValue(Identifier identifier, Function<TContext, Float> defaultValue) {
+    default <TContext> ShogiValue<TContext, Float> floatValue(ResourceLocation identifier, Function<TContext, Float> defaultValue) {
         return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.FLOAT);
     }
 
@@ -174,7 +174,7 @@ public interface ShogiScope {
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a boolean
      */
-    default <TContext> ShogiValue<TContext, Boolean> booleanValue(Identifier identifier, Function<TContext, Boolean> defaultValue) {
+    default <TContext> ShogiValue<TContext, Boolean> booleanValue(ResourceLocation identifier, Function<TContext, Boolean> defaultValue) {
         return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.BOOLEAN);
     }
 
@@ -186,7 +186,7 @@ public interface ShogiScope {
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a string
      */
-    default <TContext> ShogiValue<TContext, String> stringValue(Identifier identifier, Function<TContext, String> defaultValue) {
+    default <TContext> ShogiValue<TContext, String> stringValue(ResourceLocation identifier, Function<TContext, String> defaultValue) {
         return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.STRING);
     }
 
@@ -198,7 +198,7 @@ public interface ShogiScope {
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a chat component
      */
-    default <TContext> ShogiValue<TContext, Component> componentValue(Identifier identifier, Function<TContext, Component> defaultValue) {
+    default <TContext> ShogiValue<TContext, Component> componentValue(ResourceLocation identifier, Function<TContext, Component> defaultValue) {
         return Shogi.__factories().value(identifier, this, defaultValue).coerce(Coercion.COMPONENT);
     }
 
@@ -211,7 +211,7 @@ public interface ShogiScope {
      * @param <TSuccess> the success value type
      * @return a value that resolves to the given either payload shape
      */
-    default <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, Function<TContext, Either<TSuccess, ?>> defaultValue) {
+    default <TContext, TSuccess> ShogiValue<TContext, ?> maybe(ResourceLocation identifier, Function<TContext, Either<TSuccess, ?>> defaultValue) {
         return Shogi.__factories().maybe(identifier, this, defaultValue);
     }
 
@@ -225,7 +225,7 @@ public interface ShogiScope {
      * @param <TSuccess> default provider success type
      * @return either resolved success or failure payload
      */
-    <TContext, TSuccess> Either<?, ?> resolve(Identifier identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider);
+    <TContext, TSuccess> Either<?, ?> resolve(ResourceLocation identifier, TContext context, Function<TContext, Either<TSuccess, ?>> defaultProvider);
 
     /**
      * Registers an override provider consulted during resolution.
@@ -240,7 +240,7 @@ public interface ShogiScope {
      * @param identifier value identifier
      * @return override effect, or empty when none applies
      */
-    Optional<ShogiEffect<?>> getOverride(Identifier identifier);
+    Optional<ShogiEffect<?>> getOverride(ResourceLocation identifier);
 
     /**
      * Sets the network cache used for synchronized values.

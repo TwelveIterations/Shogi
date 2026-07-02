@@ -3,7 +3,7 @@ package net.blay09.mods.shogi;
 import com.mojang.datafixers.util.Either;
 import net.blay09.mods.shogi.internal.MinimalShogiFactories;
 import net.blay09.mods.shogi.scope.ShogiScope;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ public interface ShogiFactories {
      * @param identifier the scope identifier
      * @return the created scope
      */
-    ShogiScope scope(Identifier identifier);
+    ShogiScope scope(ResourceLocation identifier);
 
     /**
      * Returns a scope for a namespace of effect registrations and value resolution, creating it if needed, and runs
@@ -29,7 +29,7 @@ public interface ShogiFactories {
      * @param configure  configuration callback for the scope
      * @return the scope
      */
-    ShogiScope scope(Identifier identifier, Consumer<ShogiScope> configure);
+    ShogiScope scope(ResourceLocation identifier, Consumer<ShogiScope> configure);
 
     /**
      * Creates a value that resolves through a scope and falls back to a default provider.
@@ -41,7 +41,7 @@ public interface ShogiFactories {
      * @param <TSuccess>      the expected success type from the default provider
      * @return a Shogi value wrapper
      */
-    <TContext, TSuccess> ShogiValue<TContext, ?> value(Identifier identifier, ShogiScope scope, Function<TContext, TSuccess> defaultProvider);
+    <TContext, TSuccess> ShogiValue<TContext, ?> value(ResourceLocation identifier, ShogiScope scope, Function<TContext, TSuccess> defaultProvider);
 
     /**
      * Creates a value whose default provider already returns an Either success/failure payload.
@@ -53,7 +53,7 @@ public interface ShogiFactories {
      * @param <TSuccess>  the success type
      * @return a Shogi value wrapper
      */
-    <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> defaultRule);
+    <TContext, TSuccess> ShogiValue<TContext, ?> maybe(ResourceLocation identifier, ShogiScope scope, Function<TContext, Either<TSuccess, ?>> defaultRule);
 
     /**
      * Creates a factory implementation.

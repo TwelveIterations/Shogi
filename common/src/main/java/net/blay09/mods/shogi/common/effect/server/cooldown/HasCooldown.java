@@ -6,14 +6,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
-public record HasCooldown(Identifier cooldown) implements ShogiEffect<Boolean> {
+public record HasCooldown(ResourceLocation cooldown) implements ShogiEffect<Boolean> {
 
-    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "has_cooldown");
+    public static final ResourceLocation IDENTIFIER = ResourceLocation.fromNamespaceAndPath("shogi", "has_cooldown");
     public static final MapCodec<HasCooldown> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            Identifier.CODEC.fieldOf("identifier").forGetter(HasCooldown::cooldown)
+            ResourceLocation.CODEC.fieldOf("identifier").forGetter(HasCooldown::cooldown)
     ).apply(instance, HasCooldown::new));
 
     @Override
@@ -26,7 +26,7 @@ public record HasCooldown(Identifier cooldown) implements ShogiEffect<Boolean> {
     }
 
     @Override
-    public Identifier identifier() {
+    public ResourceLocation identifier() {
         return IDENTIFIER;
     }
 }
