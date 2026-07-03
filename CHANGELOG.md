@@ -1,1 +1,6 @@
-- Updated to Minecraft 26.2
+- Added support for `+`/`-` unary expressions (i.e. the exotic concept of negative numbers, lol)
+- Added `is_in_team(name)` and `lookup_team(username)` effects
+- Added `set_food_level(number)` and `set_health(number)` effects
+- Added `health_cost(number)` and `add_health(number)` effects
+- Added `hunger_cost(number)` and `add_hunger(number)` effects
+- API: Fixed `refuse()` not supporting `Component` coercion
