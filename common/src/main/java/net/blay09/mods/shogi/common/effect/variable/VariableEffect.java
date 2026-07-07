@@ -23,6 +23,14 @@ public record VariableEffect(String name) implements ShogiEffect<Object> {
     @Override
     public Either<?, ?> apply(ShogiContext context) {
         final var value = context.getVariable(name);
-        return value.isPresent() ? Either.left(value.get()) : Either.right(new MissingVariableFailure(name));
+        if (value.isEmpty()) {
+            return Either.right(new MissingVariableFailure(name));
+        }
+
+        final var resolvedValue = value.get();
+        if (resolvedValue instanceof ShogiEffect<?> effect) {
+            return effect.apply(context);
+        }
+        return Either.left(resolvedValue);
     }
 }

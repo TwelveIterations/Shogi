@@ -141,6 +141,7 @@ public class ShogiDefaults {
         scope.registerEffect(CooldownCost.IDENTIFIER, CooldownCost.mapCodec(scope), List.of("identifier", "duration"));
 
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
+        scope.registerEffect(MacroAssignmentEffect.IDENTIFIER, MacroAssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
         scope.registerEffect(ClampMinEffect.IDENTIFIER, ClampMinEffect.mapCodec(scope), List.of("value", "min"));
         scope.registerEffect(ClampMaxEffect.IDENTIFIER, ClampMaxEffect.mapCodec(scope), List.of("value", "max"));

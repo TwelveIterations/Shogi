@@ -112,6 +112,10 @@ public class ShogiRuleParser {
                 return nested;
             }
 
+            if (peek() == '$') {
+                return variableEffect(parseVariablePath());
+            }
+
             return parseConditionCall();
         }
 
@@ -134,6 +138,11 @@ public class ShogiRuleParser {
             if (peek() == '$') {
                 final String variable = parseVariablePath();
                 skipWhitespace();
+                if (tryConsume('#')) {
+                    expect('=');
+                    final Expr value = parseExpression();
+                    return macroAssignmentEffect(variable, effectFromExpr(value));
+                }
                 if (tryConsume('=')) {
                     final Expr value = parseExpression();
                     return assignmentEffect(variable, effectFromExpr(value));
@@ -410,6 +419,14 @@ public class ShogiRuleParser {
         private JsonObject assignmentEffect(String variable, JsonObject value) {
             final JsonObject json = new JsonObject();
             json.addProperty("type", "shogi:assignment");
+            json.addProperty("variable", variable);
+            json.add("value", value);
+            return json;
+        }
+
+        private JsonObject macroAssignmentEffect(String variable, JsonObject value) {
+            final JsonObject json = new JsonObject();
+            json.addProperty("type", "shogi:macro_assignment");
             json.addProperty("variable", variable);
             json.add("value", value);
             return json;
