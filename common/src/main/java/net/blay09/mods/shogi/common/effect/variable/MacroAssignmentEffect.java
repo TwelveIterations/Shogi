@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.context.MissingContextException;
 import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
@@ -34,6 +35,6 @@ public record MacroAssignmentEffect(String variable, ShogiEffect<?> value) imple
         }
 
         mutableContext.withVariable(variable, value);
-        return Either.left(value);
+        return EmptyEffect.INSTANCE.apply(context);
     }
 }
