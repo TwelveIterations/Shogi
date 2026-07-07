@@ -8,9 +8,11 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.common.context.aggregate.ShogiAggregateContext;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
+import net.blay09.mods.shogi.common.effect.variable.HasValueEffect;
 import net.blay09.mods.shogi.common.parse.DefaultedIdentifiers;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.executor.DeferredEffectExecutor;
+import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
 import net.blay09.mods.shogi.effect.failure.ShogiFatalFailure;
@@ -58,6 +60,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
 
                 scope.getEffectCodec().parse(ops, effectJson)
                         .result()
+                        .map(effect -> new ConditionEffect(new HasValueEffect(variable), effect, EmptyEffect.INSTANCE))
                         .ifPresent(updatedEffects::add);
             }
         }

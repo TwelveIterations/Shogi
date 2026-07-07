@@ -5,8 +5,10 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
+import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
+import net.blay09.mods.shogi.common.effect.variable.HasValueEffect;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ConstantEffect;
@@ -51,7 +53,9 @@ class CachedShogiRuleTest {
         final var aggregate = assertInstanceOf(AggregateEffect.class, effect);
         assertEquals(3, aggregate.effects().size());
         assertInstanceOf(AssignmentEffect.class, aggregate.effects().getFirst());
-        assertInstanceOf(XpPointsCostEffect.class, aggregate.effects().get(2));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(2));
+        assertInstanceOf(HasValueEffect.class, guardedAutoApplied.condition());
+        assertInstanceOf(XpPointsCostEffect.class, guardedAutoApplied.trueEffect());
     }
 
     @Test
@@ -105,6 +109,7 @@ class CachedShogiRuleTest {
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("name"));
+        scope.registerEffect(HasValueEffect.IDENTIFIER, HasValueEffect.MAP_CODEC, List.of("variable"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
         scope.registerEffect(XpPointsCostEffect.IDENTIFIER, XpPointsCostEffect.mapCodec(scope), List.of("value"));

@@ -147,5 +147,6 @@ public class ShogiDefaults {
         scope.registerEffect(ClampMaxEffect.IDENTIFIER, ClampMaxEffect.mapCodec(scope), List.of("value", "max"));
         scope.registerEffect(ClampEffect.IDENTIFIER, ClampEffect.mapCodec(scope), List.of("value", "min", "max"));
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("name"));
+        scope.registerEffect(HasValueEffect.IDENTIFIER, HasValueEffect.MAP_CODEC, List.of("variable"));
     }
 }

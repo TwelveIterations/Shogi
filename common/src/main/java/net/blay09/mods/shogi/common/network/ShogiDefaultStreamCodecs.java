@@ -15,6 +15,7 @@ import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
 import net.blay09.mods.shogi.common.effect.variable.ClampEffect;
 import net.blay09.mods.shogi.common.effect.variable.ClampMaxEffect;
 import net.blay09.mods.shogi.common.effect.variable.ClampMinEffect;
+import net.blay09.mods.shogi.common.effect.variable.HasValueEffect;
 import net.blay09.mods.shogi.common.effect.variable.MacroAssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
@@ -124,6 +125,11 @@ public final class ShogiDefaultStreamCodecs {
                 ByteBufCodecs.STRING_UTF8,
                 VariableEffect::name,
                 VariableEffect::new
+        ));
+        ShogiStreamCodecs.register(id("has_value_effect"), HasValueEffect.class, StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8,
+                HasValueEffect::variable,
+                HasValueEffect::new
         ));
         ShogiStreamCodecs.register(id("binary_op_effect"), BinaryOpEffect.class, StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8,
