@@ -15,6 +15,7 @@ import net.blay09.mods.shogi.common.effect.condition.pos.CanSeeSky;
 import net.blay09.mods.shogi.common.effect.player.AddHunger;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
+import net.blay09.mods.shogi.common.effect.variable.MacroAssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
@@ -82,6 +83,28 @@ class ShogiRuleParserTest {
         assertEquals("result", assignment.variable());
         final var value = assertInstanceOf(ConstantEffect.class, assignment.value());
         assertEquals(new JsonPrimitive(5L), value.value());
+    }
+
+    @Test
+    void parsesMacroAssignmentWithoutEvaluatingValue() {
+        final var effect = parseOk(createScope(), "$uses_xp #= any(noop, noop)");
+        final var assignment = assertInstanceOf(MacroAssignmentEffect.class, effect);
+        assertEquals("uses_xp", assignment.variable());
+
+        final var value = assertInstanceOf(AnyEffect.class, assignment.value());
+        assertEquals(2, value.conditions().size());
+        value.conditions().forEach(condition -> assertInstanceOf(EmptyEffect.class, condition));
+    }
+
+    @Test
+    void parsesVariableAsCondition() {
+        final var effect = parseOk(createScope(), "$uses_xp -> $xp_points_cost = 123");
+        final var condition = assertInstanceOf(ConditionEffect.class, effect);
+        assertEquals("uses_xp", assertInstanceOf(VariableEffect.class, condition.condition()).name());
+
+        final var assignment = assertInstanceOf(AssignmentEffect.class, condition.trueEffect());
+        assertEquals("xp_points_cost", assignment.variable());
+        assertEquals(new JsonPrimitive(123L), assertInstanceOf(ConstantEffect.class, assignment.value()).value());
     }
 
     @Test
@@ -492,6 +515,7 @@ class ShogiRuleParserTest {
         scope.registerEffect(AddHunger.IDENTIFIER, AddHunger.mapCodec(scope), List.of("hunger"));
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("path"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
+        scope.registerEffect(MacroAssignmentEffect.IDENTIFIER, MacroAssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
     }
 
