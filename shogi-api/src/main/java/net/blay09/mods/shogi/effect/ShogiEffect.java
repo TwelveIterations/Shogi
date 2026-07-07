@@ -5,6 +5,7 @@ import net.blay09.mods.shogi.coercion.Coercion;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -21,6 +22,15 @@ public interface ShogiEffect<TResult> extends Function<ShogiContext, Either<? ex
      * @return effect identifier
      */
     Identifier identifier();
+
+    /**
+     * Returns nested effects that are structurally owned by this effect.
+     *
+     * @return child effects for tree traversal
+     */
+    default List<ShogiEffect<?>> nestedEffects() {
+        return List.of();
+    }
 
     /**
      * Evaluates this effect as a boolean predicate.

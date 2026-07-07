@@ -10,6 +10,8 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record ClampMinEffect(ShogiEffect<?> value, ShogiEffect<?> min) implements ShogiEffect<Object> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "clamp_min");
@@ -24,6 +26,11 @@ public record ClampMinEffect(ShogiEffect<?> value, ShogiEffect<?> min) implement
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(value, min);
     }
 
     @Override

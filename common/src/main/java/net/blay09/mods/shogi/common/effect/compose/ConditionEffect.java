@@ -10,6 +10,8 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record ConditionEffect(
         ShogiEffect<?> condition,
         ShogiEffect<?> trueEffect,
@@ -21,6 +23,11 @@ public record ConditionEffect(
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(condition, trueEffect, falseEffect);
     }
 
     public static MapCodec<ConditionEffect> mapCodec(ShogiScope scope) {

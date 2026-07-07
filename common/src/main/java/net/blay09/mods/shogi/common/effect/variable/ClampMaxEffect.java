@@ -10,6 +10,8 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record ClampMaxEffect(ShogiEffect<?> value, ShogiEffect<?> max) implements ShogiEffect<Object> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "clamp_max");
@@ -24,6 +26,11 @@ public record ClampMaxEffect(ShogiEffect<?> value, ShogiEffect<?> max) implement
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(value, max);
     }
 
     @Override

@@ -44,6 +44,21 @@ class AggregateEffectTest {
     }
 
     @Test
+    void autoAppliesSingleParameterEffectFromNestedAssignedVariable() {
+        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final List<ShogiEffect<?>> effects = List.of(
+                parseOk(scope, "$uses_xp -> $xp_points_cost = 12")
+        );
+
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
+        assertEquals(2, aggregate.effects().size());
+
+        final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(1));
+        final var value = assertInstanceOf(VariableEffect.class, autoApplied.xp());
+        assertEquals("xp_points_cost", value.name());
+    }
+
+    @Test
     void doesNotAutoApplyForMultiParameterEffects() {
         final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
         final List<ShogiEffect<?>> effects = List.of(parseOk(scope, "$binary_op = 12"));
@@ -123,6 +138,7 @@ class AggregateEffectTest {
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
+        scope.registerEffect(ConditionEffect.IDENTIFIER, ConditionEffect.mapCodec(scope), List.of("condition", "then", "else"));
         scope.registerEffect(ExperiencePointsCost.IDENTIFIER, ExperiencePointsCost.mapCodec(scope), List.of("xp"));
         if (includeCustomNamespaceUnary) {
             scope.registerEffect(CustomScopeUnaryEffect.IDENTIFIER, CustomScopeUnaryEffect.mapCodec(scope), List.of("value"));
