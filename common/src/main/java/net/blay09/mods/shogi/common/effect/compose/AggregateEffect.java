@@ -36,9 +36,7 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
         final var updatedEffects = new ArrayList<>(effects);
         final Set<String> assignedVariables = new LinkedHashSet<>();
         for (final var effect : effects) {
-            if (effect instanceof AssignmentEffect assignmentEffect) {
-                assignedVariables.add(assignmentEffect.variable());
-            }
+            collectAssignedVariables(effect, assignedVariables);
         }
 
         for (final var variable : assignedVariables) {
@@ -65,6 +63,18 @@ public record AggregateEffect(List<ShogiEffect<?>> effects) implements ShogiEffe
         }
 
         return new AggregateEffect(updatedEffects);
+    }
+
+    private static void collectAssignedVariables(ShogiEffect<?> effect, Set<String> assignedVariables) {
+        if (effect instanceof AssignmentEffect assignmentEffect) {
+            assignedVariables.add(assignmentEffect.variable());
+        }
+        effect.nestedEffects().forEach(child -> collectAssignedVariables(child, assignedVariables));
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return effects;
     }
 
     @Override

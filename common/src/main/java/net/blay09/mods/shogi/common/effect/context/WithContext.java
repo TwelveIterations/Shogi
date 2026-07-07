@@ -9,6 +9,8 @@ import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record WithContext<T>(ShogiEffect<?> contextEffect, ShogiEffect<T> effect) implements ShogiEffect<T> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "with");
@@ -23,6 +25,11 @@ public record WithContext<T>(ShogiEffect<?> contextEffect, ShogiEffect<T> effect
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(contextEffect, effect);
     }
 
     @Override

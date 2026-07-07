@@ -9,6 +9,8 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 
+import java.util.List;
+
 public record OffHand<T>(ShogiEffect<T> effect) implements ShogiEffect<T> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "offhand");
@@ -22,6 +24,11 @@ public record OffHand<T>(ShogiEffect<T> effect) implements ShogiEffect<T> {
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(effect);
     }
 
     @Override

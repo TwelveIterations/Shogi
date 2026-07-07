@@ -11,6 +11,8 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.blay09.mods.shogi.coercion.Coercion;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record BinaryOpEffect(String op, ShogiEffect<?> left, ShogiEffect<?> right) implements ShogiEffect<Object> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "binary_op");
@@ -26,6 +28,11 @@ public record BinaryOpEffect(String op, ShogiEffect<?> left, ShogiEffect<?> righ
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(left, right);
     }
 
     @Override

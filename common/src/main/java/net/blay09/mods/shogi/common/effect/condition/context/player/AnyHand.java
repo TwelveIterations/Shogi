@@ -9,6 +9,8 @@ import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 
+import java.util.List;
+
 public record AnyHand(ShogiEffect<?> condition) implements ShogiEffect<Boolean> {
 
     private static final InteractionHand[] HANDS = InteractionHand.values();
@@ -23,6 +25,11 @@ public record AnyHand(ShogiEffect<?> condition) implements ShogiEffect<Boolean> 
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(condition);
     }
 
     @Override

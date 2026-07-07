@@ -26,6 +26,11 @@ public record AndEffect(List<ShogiEffect<?>> conditions) implements ShogiEffect<
     }
 
     @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return conditions;
+    }
+
+    @Override
     public Either<Boolean, Object> apply(ShogiContext context) {
         for (final var condition : conditions) {
             if (!condition.test(context)) {

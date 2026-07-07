@@ -12,6 +12,8 @@ import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.resources.Identifier;
 
+import java.util.List;
+
 public record AssignmentEffect(String variable, ShogiEffect<?> value) implements ShogiEffect<Object> {
 
     public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "assignment");
@@ -26,6 +28,11 @@ public record AssignmentEffect(String variable, ShogiEffect<?> value) implements
     @Override
     public Identifier identifier() {
         return IDENTIFIER;
+    }
+
+    @Override
+    public List<ShogiEffect<?>> nestedEffects() {
+        return List.of(value);
     }
 
     @Override
