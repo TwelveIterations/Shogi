@@ -41,4 +41,9 @@ public class EmptyEffect implements ShogiEffect<Object>, ShogiEmpty {
     public Either<?, ? extends ShogiEmpty> apply(ShogiContext context) {
         return Either.right(this);
     }
+
+    @Override
+    public String toString() {
+        return "EmptyEffect";
+    }
 }
