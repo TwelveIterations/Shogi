@@ -10,9 +10,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
 import net.blay09.mods.shogi.common.effect.variable.AssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.BinaryOpEffect;
+import net.blay09.mods.shogi.common.effect.variable.HasValueEffect;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
 import net.blay09.mods.shogi.common.parse.ShogiRuleParser;
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AggregateEffectTest {
 
@@ -38,7 +41,11 @@ class AggregateEffectTest {
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(3, aggregate.effects().size());
 
-        final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(2));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(2));
+        final var condition = assertInstanceOf(HasValueEffect.class, guardedAutoApplied.condition());
+        assertEquals("xp_points_cost", condition.variable());
+
+        final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, guardedAutoApplied.trueEffect());
         final var value = assertInstanceOf(VariableEffect.class, autoApplied.xp());
         assertEquals("xp_points_cost", value.name());
     }
@@ -53,9 +60,27 @@ class AggregateEffectTest {
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
 
-        final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(1));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(1));
+        final var condition = assertInstanceOf(HasValueEffect.class, guardedAutoApplied.condition());
+        assertEquals("xp_points_cost", condition.variable());
+
+        final var autoApplied = assertInstanceOf(ExperiencePointsCost.class, guardedAutoApplied.trueEffect());
         final var value = assertInstanceOf(VariableEffect.class, autoApplied.xp());
         assertEquals("xp_points_cost", value.name());
+    }
+
+    @Test
+    void guardedAutoAppliedEffectSkipsMissingNestedAssignment() {
+        final var scope = createScope(Identifier.fromNamespaceAndPath("shogi", "test"), false);
+        final List<ShogiEffect<?>> effects = List.of(
+                parseOk(scope, "$uses_xp -> $xp_points_cost = 12")
+        );
+
+        final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
+        final var result = aggregate.apply(new ShogiContextImpl());
+
+        assertTrue(result.left().isPresent());
+        assertTrue(result.left().orElseThrow().isEmpty());
     }
 
     @Test
@@ -74,7 +99,8 @@ class AggregateEffectTest {
 
         final var aggregate = AggregateEffect.withAutoApplied(customScope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
-        assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(1));
+        assertInstanceOf(CustomScopeUnaryEffect.class, guardedAutoApplied.trueEffect());
     }
 
     @Test
@@ -85,7 +111,8 @@ class AggregateEffectTest {
 
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
-        assertInstanceOf(CustomScopeUnaryEffect.class, aggregate.effects().get(1));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(1));
+        assertInstanceOf(CustomScopeUnaryEffect.class, guardedAutoApplied.trueEffect());
     }
 
     @Test
@@ -97,7 +124,8 @@ class AggregateEffectTest {
 
         final var aggregate = AggregateEffect.withAutoApplied(scope, JsonOps.INSTANCE, effects);
         assertEquals(2, aggregate.effects().size());
-        assertInstanceOf(ExperiencePointsCost.class, aggregate.effects().get(1));
+        final var guardedAutoApplied = assertInstanceOf(ConditionEffect.class, aggregate.effects().get(1));
+        assertInstanceOf(ExperiencePointsCost.class, guardedAutoApplied.trueEffect());
     }
 
     @Test
@@ -135,6 +163,7 @@ class AggregateEffectTest {
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
         scope.registerEffect(VariableEffect.IDENTIFIER, VariableEffect.MAP_CODEC, List.of("name"));
+        scope.registerEffect(HasValueEffect.IDENTIFIER, HasValueEffect.MAP_CODEC, List.of("variable"));
         scope.registerEffect(AssignmentEffect.IDENTIFIER, AssignmentEffect.mapCodec(scope), List.of("variable", "value"));
         scope.registerEffect(BinaryOpEffect.IDENTIFIER, BinaryOpEffect.mapCodec(scope), List.of("op", "left", "right"));
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
