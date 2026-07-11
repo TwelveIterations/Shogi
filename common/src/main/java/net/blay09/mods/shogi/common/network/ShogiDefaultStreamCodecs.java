@@ -1,6 +1,5 @@
 package net.blay09.mods.shogi.common.network;
 
-import com.google.gson.JsonElement;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
@@ -19,15 +18,9 @@ import net.blay09.mods.shogi.common.effect.variable.HasValueEffect;
 import net.blay09.mods.shogi.common.effect.variable.MacroAssignmentEffect;
 import net.blay09.mods.shogi.common.effect.variable.MissingVariableFailure;
 import net.blay09.mods.shogi.common.effect.variable.VariableEffect;
-import net.blay09.mods.shogi.effect.ConstantEffect;
-import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
-import net.blay09.mods.shogi.effect.ShogiEmpty;
-import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -37,10 +30,6 @@ import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 public final class ShogiDefaultStreamCodecs {
     private static boolean initialized;
-    private static final StreamCodec<RegistryFriendlyByteBuf, Throwable> THROWABLE_CODEC = StreamCodec.unit(new Exception());
-    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiDeferred> DEFERRED_CODEC = StreamCodec.unit(ShogiDeferred.INSTANCE);
-    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiEmpty> EMPTY_CODEC = StreamCodec.unit(EmptyEffect.INSTANCE);
-    private static final StreamCodec<RegistryFriendlyByteBuf, JsonElement> JSON_CODEC = ByteBufCodecs.lenientJson(Short.MAX_VALUE).cast();
     private static final StreamCodec<RegistryFriendlyByteBuf, ShogiEffect<?>> EFFECT_CODEC = ShogiStreamCodecs.dynamicObjectCodec()
             .map(value -> (ShogiEffect<?>) value, value -> value);
     private static final StreamCodec<RegistryFriendlyByteBuf, List<ShogiEffect<?>>> EFFECT_LIST_CODEC = EFFECT_CODEC.apply(ByteBufCodecs.list());
@@ -54,14 +43,6 @@ public final class ShogiDefaultStreamCodecs {
         }
         initialized = true;
 
-        ShogiStreamCodecs.register(id("int"), Integer.class, ByteBufCodecs.VAR_INT.cast());
-        ShogiStreamCodecs.register(id("float"), Float.class, ByteBufCodecs.FLOAT.cast());
-        ShogiStreamCodecs.register(id("bool"), Boolean.class, ByteBufCodecs.BOOL.cast());
-        ShogiStreamCodecs.register(id("string"), String.class, ByteBufCodecs.STRING_UTF8.cast());
-        ShogiStreamCodecs.register(id("json"), JsonElement.class, JSON_CODEC.cast());
-        ShogiStreamCodecs.register(id("component"), Component.class, ComponentSerialization.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("throwable"), Throwable.class, THROWABLE_CODEC);
-        ShogiStreamCodecs.register(id("list"), List.class, ShogiStreamCodecs.LIST_STREAM_CODEC);
         ShogiStreamCodecs.register(id("failure"), FailureInformation.class, FailureInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("refusal"), RefusalInformation.class, RefusalInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
@@ -71,13 +52,6 @@ public final class ShogiDefaultStreamCodecs {
         ShogiStreamCodecs.register(id("hunger_cost"), HungerCostInformation.class, HungerCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("item_cost"), ItemCostInformation.class, ItemCostInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("cooldown"), CooldownInformation.class, CooldownInformation.STREAM_CODEC);
-        ShogiStreamCodecs.register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
-        ShogiStreamCodecs.register(id("empty"), ShogiEmpty.class, EMPTY_CODEC);
-        ShogiStreamCodecs.register(id("constant_effect"), ConstantEffect.class, StreamCodec.composite(
-                JSON_CODEC,
-                ConstantEffect::value,
-                ConstantEffect::new
-        ));
         ShogiStreamCodecs.register(id("aggregate_effect"), AggregateEffect.class, StreamCodec.composite(
                 EFFECT_LIST_CODEC,
                 AggregateEffect::effects,
