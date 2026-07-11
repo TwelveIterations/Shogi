@@ -85,14 +85,18 @@ public final class ShogiStreamCodecs {
      * @param type runtime class handled by the codec
      * @param codec codec used for encoding/decoding payload values
      * @param <T> payload type
-     * @throws IllegalArgumentException if the class or identifier was already registered
      */
     public static synchronized <T> void register(Identifier typeId, Class<? super T> type, StreamCodec<RegistryFriendlyByteBuf, T> codec) {
-        if (byClass.containsKey(type)) {
-            throw new IllegalArgumentException("A synced payload codec is already registered for class " + type.getName());
+        final var existingByClass = byClass.remove(type);
+        if (existingByClass != null) {
+            logger.info("Overriding Shogi stream codec registration for class {}", type.getName());
+            byIdentifier.remove(existingByClass.id());
         }
-        if (byIdentifier.containsKey(typeId)) {
-            throw new IllegalArgumentException("A synced payload codec is already registered for identifier " + typeId);
+
+        final var existingByIdentifier = byIdentifier.remove(typeId);
+        if (existingByIdentifier != null) {
+            logger.info("Overriding Shogi stream codec registration for identifier '{}'", typeId);
+            byClass.remove(existingByIdentifier.type());
         }
 
         @SuppressWarnings("unchecked")
