@@ -1,7 +1,14 @@
 package net.blay09.mods.shogi.network;
 
+import com.google.gson.JsonElement;
 import com.mojang.datafixers.util.Either;
+import net.blay09.mods.shogi.effect.ConstantEffect;
+import net.blay09.mods.shogi.effect.EmptyEffect;
+import net.blay09.mods.shogi.effect.ShogiEmpty;
+import net.blay09.mods.shogi.effect.failure.ShogiDeferred;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -28,6 +35,10 @@ public final class ShogiStreamCodecs {
 
     private static final StreamCodec<RegistryFriendlyByteBuf, Object> UNKNOWN_CODEC = StreamCodec.unit(UNKNOWN_VALUE);
     private static final StreamCodec<RegistryFriendlyByteBuf, Identifier> IDENTIFIER_STREAM_CODEC = Identifier.STREAM_CODEC.cast();
+    private static final StreamCodec<RegistryFriendlyByteBuf, Throwable> THROWABLE_CODEC = StreamCodec.unit(new Exception());
+    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiDeferred> DEFERRED_CODEC = StreamCodec.unit(ShogiDeferred.INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, ShogiEmpty> EMPTY_CODEC = StreamCodec.unit(EmptyEffect.INSTANCE);
+    private static final StreamCodec<RegistryFriendlyByteBuf, JsonElement> JSON_CODEC = ByteBufCodecs.lenientJson(Short.MAX_VALUE).cast();
 
     /**
      * Dynamic object stream codec that dispatches by registered runtime type identifier.
@@ -42,7 +53,29 @@ public final class ShogiStreamCodecs {
      */
     public static final StreamCodec<RegistryFriendlyByteBuf, List<Object>> LIST_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.list());
 
+    static {
+        register(id("int"), Integer.class, ByteBufCodecs.VAR_INT.cast());
+        register(id("float"), Float.class, ByteBufCodecs.FLOAT.cast());
+        register(id("bool"), Boolean.class, ByteBufCodecs.BOOL.cast());
+        register(id("string"), String.class, ByteBufCodecs.STRING_UTF8.cast());
+        register(id("list"), List.class, LIST_STREAM_CODEC);
+        register(id("json"), JsonElement.class, JSON_CODEC.cast());
+        register(id("component"), Component.class, ComponentSerialization.STREAM_CODEC);
+        register(id("throwable"), Throwable.class, THROWABLE_CODEC);
+        register(id("deferred"), ShogiDeferred.class, DEFERRED_CODEC);
+        register(id("empty"), ShogiEmpty.class, EMPTY_CODEC);
+        register(id("constant_effect"), ConstantEffect.class, StreamCodec.composite(
+                JSON_CODEC,
+                ConstantEffect::value,
+                ConstantEffect::new
+        ));
+    }
+
     private ShogiStreamCodecs() {
+    }
+
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath("shogi", path);
     }
 
     /**
