@@ -122,17 +122,19 @@ dependencies {
 
 ```java
 public class ExampleModRules {
+    public static final ShogiScope scope = Shogi.scope(Identifier.fromNamespaceAndPath("example", "rules"));
+
     // This value takes a player as a context. By default, its result falls back to the static config value.
     // Users could configure a Shogi rule to conditionally prevent void deaths based on the player's xp level, dimension, etc.
-    public static final ShogiValue<Player, Boolean> PREVENT_DEATH = Shogi.booleanValue(Identifier.fromNamespaceAndPath("forgivingvoid", "prevent_death"), player -> ForgivingVoidConfig.getActive().preventDeath);
+    public static final ShogiValue<Player, Boolean> PREVENT_DEATH = scope.booleanValue(Identifier.fromNamespaceAndPath("example", "prevent_death"), player -> ForgivingVoidConfig.getActive().preventDeath);
 
     // This value takes a level as a context. By default, its result falls back to the static config value.
     // Users could configure a Shogi rule to change the falling height based on the level's dimension, time of day, etc.
-    public static final ShogiValue<Level, Integer> FALLING_HEIGHT = Shogi.intValue(Identifier.fromNamespaceAndPath("forgivingvoid", "falling_height"), level -> ForgivingVoidConfig.getActive().fallingHeight);
+    public static final ShogiValue<Level, Integer> FALLING_HEIGHT = scope.intValue(Identifier.fromNamespaceAndPath("example", "falling_height"), level -> ForgivingVoidConfig.getActive().fallingHeight);
 
     // There is also a ShogiContext class you can use if you want to provide exact context values.
     // In this case, we define a CAN_REVIVE_OTHERS as an optional way for Shogi users to disable reviving for players under custom conditions. 
-    public static final ShogiValue<ShogiContext, Boolean> CAN_REVIVE_OTHERS = Shogi.booleanValue(Identifier.fromNamespaceAndPath("hardcorerevival", "can_revive_others"), context -> true);
+    public static final ShogiValue<ShogiContext, Boolean> CAN_REVIVE_OTHERS = scope.booleanValue(Identifier.fromNamespaceAndPath("example", "can_revive_others"), context -> true);
 }
 ```
 
@@ -144,7 +146,7 @@ aggregates and calculations.
 
 These rules can be defined inside a JSON file in the config folder, named by the scope they target.
 
-For example, `config/hardcorerevival.default.json` can contain rules for the `hardcorerevival:default` scope, keyed by the value they should target.
+For example, `config/example.rules.json` can contain rules for the `example:rules` scope, keyed by the value they should target.
 
 Config file names use the pattern `config/<scopeNamespace>.<scopePath>.json`.
 If the scope path contains `/`, it is normalized to `.` in the file name.
@@ -217,7 +219,7 @@ further processing and discarding all other failures.
 ## Scopes
 
 Scopes determine which effects are available and keep track of any rule overrides that should be applied.
-You can extend the default scope or create a custom scope to control which effects are available within your
+You can create a custom scope to control which effects are available within your
 evaluations.
 
 ## Ruleset Grammar
