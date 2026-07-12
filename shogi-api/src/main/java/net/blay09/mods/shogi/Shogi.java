@@ -58,11 +58,14 @@ public class Shogi {
     /**
      * Creates an integer value backed by the default scope.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback value provider used when no override applies
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to an integer
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext> ShogiValue<TContext, Integer> intValue(Identifier identifier, Function<TContext, Integer> defaultValue) {
         return factories.value(identifier, defaultScope(), defaultValue).coerce(Coercion.INT);
     }
@@ -70,11 +73,14 @@ public class Shogi {
     /**
      * Creates a float value backed by the default scope.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback value provider used when no override applies
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a float
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext> ShogiValue<TContext, Float> floatValue(Identifier identifier, Function<TContext, Float> defaultValue) {
         return factories.value(identifier, defaultScope(), defaultValue).coerce(Coercion.FLOAT);
     }
@@ -82,11 +88,14 @@ public class Shogi {
     /**
      * Creates a boolean value backed by the default scope.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback value provider used when no override applies
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a boolean
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext> ShogiValue<TContext, Boolean> booleanValue(Identifier identifier, Function<TContext, Boolean> defaultValue) {
         return factories.value(identifier, defaultScope(), defaultValue).coerce(Coercion.BOOLEAN);
     }
@@ -94,11 +103,14 @@ public class Shogi {
     /**
      * Creates a string value backed by the default scope.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback value provider used when no override applies
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a string
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext> ShogiValue<TContext, String> stringValue(Identifier identifier, Function<TContext, String> defaultValue) {
         return factories.value(identifier, defaultScope(), defaultValue).coerce(Coercion.STRING);
     }
@@ -106,11 +118,14 @@ public class Shogi {
     /**
      * Creates a component value backed by the default scope.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback value provider used when no override applies
      * @param <TContext> the context type supplied during resolution
      * @return a value that resolves to a chat component
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext> ShogiValue<TContext, Component> componentValue(Identifier identifier, Function<TContext, Component> defaultValue) {
         return factories.value(identifier, defaultScope(), defaultValue).coerce(Coercion.COMPONENT);
     }
@@ -118,12 +133,15 @@ public class Shogi {
     /**
      * Creates a value whose default provider already returns an Either payload.
      *
+     * @deprecated Use {@link #scope(Identifier)} and create the value on the returned {@link ShogiScope} instead.
+     *
      * @param identifier the unique identifier for this value
      * @param defaultValue the fallback resolver returning either success or failure
      * @param <TContext> the context type supplied during resolution
      * @param <TSuccess> the success value type
      * @return a value that resolves to the given either payload shape
      */
+    @Deprecated(since = "26.3.0.0")
     public static <TContext, TSuccess> ShogiValue<TContext, ?> maybe(Identifier identifier, Function<TContext, Either<TSuccess, ?>> defaultValue) {
         return factories.maybe(identifier, defaultScope(), defaultValue);
     }

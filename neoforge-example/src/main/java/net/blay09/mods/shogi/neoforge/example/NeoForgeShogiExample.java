@@ -15,11 +15,12 @@ import static net.blay09.mods.shogi.common.ShogiCommon.id;
 public class NeoForgeShogiExample {
 
     public NeoForgeShogiExample(ModContainer modContainer, IEventBus modEventBus) {
-        final var intValue = Shogi.intValue(id("int"), _ -> 123);
-        final var floatValue = Shogi.floatValue(id("float"), _ -> 13.37f);
-        final var stringValue = Shogi.stringValue(id("string"), _ -> "Hello World");
-        final var booleanValue = Shogi.booleanValue(id("boolean"), _ -> false).networked();
-        final var nameValue = Shogi.componentValue(id("name"), Player::getName);
+        final var exampleScope = Shogi.scope(id("example"));
+        final var intValue = exampleScope.intValue(id("int"), _ -> 123);
+        final var floatValue = exampleScope.floatValue(id("float"), _ -> 13.37f);
+        final var stringValue = exampleScope.stringValue(id("string"), _ -> "Hello World");
+        final var booleanValue = exampleScope.booleanValue(id("boolean"), _ -> false).networked();
+        final var nameValue = exampleScope.componentValue(id("name"), Player::getName);
 
         NeoForge.EVENT_BUS.addListener((ServerTickEvent.Pre event) -> {
             for (final var player : event.getServer().getPlayerList().getPlayers()) {
