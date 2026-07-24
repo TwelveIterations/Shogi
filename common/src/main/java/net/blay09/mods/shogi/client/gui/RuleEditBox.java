@@ -9,13 +9,16 @@ import net.minecraft.client.gui.components.AbstractTextAreaWidget;
 import net.minecraft.client.gui.components.IMEPreeditOverlay;
 import net.minecraft.client.gui.components.MultilineTextField;
 import net.minecraft.client.gui.components.TextCursorUtils;
+import net.minecraft.client.gui.components.Whence;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.CharacterEvent;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.PreeditEvent;
+import net.blay09.mods.shogi.Shogi;
 import net.blay09.mods.shogi.common.mixin.MultilineTextFieldStringViewAccessor;
+import net.blay09.mods.shogi.scope.ShogiScope;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
@@ -30,13 +33,17 @@ public class RuleEditBox extends AbstractTextAreaWidget {
     private static final int CURSOR_HEIGHT = LINE_HEIGHT + 1;
     private static final int CURSOR_COLOR = 0xFFD0D0D0;
     private static final int PLACEHOLDER_TEXT_COLOR = ARGB.color(204, 0xFFE0E0E0);
+    private static final int SUGGESTION_LINE_HEIGHT = LINE_HEIGHT + 3;
 
     private final Font font;
     private final Component placeholder;
     private final MultilineTextField textField;
+    private final ShogiEffectSuggestionProvider suggestionProvider;
+    private final SuggestionPopup suggestionPopup = new SuggestionPopup(SUGGESTION_LINE_HEIGHT);
     private final boolean textShadow;
     private final int cursorColor;
     private @Nullable IMEPreeditOverlay preeditOverlay;
+    private @Nullable TextSuggestions currentSuggestions;
     private long focusedTime = Util.getMillis();
 
     private RuleEditBox(
@@ -47,6 +54,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
             int height,
             Component placeholder,
             Component narration,
+            ShogiScope scope,
             boolean textShadow,
             int cursorColor,
             boolean showBackground,
@@ -54,6 +62,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         super(x, y, width, height, narration, AbstractScrollArea.defaultSettings((int) (LINE_HEIGHT / 2.0)), showBackground, showDecorations);
         this.font = font;
         this.placeholder = placeholder;
+        this.suggestionProvider = new ShogiEffectSuggestionProvider(scope);
         this.textShadow = textShadow;
         this.cursorColor = cursorColor;
         this.textField = new MultilineTextField(font, width - this.totalInnerPadding());
@@ -78,6 +87,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
 
     public void setValue(String value, boolean allowOverflowLineLimit) {
         this.textField.setValue(value, allowOverflowLineLimit);
+        this.hideSuggestions();
     }
 
     public String getValue() {
@@ -91,8 +101,13 @@ public class RuleEditBox extends AbstractTextAreaWidget {
 
     @Override
     public void onClick(MouseButtonEvent event, boolean doubleClick) {
+        if (this.acceptSuggestionClick(event.x(), event.y())) {
+            return;
+        }
+
         if (doubleClick) {
             this.textField.selectWordAtCursor();
+            this.hideSuggestions();
         } else {
             this.textField.setSelecting(event.hasShiftDown());
             this.seekCursorScreen(event.x(), event.y());
@@ -104,17 +119,27 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         this.textField.setSelecting(true);
         this.seekCursorScreen(event.x(), event.y());
         this.textField.setSelecting(event.hasShiftDown());
+        this.hideSuggestions();
     }
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        return this.textField.keyPressed(event);
+        if (this.handleSuggestionKey(event)) {
+            return true;
+        }
+
+        final boolean handled = this.textField.keyPressed(event);
+        if (handled) {
+            this.hideSuggestions();
+        }
+        return handled;
     }
 
     @Override
     public boolean charTyped(CharacterEvent event) {
         if (this.visible && this.isFocused() && event.isAllowedChatCharacter()) {
             this.textField.insertText(event.codepointAsString());
+            this.updateSuggestions();
             return true;
         }
         return false;
@@ -137,7 +162,6 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         final var spans = ShogiExpressionHighlighter.highlight(value);
         final int cursor = this.textField.cursor();
         final boolean showCursor = this.isFocused() && TextCursorUtils.isCursorVisible(Util.getMillis() - this.focusedTime);
-        final boolean needsValidCursorPos = this.preeditOverlay != null;
         final boolean insertCursor = cursor < value.length();
         int cursorX = this.getInnerLeft();
         int cursorY = this.getInnerTop();
@@ -151,16 +175,13 @@ public class RuleEditBox extends AbstractTextAreaWidget {
                 drawHighlightedLine(graphics, value, spans, lineView.getBeginIndex(), lineView.getEndIndex(), this.getInnerLeft(), drawTop);
             }
 
-            if (!hasDrawnCursor && (needsValidCursorPos || showCursor) && insertCursor && cursor >= lineView.getBeginIndex() && cursor <= lineView.getEndIndex()) {
+            if (!hasDrawnCursor && cursor >= lineView.getBeginIndex() && cursor <= lineView.getEndIndex()) {
                 cursorX = this.getInnerLeft() + this.font.width(value.substring(lineView.getBeginIndex(), cursor));
                 cursorY = drawTop;
-                if (lineWithinVisibleBounds && showCursor) {
+                if (insertCursor && lineWithinVisibleBounds && showCursor) {
                     TextCursorUtils.extractInsertCursor(graphics, cursorX, cursorY, this.cursorColor, CURSOR_HEIGHT);
                 }
                 hasDrawnCursor = true;
-            } else if ((needsValidCursorPos || showCursor) && !insertCursor && lineWithinVisibleBounds) {
-                cursorX = this.getInnerLeft() + this.font.width(value.substring(lineView.getBeginIndex(), lineView.getEndIndex()));
-                cursorY = drawTop;
             }
 
             drawTop += LINE_HEIGHT;
@@ -180,6 +201,8 @@ public class RuleEditBox extends AbstractTextAreaWidget {
             this.preeditOverlay.updateInputPosition(cursorX, cursorY);
             graphics.setPreeditOverlay(this.preeditOverlay);
         }
+
+        this.suggestionPopup.extractRenderState(this.font, graphics, cursorX, cursorY + LINE_HEIGHT + 2, LINE_HEIGHT, this.textShadow);
     }
 
     private void drawHighlightedLine(
@@ -289,6 +312,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         final double mouseX = x - this.getX() - this.innerPadding();
         final double mouseY = y - this.getY() - this.innerPadding() + this.scrollAmount();
         this.textField.seekCursorToPoint(mouseX, mouseY);
+        this.hideSuggestions();
     }
 
     @Override
@@ -296,9 +320,67 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         super.setFocused(focused);
         if (focused) {
             this.focusedTime = Util.getMillis();
+        } else {
+            this.hideSuggestions();
         }
 
         Minecraft.getInstance().onTextInputFocusChange(this, focused);
+    }
+
+    private boolean handleSuggestionKey(KeyEvent event) {
+        return switch (this.suggestionPopup.keyPressed(event)) {
+            case ACCEPT -> {
+                this.applySelectedSuggestion();
+                yield true;
+            }
+            case HANDLED -> true;
+            case NONE -> false;
+        };
+    }
+
+    private boolean acceptSuggestionClick(double mouseX, double mouseY) {
+        if (!this.suggestionPopup.mouseClicked(mouseX, mouseY)) {
+            return false;
+        }
+
+        this.applySelectedSuggestion();
+        return true;
+    }
+
+    private void updateSuggestions() {
+        if (!this.isFocused()) {
+            this.hideSuggestions();
+            return;
+        }
+
+        final TextSuggestions suggestions = this.suggestionProvider.suggest(this.textField.value(), this.textField.cursor());
+        if (suggestions == null || suggestions.isEmpty()) {
+            this.hideSuggestions();
+            return;
+        }
+
+        this.currentSuggestions = suggestions;
+        this.suggestionPopup.setSuggestions(suggestions.values());
+    }
+
+    private void hideSuggestions() {
+        this.currentSuggestions = null;
+        this.suggestionPopup.hide();
+    }
+
+    private void applySelectedSuggestion() {
+        if (!this.suggestionPopup.isVisible() || this.currentSuggestions == null) {
+            return;
+        }
+
+        final TextSuggestions suggestions = this.currentSuggestions;
+        this.textField.setSelecting(false);
+        this.textField.seekCursor(Whence.ABSOLUTE, suggestions.start());
+        this.textField.setSelecting(true);
+        this.textField.seekCursor(Whence.ABSOLUTE, suggestions.end());
+        this.textField.setSelecting(false);
+        this.textField.insertText(this.suggestionPopup.selectedValue());
+        this.updateSuggestions();
     }
 
     public static Builder builder() {
@@ -309,6 +391,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         private int x;
         private int y;
         private Component placeholder = CommonComponents.EMPTY;
+        private ShogiScope scope = Shogi.defaultScope();
         private boolean textShadow = true;
         private int cursorColor = CURSOR_COLOR;
         private boolean showBackground = true;
@@ -326,6 +409,11 @@ public class RuleEditBox extends AbstractTextAreaWidget {
 
         public Builder setPlaceholder(Component placeholder) {
             this.placeholder = placeholder;
+            return this;
+        }
+
+        public Builder setScope(ShogiScope scope) {
+            this.scope = scope;
             return this;
         }
 
@@ -358,6 +446,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
                     height,
                     this.placeholder,
                     narration,
+                    this.scope,
                     this.textShadow,
                     this.cursorColor,
                     this.showBackground,
