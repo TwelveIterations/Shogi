@@ -46,10 +46,55 @@ class ShogiEffectSuggestionProviderTest {
         assertNull(provider.suggest("'no", 3));
     }
 
+    @Test
+    void showsParameterTooltipAfterOpeningBracket() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 0), provider.parameterTooltip("custom_effect(", 14));
+    }
+
+    @Test
+    void showsParameterTooltipAfterComma() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 1), provider.parameterTooltip("custom_effect(1,", 16));
+    }
+
+    @Test
+    void showsParameterTooltipAfterCommaAndWhitespace() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 1), provider.parameterTooltip("custom_effect(1, ", 17));
+    }
+
+    @Test
+    void showsParameterTooltipForNestedCurrentCall() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 1), provider.parameterTooltip("noop(custom_effect(1,", 21));
+    }
+
+    @Test
+    void ignoresNestedCommasForParameterTooltipIndex() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 1), provider.parameterTooltip("custom_effect(noop(1, 2), ", 26));
+    }
+
+    @Test
+    void doesNotShowParameterTooltipOutsideTriggerPositionOrStrings() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertNull(provider.parameterTooltip("custom_effect(1", 15));
+        assertNull(provider.parameterTooltip("'custom_effect(", 15));
+        assertNull(provider.parameterTooltip("noop(", 5));
+    }
+
     private static ShogiScopeImpl createScope() {
         final var scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
         scope.registerEffect(Identifier.fromNamespaceAndPath("test", "custom"), EmptyEffect.MAP_CODEC);
+        scope.registerEffect(Identifier.fromNamespaceAndPath("shogi", "custom_effect"), EmptyEffect.MAP_CODEC, List.of("value", "count"));
         return scope;
     }
 }

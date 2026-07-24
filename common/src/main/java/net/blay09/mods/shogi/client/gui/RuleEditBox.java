@@ -40,6 +40,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
     private final MultilineTextField textField;
     private final ShogiEffectSuggestionProvider suggestionProvider;
     private final SuggestionPopup suggestionPopup = new SuggestionPopup(SUGGESTION_LINE_HEIGHT);
+    private final ParameterTooltipPopup parameterTooltipPopup = new ParameterTooltipPopup();
     private final boolean textShadow;
     private final int cursorColor;
     private @Nullable IMEPreeditOverlay preeditOverlay;
@@ -66,7 +67,10 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         this.textShadow = textShadow;
         this.cursorColor = cursorColor;
         this.textField = new MultilineTextField(font, width - this.totalInnerPadding());
-        this.textField.setCursorListener(this::scrollToCursor);
+        this.textField.setCursorListener(() -> {
+            this.scrollToCursor();
+            this.updateSuggestions();
+        });
     }
 
     public void setCharacterLimit(int characterLimit) {
@@ -130,7 +134,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
 
         final boolean handled = this.textField.keyPressed(event);
         if (handled) {
-            this.hideSuggestions();
+            this.updateSuggestions();
         }
         return handled;
     }
@@ -203,6 +207,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         }
 
         this.suggestionPopup.extractRenderState(this.font, graphics, cursorX, cursorY + LINE_HEIGHT + 2, LINE_HEIGHT, this.textShadow);
+        this.parameterTooltipPopup.extractRenderState(this.font, graphics, cursorX, cursorY + LINE_HEIGHT + 2, LINE_HEIGHT, this.textShadow);
     }
 
     private void drawHighlightedLine(
@@ -354,18 +359,29 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         }
 
         final TextSuggestions suggestions = this.suggestionProvider.suggest(this.textField.value(), this.textField.cursor());
-        if (suggestions == null || suggestions.isEmpty()) {
-            this.hideSuggestions();
+        if (suggestions != null && !suggestions.isEmpty()) {
+            this.currentSuggestions = suggestions;
+            this.suggestionPopup.setSuggestions(suggestions.values());
+            this.parameterTooltipPopup.hide();
             return;
         }
 
-        this.currentSuggestions = suggestions;
-        this.suggestionPopup.setSuggestions(suggestions.values());
+        this.currentSuggestions = null;
+        this.suggestionPopup.hide();
+
+        final ShogiEffectSuggestionProvider.ParameterTooltip parameterTooltip = this.suggestionProvider.parameterTooltip(this.textField.value(), this.textField.cursor());
+        if (parameterTooltip == null || parameterTooltip.parameters().isEmpty()) {
+            this.parameterTooltipPopup.hide();
+            return;
+        }
+
+        this.parameterTooltipPopup.setParameters(parameterTooltip.parameters(), parameterTooltip.parameterIndex());
     }
 
     private void hideSuggestions() {
         this.currentSuggestions = null;
         this.suggestionPopup.hide();
+        this.parameterTooltipPopup.hide();
     }
 
     private void applySelectedSuggestion() {
