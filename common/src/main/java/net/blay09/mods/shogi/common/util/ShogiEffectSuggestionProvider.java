@@ -108,25 +108,11 @@ public class ShogiEffectSuggestionProvider {
 
     @Nullable
     private ParameterTooltipContext findParameterTooltipContext(String value, int cursor) {
-        if (cursor == 0 || cursor > value.length() || isInsideString(value, cursor)) {
+        if (cursor == 0 || cursor > value.length()) {
             return null;
         }
 
-        int triggerIndex = cursor - 1;
-        while (triggerIndex >= 0 && Character.isWhitespace(value.charAt(triggerIndex))) {
-            triggerIndex--;
-        }
-
-        if (triggerIndex < 0) {
-            return null;
-        }
-
-        final char previous = value.charAt(triggerIndex);
-        if (previous != '(' && previous != ',') {
-            return null;
-        }
-
-        final int openingBracket = previous == '(' ? triggerIndex : findEnclosingOpeningBracket(value, triggerIndex);
+        final int openingBracket = findEnclosingOpeningBracket(value, cursor);
         if (openingBracket <= 0) {
             return null;
         }
@@ -151,14 +137,14 @@ public class ShogiEffectSuggestionProvider {
             return null;
         }
 
-        return new ParameterTooltipContext(resolvedIdentifier, countParameterIndex(value, openingBracket + 1, triggerIndex));
+        return new ParameterTooltipContext(resolvedIdentifier, countParameterIndex(value, openingBracket + 1, cursor));
     }
 
-    private static int countParameterIndex(String value, int start, int end) {
+    private static int countParameterIndex(String value, int start, int endExclusive) {
         int parameterIndex = 0;
         int depth = 0;
         char quote = 0;
-        for (int i = start; i <= end; i++) {
+        for (int i = start; i < endExclusive; i++) {
             final char ch = value.charAt(i);
             if (quote != 0) {
                 if (ch == '\\') {

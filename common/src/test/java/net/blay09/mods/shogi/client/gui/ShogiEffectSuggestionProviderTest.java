@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.client.gui;
 
 import net.blay09.mods.shogi.common.util.ShogiEffectSuggestionProvider;
+import net.blay09.mods.shogi.common.util.ShogiEffectSuggestionProvider.TextSuggestions;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
 import net.minecraft.resources.Identifier;
@@ -92,10 +93,31 @@ class ShogiEffectSuggestionProviderTest {
     }
 
     @Test
-    void doesNotShowParameterTooltipOutsideTriggerPositionOrStrings() {
+    void showsParameterTooltipInsideCurrentParameter() {
         final var provider = new ShogiEffectSuggestionProvider(createScope());
 
-        assertNull(provider.parameterTooltip("custom_effect(1", 15));
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 0), provider.parameterTooltip("custom_effect(123", 16));
+    }
+
+    @Test
+    void showsParameterTooltipInsideLaterParameter() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 1), provider.parameterTooltip("custom_effect(1, 23", 19));
+    }
+
+    @Test
+    void showsParameterTooltipInsideQuotedParameter() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertEquals(new ShogiEffectSuggestionProvider.ParameterTooltip(List.of("value", "count"), 0), provider.parameterTooltip("custom_effect(\"minecraft:diamond\")", 25));
+    }
+
+    @Test
+    void doesNotShowParameterTooltipOutsideCallOrStrings() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        assertNull(provider.parameterTooltip("custom_effect(1)", 16));
         assertNull(provider.parameterTooltip("'custom_effect(", 15));
         assertNull(provider.parameterTooltip("noop(", 5));
     }

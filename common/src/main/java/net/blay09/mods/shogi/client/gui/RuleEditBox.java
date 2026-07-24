@@ -122,7 +122,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         this.textField.setSelecting(true);
         this.seekCursorScreen(event.x(), event.y());
         this.textField.setSelecting(event.hasShiftDown());
-        this.hideSuggestions();
+        this.updateParameterTooltip();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         if (handled && !previousValue.equals(this.textField.value())) {
             this.updateSuggestions();
         } else if (handled) {
-            this.hideSuggestions();
+            this.updateParameterTooltip();
         }
         return handled;
     }
@@ -319,7 +319,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         final double mouseX = x - this.getX() - this.innerPadding();
         final double mouseY = y - this.getY() - this.innerPadding() + this.scrollAmount();
         this.textField.seekCursorToPoint(mouseX, mouseY);
-        this.hideSuggestions();
+        this.updateParameterTooltip();
     }
 
     @Override
@@ -370,6 +370,24 @@ public class RuleEditBox extends AbstractTextAreaWidget {
 
         this.currentSuggestions = null;
         this.suggestionPopup.hide();
+
+        final ShogiEffectSuggestionProvider.ParameterTooltip parameterTooltip = this.suggestionProvider.parameterTooltip(this.textField.value(), this.textField.cursor());
+        if (parameterTooltip == null || parameterTooltip.parameters().isEmpty()) {
+            this.parameterTooltipPopup.hide();
+            return;
+        }
+
+        this.parameterTooltipPopup.setParameters(parameterTooltip.parameters(), parameterTooltip.parameterIndex());
+    }
+
+    private void updateParameterTooltip() {
+        this.currentSuggestions = null;
+        this.suggestionPopup.hide();
+
+        if (!this.isFocused()) {
+            this.parameterTooltipPopup.hide();
+            return;
+        }
 
         final ShogiEffectSuggestionProvider.ParameterTooltip parameterTooltip = this.suggestionProvider.parameterTooltip(this.textField.value(), this.textField.cursor());
         if (parameterTooltip == null || parameterTooltip.parameters().isEmpty()) {
