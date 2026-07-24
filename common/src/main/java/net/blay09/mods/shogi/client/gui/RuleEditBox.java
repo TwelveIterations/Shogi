@@ -67,10 +67,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
         this.textShadow = textShadow;
         this.cursorColor = cursorColor;
         this.textField = new MultilineTextField(font, width - this.totalInnerPadding());
-        this.textField.setCursorListener(() -> {
-            this.scrollToCursor();
-            this.updateSuggestions();
-        });
+        this.textField.setCursorListener(this::scrollToCursor);
     }
 
     public void setCharacterLimit(int characterLimit) {
@@ -132,9 +129,12 @@ public class RuleEditBox extends AbstractTextAreaWidget {
             return true;
         }
 
+        final String previousValue = this.textField.value();
         final boolean handled = this.textField.keyPressed(event);
-        if (handled) {
+        if (handled && !previousValue.equals(this.textField.value())) {
             this.updateSuggestions();
+        } else if (handled) {
+            this.hideSuggestions();
         }
         return handled;
     }
