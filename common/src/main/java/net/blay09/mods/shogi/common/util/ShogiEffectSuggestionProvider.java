@@ -1,4 +1,4 @@
-package net.blay09.mods.shogi.client.gui;
+package net.blay09.mods.shogi.common.util;
 
 import net.blay09.mods.shogi.common.parse.DefaultedIdentifiers;
 import net.blay09.mods.shogi.scope.ShogiScope;
@@ -238,5 +238,15 @@ public class ShogiEffectSuggestionProvider {
     }
 
     public record ParameterTooltip(List<String> parameters, int parameterIndex) {
+    }
+
+    public record TextSuggestions(int start, int end, List<String> values) {
+        public TextSuggestions {
+            values = List.copyOf(values);
+        }
+
+        public boolean isEmpty() {
+            return values.isEmpty();
+        }
     }
 }

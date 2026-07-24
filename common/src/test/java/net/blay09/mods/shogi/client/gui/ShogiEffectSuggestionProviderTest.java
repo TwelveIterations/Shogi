@@ -1,5 +1,6 @@
 package net.blay09.mods.shogi.client.gui;
 
+import net.blay09.mods.shogi.common.util.ShogiEffectSuggestionProvider;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.scope.internal.ShogiScopeImpl;
 import net.minecraft.resources.Identifier;

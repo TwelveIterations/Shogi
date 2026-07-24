@@ -1,4 +1,4 @@
-package net.blay09.mods.shogi.client.gui;
+package net.blay09.mods.shogi.common.util;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

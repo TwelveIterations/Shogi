@@ -1,5 +1,6 @@
 package net.blay09.mods.shogi.client.gui;
 
+import net.blay09.mods.shogi.common.util.ShogiExpressionHighlighter;
 import net.minecraft.network.chat.Component;
 import org.junit.jupiter.api.Test;
 

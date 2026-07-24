@@ -1,6 +1,8 @@
 package net.blay09.mods.shogi.client.gui;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
+import net.blay09.mods.shogi.common.util.ShogiEffectSuggestionProvider;
+import net.blay09.mods.shogi.common.util.ShogiExpressionHighlighter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -44,7 +46,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
     private final boolean textShadow;
     private final int cursorColor;
     private @Nullable IMEPreeditOverlay preeditOverlay;
-    private @Nullable TextSuggestions currentSuggestions;
+    private ShogiEffectSuggestionProvider.@Nullable TextSuggestions currentSuggestions;
     private long focusedTime = Util.getMillis();
 
     private RuleEditBox(
@@ -358,7 +360,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
             return;
         }
 
-        final TextSuggestions suggestions = this.suggestionProvider.suggest(this.textField.value(), this.textField.cursor());
+        final ShogiEffectSuggestionProvider.TextSuggestions suggestions = this.suggestionProvider.suggest(this.textField.value(), this.textField.cursor());
         if (suggestions != null && !suggestions.isEmpty()) {
             this.currentSuggestions = suggestions;
             this.suggestionPopup.setSuggestions(suggestions.values());
@@ -389,7 +391,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
             return;
         }
 
-        final TextSuggestions suggestions = this.currentSuggestions;
+        final ShogiEffectSuggestionProvider.TextSuggestions suggestions = this.currentSuggestions;
         this.textField.setSelecting(false);
         this.textField.seekCursor(Whence.ABSOLUTE, suggestions.start());
         this.textField.setSelecting(true);
