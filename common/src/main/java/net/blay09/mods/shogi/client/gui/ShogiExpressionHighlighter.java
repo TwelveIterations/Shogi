@@ -1,5 +1,9 @@
 package net.blay09.mods.shogi.client.gui;
 
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,6 +66,30 @@ public class ShogiExpressionHighlighter {
         }
 
         return spans;
+    }
+
+    public static Component highlightComponent(String input) {
+        final var component = Component.empty();
+        final var spans = highlight(input);
+        int current = 0;
+        for (Span span : spans) {
+            if (current < span.start()) {
+                appendSlice(component, input, current, span.start(), DEFAULT_COLOR);
+            }
+
+            appendSlice(component, input, span.start(), span.end(), span.color());
+            current = span.end();
+        }
+
+        if (current < input.length()) {
+            appendSlice(component, input, current, input.length(), DEFAULT_COLOR);
+        }
+
+        return component;
+    }
+
+    private static void appendSlice(MutableComponent component, String input, int start, int end, int color) {
+        component.append(Component.literal(input.substring(start, end)).withStyle(style -> style.withColor(TextColor.fromRgb(color & 0xFFFFFF))));
     }
 
     private static int readVariable(String input, List<Span> spans, int start) {
