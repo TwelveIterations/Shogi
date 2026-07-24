@@ -30,6 +30,15 @@ class ShogiEffectSuggestionProviderTest {
     }
 
     @Test
+    void keepsExactMatchWhenOtherSuggestionsSharePrefix() {
+        final var provider = new ShogiEffectSuggestionProvider(createScope());
+
+        final var suggestions = provider.suggest("is_near", 7);
+
+        assertEquals(new TextSuggestions(0, 7, List.of("is_near", "is_near_block_entity")), suggestions);
+    }
+
+    @Test
     void doesNotSuggestWithoutFilterCharacters() {
         final var provider = new ShogiEffectSuggestionProvider(createScope());
 
@@ -95,6 +104,8 @@ class ShogiEffectSuggestionProviderTest {
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
         scope.registerEffect(Identifier.fromNamespaceAndPath("test", "custom"), EmptyEffect.MAP_CODEC);
         scope.registerEffect(Identifier.fromNamespaceAndPath("shogi", "custom_effect"), EmptyEffect.MAP_CODEC, List.of("value", "count"));
+        scope.registerEffect(Identifier.fromNamespaceAndPath("shogi", "is_near"), EmptyEffect.MAP_CODEC);
+        scope.registerEffect(Identifier.fromNamespaceAndPath("shogi", "is_near_block_entity"), EmptyEffect.MAP_CODEC);
         return scope;
     }
 }

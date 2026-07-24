@@ -58,11 +58,14 @@ public class ShogiEffectSuggestionProvider {
                 addIfMatching(names, qualifiedName, prefix);
             }
         }
+        if (names.size() == 1 && names.contains(prefix)) {
+            return List.of();
+        }
         return new ArrayList<>(names);
     }
 
     private static void addIfMatching(Set<String> names, String value, String prefix) {
-        if (value.startsWith(prefix) && !value.equals(prefix)) {
+        if (value.startsWith(prefix)) {
             names.add(value);
         }
     }
