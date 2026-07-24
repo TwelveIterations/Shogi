@@ -488,6 +488,16 @@ class ShogiRuleParserTest {
         assertContains(parseErr(createScope(), "noop + () -> noop"), "Expected condition");
     }
 
+    @Test
+    void exposesRegisteredEffectIdentifiersAndAliases() {
+        final var scope = createScope();
+        final var alias = Identifier.fromNamespaceAndPath("shogi", "empty");
+        scope.registerEffectAlias(alias, EmptyEffect.IDENTIFIER);
+
+        assertTrue(scope.getEffectIdentifiers().contains(EmptyEffect.IDENTIFIER));
+        assertTrue(scope.getEffectIdentifiers().contains(alias));
+    }
+
     private static ShogiScope createScope() {
         final ShogiScopeImpl scope = new ShogiScopeImpl(Identifier.fromNamespaceAndPath("shogi", "test"));
         registerParserEffects(scope, true);

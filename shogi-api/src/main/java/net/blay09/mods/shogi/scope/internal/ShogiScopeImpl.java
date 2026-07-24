@@ -85,6 +85,14 @@ public class ShogiScopeImpl implements ShogiScope {
     }
 
     @Override
+    public List<Identifier> getEffectIdentifiers() {
+        final Set<Identifier> identifiers = new TreeSet<>(Comparator.comparing(Identifier::toString));
+        identifiers.addAll(effectTypeById.keySet());
+        identifiers.addAll(effectAliasById.keySet());
+        return List.copyOf(identifiers);
+    }
+
+    @Override
     public Codec<ShogiEffect<?>> getEffectCodec() {
         return effectCodec;
     }

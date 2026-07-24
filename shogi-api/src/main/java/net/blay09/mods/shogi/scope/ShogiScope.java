@@ -85,6 +85,13 @@ public interface ShogiScope {
     Optional<Identifier> resolveEffectIdentifier(Identifier identifier);
 
     /**
+     * Returns all effect identifiers accepted by this scope, including aliases.
+     *
+     * @return registered effect identifiers
+     */
+    List<Identifier> getEffectIdentifiers();
+
+    /**
      * Returns the polymorphic effect codec for all effects registered in this scope.
      *
      * @return effect codec
