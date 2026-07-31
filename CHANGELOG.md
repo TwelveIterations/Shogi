@@ -1,4 +1,3 @@
-- Added support for `#=` macro assignments
-- Added `has_value` to check if variable is set
-- Fixed nested variable assignments not being counted for auto applied effects
-- Fixed some default effects missing sync codecs
+- API: Added RuleEditBox with syntax highlighting, auto-complete suggestions and parameter tooltips
+- API: Allow overriding stream codec registrations without throwing
+- API: Move primitive stream codecs for results that may occur without Shogi installed to shogi-api
