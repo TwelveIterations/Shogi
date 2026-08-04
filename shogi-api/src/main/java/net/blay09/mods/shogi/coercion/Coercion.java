@@ -63,9 +63,26 @@ public final class Coercion {
     });
 
     /**
+     * Coerces values to a long, reading the last list/array element when applicable.
+     */
+    public static final Function<Object, Long> LONG = LAST.andThen(input -> switch (input) {
+        case Long longValue -> longValue;
+        case Number numberValue -> numberValue.longValue();
+        case JsonPrimitive jsonElement when jsonElement.isNumber() -> jsonElement.getAsLong();
+        case JsonPrimitive jsonElement when jsonElement.isString() -> Long.parseLong(jsonElement.getAsString());
+        case JsonPrimitive jsonElement when jsonElement.isBoolean() -> jsonElement.getAsBoolean() ? 1L : 0L;
+        default -> Long.parseLong(Objects.toString(input));
+    });
+
+    /**
      * Coerces values to a non-negative integer.
      */
     public static final Function<Object, Integer> NON_NEGATIVE_INT = input -> Math.max(0, INT.apply(input));
+
+    /**
+     * Coerces values to a non-negative long.
+     */
+    public static final Function<Object, Long> NON_NEGATIVE_LONG = input -> Math.max(0, LONG.apply(input));
 
     /**
      * Coerces values to a duration in seconds, reading the last list/array element when applicable.
