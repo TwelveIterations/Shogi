@@ -26,9 +26,9 @@ public record ExperiencePointsCost(ShogiEffect<?> xp) implements ShogiEffect<Exp
     @Override
     public Either<ExperiencePointsCostInformation, Object> apply(ShogiContext context) {
         final var entity = context.entity();
-        final int availableXp = entity instanceof Player player ? getAvailableExperiencePoints(player) : 0;
+        final long availableXp = entity instanceof Player player ? getAvailableExperiencePoints(player) : 0;
 
-        final var requestedXp = xp.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
+        final int requestedXp = xp.apply(context).mapLeft(Coercion.NON_NEGATIVE_INT).orThrow();
         final int aggregateCost = context.aggregate(AGGREGATE_KEY, () -> 0, it -> it + requestedXp);
         if (aggregateCost > availableXp) {
             return Either.right(new ExperiencePointsCostInformation(availableXp, requestedXp));
@@ -47,21 +47,21 @@ public record ExperiencePointsCost(ShogiEffect<?> xp) implements ShogiEffect<Exp
         return IDENTIFIER;
     }
 
-    private static int getAvailableExperiencePoints(Player player) {
-        final int xpForLevel = getCumulativeXpNeededForLevel(player.experienceLevel);
-        final int xpForProgress = (int) Math.floor(player.experienceProgress * player.getXpNeededForNextLevel());
+    private static long getAvailableExperiencePoints(Player player) {
+        final long xpForLevel = getCumulativeXpNeededForLevel(player.experienceLevel);
+        final long xpForProgress = (int) Math.floor(player.experienceProgress * player.getXpNeededForNextLevel());
         return xpForLevel + xpForProgress;
     }
 
-    private static int getXpNeededForNextLevel(int level) {
+    private static long getXpNeededForNextLevel(int level) {
         if (level >= 30) {
-            return 112 + (level - 30) * 9;
+            return 112 + (level - 30) * 9L;
         }
-        return level >= 15 ? 37 + (level - 15) * 5 : 7 + level * 2;
+        return level >= 15 ? 37 + (level - 15) * 5L : 7 + level * 2L;
     }
 
-    private static int getCumulativeXpNeededForLevel(int targetLevel) {
-        int currentCumulativeXp = 0;
+    private static long getCumulativeXpNeededForLevel(int targetLevel) {
+        long currentCumulativeXp = 0;
         for (int level = 0; level < targetLevel; level++) {
             currentCumulativeXp += getXpNeededForNextLevel(level);
         }
