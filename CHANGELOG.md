@@ -1,3 +1,3 @@
-- API: Added RuleEditBox with syntax highlighting, auto-complete suggestions and parameter tooltips
+- Fixed integer overflow in ExperiencePointsCost if the player has too many levels
 - API: Allow overriding stream codec registrations without throwing
-- API: Move primitive stream codecs for results that may occur without Shogi installed to shogi-api
+- API: Move primitive stream codecs for results that may occur without Shogi installed to `shogi-api`
