@@ -1,4 +1,3 @@
-- Added support for `#=` macro assignments
-- Added `has_value` to check if variable is set
-- Fixed nested variable assignments not being counted for auto applied effects
-- Fixed some default effects missing sync codecs
+- Fixed integer overflow in ExperiencePointsCost if the player has too many levels
+- API: Allow overriding stream codec registrations without throwing
+- API: Move primitive stream codecs for results that may occur without Shogi installed to `shogi-api`
