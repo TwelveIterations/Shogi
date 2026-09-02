@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -60,6 +61,14 @@ public interface ShogiContext {
      */
     @Nullable
     BlockState blockState();
+
+    /**
+     * Returns the fluid state in this context.
+     *
+     * @return the current fluid state, or {@code null}
+     */
+    @Nullable
+    FluidState fluidState();
 
     /**
      * Returns the block entity in this context.
@@ -164,6 +173,20 @@ public interface ShogiContext {
         final var blockState = blockState();
         if (blockState != null) {
             return blockState;
+        }
+        throw new MissingContextException(this);
+    }
+
+    /**
+     * Returns the fluid state in this context or throws if absent.
+     *
+     * @return the current fluid state
+     * @throws MissingContextException if no fluid state is available
+     */
+    default FluidState requireFluidState() {
+        final var fluidState = fluidState();
+        if (fluidState != null) {
+            return fluidState;
         }
         throw new MissingContextException(this);
     }

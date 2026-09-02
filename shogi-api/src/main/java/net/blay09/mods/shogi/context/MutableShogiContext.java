@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -49,6 +50,14 @@ public interface MutableShogiContext extends ShogiContext {
      * @return this builder
      */
     MutableShogiContext withBlockState(@Nullable BlockState blockState);
+
+    /**
+     * Sets the fluid state in this context.
+     *
+     * @param fluidState the fluid state to store, or {@code null}
+     * @return this builder
+     */
+    MutableShogiContext withFluidState(@Nullable FluidState fluidState);
 
     /**
      * Sets the block entity in this context.
@@ -153,6 +162,10 @@ public interface MutableShogiContext extends ShogiContext {
 
         if (input instanceof BlockState blockState) {
             context.withBlockState(blockState);
+        }
+
+        if (input instanceof FluidState fluidState) {
+            context.withFluidState(fluidState);
         }
 
         return context;
