@@ -17,6 +17,8 @@ import net.blay09.mods.shogi.common.effect.condition.player.SimplePlayerEffects;
 import net.blay09.mods.shogi.common.effect.condition.pos.*;
 import net.blay09.mods.shogi.common.effect.context.WithContext;
 import net.blay09.mods.shogi.common.effect.context.player.OffHand;
+import net.blay09.mods.shogi.common.effect.context.pos.Above;
+import net.blay09.mods.shogi.common.effect.context.pos.Below;
 import net.blay09.mods.shogi.common.effect.cost.DamageItem;
 import net.blay09.mods.shogi.common.effect.cost.ExperienceLevelCost;
 import net.blay09.mods.shogi.common.effect.cost.ExperiencePointsCost;
@@ -80,6 +82,8 @@ public class ShogiDefaults {
         scope.registerEffect(AnyHand.IDENTIFIER, AnyHand.mapCodec(scope), List.of("condition"));
         scope.registerEffect(WithContext.IDENTIFIER, WithContext.mapCodec(scope), List.of("context", "effect"));
         scope.registerEffect(OffHand.IDENTIFIER, OffHand.mapCodec(scope), List.of("effect"));
+        scope.registerEffect(Above.IDENTIFIER, Above.mapCodec(scope), List.of("effect"));
+        scope.registerEffect(Below.IDENTIFIER, Below.mapCodec(scope), List.of("effect"));
 
         scope.registerEffect(HasEntityTag.IDENTIFIER, HasEntityTag.MAP_CODEC, List.of("tag"));
         scope.registerEffect(HasMobEffect.IDENTIFIER, HasMobEffect.MAP_CODEC, List.of("effect"));
