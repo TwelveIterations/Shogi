@@ -111,6 +111,8 @@ public class ShogiDefaults {
         scope.registerEffect(IsBrighterThan.IDENTIFIER, IsBrighterThan.mapCodec(scope), List.of("light_level"));
         scope.registerEffect(IsBlock.IDENTIFIER, IsBlock.MAP_CODEC, List.of("block"));
         scope.registerEffect(IsFluid.IDENTIFIER, IsFluid.MAP_CODEC, List.of("fluid"));
+        scope.registerEffect(IsFluidSource.IDENTIFIER, IsFluidSource.MAP_CODEC);
+        scope.registerEffect(IsWaterlogged.IDENTIFIER, IsWaterlogged.MAP_CODEC);
         scope.registerEffect(IsBlockEntity.IDENTIFIER, IsBlockEntity.MAP_CODEC, List.of("block_entity_type"));
         scope.registerEffect(IsBlockStateProperty.IDENTIFIER, IsBlockStateProperty.MAP_CODEC, List.of("property", "value"));
         scope.registerEffect(IsDarkerThan.IDENTIFIER, IsDarkerThan.mapCodec(scope), List.of("light_level"));
