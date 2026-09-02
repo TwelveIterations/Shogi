@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class ShogiContextImpl implements MutableShogiContext {
     private @Nullable Entity entity;
     private @Nullable BlockPos blockPos;
     private @Nullable BlockState blockState;
+    private @Nullable FluidState fluidState;
     private @Nullable BlockEntity blockEntity;
     private @Nullable ItemStack itemStack;
     private @Nullable Map<String, Object> variables;
@@ -123,6 +125,27 @@ public class ShogiContextImpl implements MutableShogiContext {
     @Override
     public MutableShogiContext withBlockState(@Nullable BlockState blockState) {
         this.blockState = blockState;
+        return this;
+    }
+
+    @Override
+    public @Nullable FluidState fluidState() {
+        if (fluidState != null) {
+            return fluidState;
+        }
+        final var blockState = blockState();
+        if (blockState != null) {
+            return blockState.getFluidState();
+        }
+        if (parent != null) {
+            return parent.fluidState();
+        }
+        return null;
+    }
+
+    @Override
+    public MutableShogiContext withFluidState(@Nullable FluidState fluidState) {
+        this.fluidState = fluidState;
         return this;
     }
 
