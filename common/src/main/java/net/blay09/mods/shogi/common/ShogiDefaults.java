@@ -43,6 +43,7 @@ import net.blay09.mods.shogi.common.network.ShogiNetworkCacheImpl;
 import net.blay09.mods.shogi.common.scope.ShogiOverrideProviderImpl;
 import net.blay09.mods.shogi.common.scope.ShogiRuleRepositories;
 import net.blay09.mods.shogi.common.scope.ShogiRuleRepository;
+import net.blay09.mods.shogi.effect.AlwaysEffect;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
@@ -69,6 +70,7 @@ public class ShogiDefaults {
     private static void registerEffects(ShogiScope scope) {
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
+        scope.registerEffect(AlwaysEffect.IDENTIFIER, AlwaysEffect.MAP_CODEC);
 
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
