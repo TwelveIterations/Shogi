@@ -17,7 +17,6 @@ publishing {
 
 neoForge {
     neoFormVersion = libs.neoForm.get().version
-    parchment.parchmentArtifact = libs.parchment.get().toString()
 }
 
 apply from: rootProject.file('repositories.gradle')
