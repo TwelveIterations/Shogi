@@ -1,5 +1,6 @@
 package net.blay09.mods.shogi.fabric.gametest;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.blay09.mods.shogi.Shogi;
 import net.blay09.mods.shogi.common.ShogiCommon;
 import net.blay09.mods.shogi.common.effect.server.cooldown.AddCooldown;
@@ -9,13 +10,41 @@ import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.level.GameType;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ShogiGameTest {
+
+    @GameTest
+    public void cooldownCommandsModifyPlayerCooldowns(GameTestHelper helper) throws CommandSyntaxException {
+        final var player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        final var cooldowns = ShogiCooldowns.get(player);
+        final var firstCooldown = ShogiCommon.id("test_command_first");
+        final var secondCooldown = ShogiCommon.id("test_command_second");
+        final var server = helper.getLevel().getServer();
+        final var dispatcher = server.getCommands().getDispatcher();
+        final var source = server.createCommandSourceStack().withEntity(player);
+
+        dispatcher.execute("shogi cooldown set @s " + firstCooldown + " 10", source);
+        helper.assertValueEqual(cooldowns.getRemainingTicks(firstCooldown), 200L, "set command cooldown ticks");
+
+        dispatcher.execute("shogi cooldown add @s " + firstCooldown + " 5", source);
+        helper.assertValueEqual(cooldowns.getRemainingTicks(firstCooldown), 300L, "add command cooldown ticks");
+
+        dispatcher.execute("shogi cooldown set @s " + secondCooldown + " 20", source);
+        dispatcher.execute("shogi cooldown reset @s " + firstCooldown, source);
+        helper.assertFalse(cooldowns.hasCooldown(firstCooldown), "reset command did not remove the selected cooldown");
+        helper.assertTrue(cooldowns.hasCooldown(secondCooldown), "reset command removed an unrelated cooldown");
+
+        dispatcher.execute("shogi cooldown reset @s all", source);
+        helper.assertFalse(cooldowns.hasCooldown(secondCooldown), "reset all command did not remove every cooldown");
+        helper.succeed();
+    }
 
     @GameTest
     public void onDeathIsEvaluatedForDyingEntity(GameTestHelper helper) {
