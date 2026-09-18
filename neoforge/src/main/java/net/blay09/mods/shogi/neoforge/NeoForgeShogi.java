@@ -9,6 +9,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
@@ -21,6 +22,7 @@ public class NeoForgeShogi {
         modEventBus.addListener(this::onRegisterPayloadHandlers);
         NeoForge.EVENT_BUS.addListener(this::onRegisterCommands);
         NeoForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
+        NeoForge.EVENT_BUS.addListener(this::onLivingDeath);
     }
 
     private void onRegisterCommands(RegisterCommandsEvent event) {
@@ -33,5 +35,11 @@ public class NeoForgeShogi {
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         events.onPlayerDisconnected(event.getEntity());
+    }
+
+    private void onLivingDeath(LivingDeathEvent event) {
+        if (!event.getEntity().level().isClientSide()) {
+            events.onLivingEntityDeath(event.getEntity(), event.getSource());
+        }
     }
 }

@@ -8,6 +8,7 @@ import net.blay09.mods.shogi.common.platform.ShogiEventListener;
 import net.blay09.mods.shogi.forge.client.ForgeShogiClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -22,6 +23,7 @@ public class ForgeShogi {
         context.getModEventBus().addListener(this::onRegisterPayloadHandlers);
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(this::onPlayerLoggedOut);
+        MinecraftForge.EVENT_BUS.addListener(this::onLivingDeath);
         if (FMLEnvironment.dist.isClient()) {
             ForgeShogiClient.init(context.getModEventBus());
         }
@@ -37,5 +39,11 @@ public class ForgeShogi {
 
     private void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         events.onPlayerDisconnected(event.getEntity());
+    }
+
+    private void onLivingDeath(LivingDeathEvent event) {
+        if (!event.getEntity().level().isClientSide()) {
+            events.onLivingEntityDeath(event.getEntity(), event.getSource());
+        }
     }
 }
