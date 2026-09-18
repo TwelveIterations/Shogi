@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "shogi-test",
+  "version": "1.0.0",
+  "name": "Shogi Game Tests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "net.blay09.mods.shogi.fabric.gametest.ShogiGameTest"
+    ]
+  }
+}
