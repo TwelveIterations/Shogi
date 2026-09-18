@@ -73,7 +73,7 @@ public final class ShogiCommand {
             cooldowns.resetAllCooldowns();
         }
 
-        source.sendSuccess(() -> Component.literal("Reset all cooldown(s) across " + targets.size() + " player(s)."), true);
+        source.sendSuccess(() -> Component.translatable("commands.shogi.cooldown.reset.all.success", targets.size()), true);
         return removed;
     }
 
@@ -85,7 +85,7 @@ public final class ShogiCommand {
             removed++;
         }
 
-        source.sendSuccess(() -> Component.literal("Reset cooldown(s) matching " + identifier + " across " + targets.size() + " player(s)."), true);
+        source.sendSuccess(() -> Component.translatable("commands.shogi.cooldown.reset.success", identifier.toString(), targets.size()), true);
         return removed;
     }
 
@@ -95,7 +95,7 @@ public final class ShogiCommand {
             ShogiCooldowns.get(target).addCooldown(identifier, ticks);
         }
 
-        source.sendSuccess(() -> Component.literal("Added " + seconds + " second(s) to cooldown " + identifier + " across " + targets.size() + " player(s)."), true);
+        source.sendSuccess(() -> Component.translatable("commands.shogi.cooldown.add.success", seconds, identifier.toString(), targets.size()), true);
         return targets.size();
     }
 
@@ -105,7 +105,7 @@ public final class ShogiCommand {
             ShogiCooldowns.get(target).setCooldown(identifier, ticks);
         }
 
-        source.sendSuccess(() -> Component.literal("Set cooldown " + identifier + " to " + seconds + " second(s) across " + targets.size() + " player(s)."), true);
+        source.sendSuccess(() -> Component.translatable("commands.shogi.cooldown.set.success", identifier.toString(), seconds, targets.size()), true);
         return targets.size();
     }
 

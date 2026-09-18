@@ -1,1 +1,6 @@
-{}
+{
+  "commands.shogi.cooldown.reset.all.success": "Reset all cooldown(s) across %s player(s).",
+  "commands.shogi.cooldown.reset.success": "Reset cooldown(s) matching %s across %s player(s).",
+  "commands.shogi.cooldown.add.success": "Added %s second(s) to cooldown %s across %s player(s).",
+  "commands.shogi.cooldown.set.success": "Set cooldown %s to %s second(s) across %s player(s)."
+}
