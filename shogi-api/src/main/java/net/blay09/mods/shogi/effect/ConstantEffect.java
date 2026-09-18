@@ -1,9 +1,11 @@
 package net.blay09.mods.shogi.effect;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.util.Constant;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
@@ -43,5 +45,21 @@ public record ConstantEffect(JsonElement value) implements ShogiEffect<Object> {
     @Override
     public Either<?, ?> apply(ShogiContext context) {
         return Either.left(value);
+    }
+
+    public static ConstantEffect of(String string) {
+        return new ConstantEffect(new JsonPrimitive(string));
+    }
+
+    public static ConstantEffect of(Number number) {
+        return new ConstantEffect(new JsonPrimitive(number));
+    }
+
+    public static ConstantEffect of(Boolean bool) {
+        return new ConstantEffect(new JsonPrimitive(bool));
+    }
+
+    public static ConstantEffect of(Character c) {
+        return new ConstantEffect(new JsonPrimitive(c));
     }
 }
