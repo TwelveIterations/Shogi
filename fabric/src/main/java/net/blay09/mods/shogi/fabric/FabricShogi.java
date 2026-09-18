@@ -5,6 +5,7 @@ import net.blay09.mods.shogi.common.command.ShogiCommand;
 import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
@@ -16,6 +17,7 @@ public class FabricShogi implements ModInitializer {
         final var eventListener = ShogiCommon.initialize();
 
         ServerPlayConnectionEvents.DISCONNECT.register((listener, server) -> eventListener.onPlayerDisconnected(listener.player));
+        ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> eventListener.onLivingEntityDeath(entity, damageSource));
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> ShogiCommand.register(dispatcher));
     }
 }
