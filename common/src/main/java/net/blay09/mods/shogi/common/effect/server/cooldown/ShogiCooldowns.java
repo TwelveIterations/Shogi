@@ -32,9 +32,17 @@ public final class ShogiCooldowns {
 
     public long addCooldown(Identifier identifier, int ticks) {
         final long currentRemainingTicks = getRemainingTicks(identifier);
-        final int totalDuration = (int) Math.min(Integer.MAX_VALUE, currentRemainingTicks + ticks);
-        cooldowns.put(identifier, new ShogiCooldownInstance(identifier, totalDuration));
+        final int totalDuration = Math.clamp(currentRemainingTicks + ticks, 0, Integer.MAX_VALUE);
+        setCooldown(identifier, totalDuration);
         return totalDuration;
+    }
+
+    public void setCooldown(Identifier identifier, int ticks) {
+        if (ticks <= 0) {
+            cooldowns.remove(identifier);
+        } else {
+            cooldowns.put(identifier, new ShogiCooldownInstance(identifier, ticks));
+        }
     }
 
     public void resetCooldown(Identifier identifier) {

@@ -1,6 +1,8 @@
 package net.blay09.mods.shogi.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldowns;
 import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldownsAccess;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -42,7 +44,25 @@ public final class ShogiCommand {
                                                 .executes(context -> resetCooldown(
                                                         context.getSource(),
                                                         EntityArgument.getPlayers(context, "targets"),
-                                                        IdentifierArgument.getId(context, "identifier"))))))));
+                                                        IdentifierArgument.getId(context, "identifier"))))))
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .then(Commands.argument("identifier", IdentifierArgument.id())
+                                                .then(Commands.argument("seconds", IntegerArgumentType.integer())
+                                                        .executes(context -> addCooldown(
+                                                                context.getSource(),
+                                                                EntityArgument.getPlayers(context, "targets"),
+                                                                IdentifierArgument.getId(context, "identifier"),
+                                                                IntegerArgumentType.getInteger(context, "seconds")))))))
+                        .then(Commands.literal("set")
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .then(Commands.argument("identifier", IdentifierArgument.id())
+                                                .then(Commands.argument("seconds", IntegerArgumentType.integer(0))
+                                                        .executes(context -> setCooldown(
+                                                                context.getSource(),
+                                                                EntityArgument.getPlayers(context, "targets"),
+                                                                IdentifierArgument.getId(context, "identifier"),
+                                                                IntegerArgumentType.getInteger(context, "seconds")))))))));
     }
 
     private static int resetAllCooldowns(CommandSourceStack source, Collection<ServerPlayer> targets) {
@@ -67,5 +87,29 @@ public final class ShogiCommand {
 
         source.sendSuccess(() -> Component.literal("Reset cooldown(s) matching " + identifier + " across " + targets.size() + " player(s)."), true);
         return removed;
+    }
+
+    private static int addCooldown(CommandSourceStack source, Collection<ServerPlayer> targets, Identifier identifier, int seconds) {
+        final var ticks = secondsToTicks(seconds);
+        for (final var target : targets) {
+            ShogiCooldowns.get(target).addCooldown(identifier, ticks);
+        }
+
+        source.sendSuccess(() -> Component.literal("Added " + seconds + " second(s) to cooldown " + identifier + " across " + targets.size() + " player(s)."), true);
+        return targets.size();
+    }
+
+    private static int setCooldown(CommandSourceStack source, Collection<ServerPlayer> targets, Identifier identifier, int seconds) {
+        final var ticks = secondsToTicks(seconds);
+        for (final var target : targets) {
+            ShogiCooldowns.get(target).setCooldown(identifier, ticks);
+        }
+
+        source.sendSuccess(() -> Component.literal("Set cooldown " + identifier + " to " + seconds + " second(s) across " + targets.size() + " player(s)."), true);
+        return targets.size();
+    }
+
+    private static int secondsToTicks(int seconds) {
+        return Math.clamp(seconds * 20L, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 }
