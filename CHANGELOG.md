@@ -1,3 +1,3 @@
-- Fixed integer overflow in ExperiencePointsCost if the player has too many levels
-- API: Allow overriding stream codec registrations without throwing
-- API: Move primitive stream codecs for results that may occur without Shogi installed to `shogi-api`
+- Added `/shogi cooldown <targets> add <identifier> <seconds>` and `/shogi cooldown <targets> set <identifier> <seconds>` commands
+- Added `shogi:on_death` rule that is evaluated when an entity dies
+- Fixed missing i18n for `/shogi cooldown` commands
