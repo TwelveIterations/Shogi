@@ -3,7 +3,6 @@ package net.blay09.mods.shogi.common.effect.variable;
 import com.google.gson.JsonPrimitive;
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
-import net.blay09.mods.shogi.common.network.ShogiDefaultStreamCodecs;
 import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
@@ -47,8 +46,6 @@ class MacroAssignmentEffectTest {
 
     @Test
     void doesNotExposeStoredEffectAsAggregatePayload() {
-        ShogiDefaultStreamCodecs.registerDefaults();
-
         final var context = new ShogiContextImpl();
         final ShogiEffect<Boolean> macro = ShogiEffect.simple(
                 Identifier.fromNamespaceAndPath("test", "unregistered_stream_codec"),
