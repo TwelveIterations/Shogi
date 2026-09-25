@@ -12,7 +12,7 @@ import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.GameType;
 
 import java.util.Map;
@@ -21,8 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ShogiGameTest {
 
     @GameTest
+    @SuppressWarnings("removal")
     public void cooldownCommandsModifyPlayerCooldowns(GameTestHelper helper) throws CommandSyntaxException {
-        final var player = (ServerPlayer) helper.makeMockServerPlayer(GameType.SURVIVAL);
+        final var player = helper.makeMockServerPlayerInLevel();
         final var cooldowns = ShogiCooldowns.get(player);
         final var firstCooldown = ShogiCommon.id("test_command_first");
         final var secondCooldown = ShogiCommon.id("test_command_second");
@@ -49,7 +50,7 @@ public class ShogiGameTest {
     @GameTest
     public void onDeathIsEvaluatedForDyingEntity(GameTestHelper helper) {
         final var repository = ShogiRuleRepositories.get(Shogi.defaultScope()).orElseThrow();
-        final var entity = helper.spawn(EntityTypes.PIG, 1, 1, 1);
+        final var entity = helper.spawn(EntityType.PIG, 1, 1, 1);
         final var ruleEvaluated = new AtomicBoolean();
 
         repository.apply(Map.of(ShogiCommon.id("on_death"), ShogiEffect.simple(
