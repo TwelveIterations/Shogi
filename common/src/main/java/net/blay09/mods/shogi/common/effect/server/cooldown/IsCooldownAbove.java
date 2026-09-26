@@ -13,10 +13,8 @@ import net.blay09.mods.shogi.util.ShogiDuration;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
-
 public record IsCooldownAbove(Identifier cooldown, ShogiEffect<?> duration) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = id("is_cooldown_above");
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_cooldown_above");
 
     public static MapCodec<IsCooldownAbove> mapCodec(ShogiScope scope) {
         return RecordCodecBuilder.mapCodec(instance -> instance.group(
