@@ -44,10 +44,9 @@ import net.blay09.mods.shogi.common.scope.ShogiRuleRepository;
 import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.EmptyEffect;
 import net.blay09.mods.shogi.scope.ShogiScope;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
-
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 public class ShogiDefaults {
 
@@ -93,8 +92,8 @@ public class ShogiDefaults {
         scope.registerEffect(HasItem.IDENTIFIER, HasItem.mapCodec(scope), List.of("item", "count"));
         scope.registerEffect(IsInTeam.IDENTIFIER, IsInTeam.mapCodec(scope), List.of("team"));
         scope.registerEffect(LookupTeam.IDENTIFIER, LookupTeam.mapCodec(scope), List.of("username"));
-        scope.registerSimpleEffect(id("has_empty_inventory"), SimplePlayerEffects::hasEmptyInventory);
-        scope.registerSimpleEffect(id("is_wearing_any_armor"), SimplePlayerEffects::isWearingAnyArmor);
+        scope.registerSimpleEffect(Identifier.fromNamespaceAndPath("shogi", "has_empty_inventory"), SimplePlayerEffects::hasEmptyInventory);
+        scope.registerSimpleEffect(Identifier.fromNamespaceAndPath("shogi", "is_wearing_any_armor"), SimplePlayerEffects::isWearingAnyArmor);
 
         scope.registerEffect(CanSeeSky.IDENTIFIER, CanSeeSky.MAP_CODEC);
         scope.registerEffect(GetLightLevel.IDENTIFIER, GetLightLevel.MAP_CODEC);
@@ -116,7 +115,7 @@ public class ShogiDefaults {
         scope.registerEffect(IsNear.IDENTIFIER, IsNear.MAP_CODEC, List.of("pos", "distance"));
         scope.registerEffect(FindBlockEntity.IDENTIFIER, FindBlockEntity.MAP_CODEC, List.of("block_entity_type", "distance"));
         scope.registerEffect(IsStructure.IDENTIFIER, IsStructure.MAP_CODEC, List.of("structure"));
-        scope.registerEffectAlias(id("is_near_block_entity"), FindBlockEntity.IDENTIFIER);
+        scope.registerEffectAlias(Identifier.fromNamespaceAndPath("shogi", "is_near_block_entity"), FindBlockEntity.IDENTIFIER);
         scope.registerEffect(IsPlayerNearby.IDENTIFIER, IsPlayerNearby.MAP_CODEC, List.of("distance", "min"));
         scope.registerEffect(IsWithin.IDENTIFIER, IsWithin.MAP_CODEC, List.of("bounds"));
 

@@ -8,6 +8,7 @@ import net.blay09.mods.shogi.common.network.ShogiValueResultPayload;
 import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.blay09.mods.shogi.common.platform.ShogiRuntimeSpi;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -42,7 +43,7 @@ public class NeoForgeShogiClient {
 
     private void onAddClientReloadListeners(AddClientReloadListenersEvent event) {
         final var runtime = ShogiRuntimeSpi.get();
-        event.addListener(ShogiCommon.id("client_rule_reloader"), new ShogiClientRuleReloadListener(runtime.getConfigDirectory(), () -> {
+        event.addListener(Identifier.fromNamespaceAndPath("shogi", "client_rule_reloader"), new ShogiClientRuleReloadListener(runtime.getConfigDirectory(), () -> {
             final var connection = Minecraft.getInstance().getConnection();
             return connection != null ? connection.registryAccess() : null;
         }));

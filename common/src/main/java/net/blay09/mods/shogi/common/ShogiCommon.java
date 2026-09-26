@@ -16,7 +16,7 @@ public class ShogiCommon implements ShogiEventListener {
 
         final var runtime = ShogiRuntimeSpi.get();
         final var configDirectory = runtime.getConfigDirectory();
-        runtime.registerServerReloadListener(ShogiCommon.id("rule_reloader"), registries -> new ShogiRuleReloadListener(registries, configDirectory));
+        runtime.registerServerReloadListener(Identifier.fromNamespaceAndPath("shogi", "rule_reloader"), registries -> new ShogiRuleReloadListener(registries, configDirectory));
     }
 
     public static ShogiCommon initialize() {
@@ -33,9 +33,5 @@ public class ShogiCommon implements ShogiEventListener {
     @Override
     public void onLivingEntityDeath(LivingEntity entity, DamageSource source) {
         ShogiBuiltinRules.ON_DEATH.get(entity);
-    }
-
-    public static Identifier id(String path) {
-        return Identifier.fromNamespaceAndPath("shogi", path);
     }
 }

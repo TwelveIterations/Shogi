@@ -6,10 +6,8 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.minecraft.resources.Identifier;
 
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
-
 public class IsOnAnyVehicle implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = id("is_on_any_vehicle");
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "is_on_any_vehicle");
     private static final IsOnAnyVehicle INSTANCE = new IsOnAnyVehicle();
     public static final MapCodec<IsOnAnyVehicle> MAP_CODEC = MapCodec.unit(INSTANCE);
 
