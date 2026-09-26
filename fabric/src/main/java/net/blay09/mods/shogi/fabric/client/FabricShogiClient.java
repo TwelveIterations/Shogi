@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
 public class FabricShogiClient implements ClientModInitializer {
@@ -26,7 +27,7 @@ public class FabricShogiClient implements ClientModInitializer {
 
         ClientPlayConnectionEvents.DISCONNECT.register((_, _) -> events.onDisconnected());
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(
-                ShogiCommon.id("client_rule_reloader"),
+                Identifier.fromNamespaceAndPath("shogi", "client_rule_reloader"),
                 new ShogiClientRuleReloadListener(runtime.getConfigDirectory(), () -> {
                     final var connection = Minecraft.getInstance().getConnection();
                     return connection != null ? connection.registryAccess() : null;

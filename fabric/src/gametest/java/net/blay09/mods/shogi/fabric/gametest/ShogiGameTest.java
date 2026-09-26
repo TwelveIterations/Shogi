@@ -10,6 +10,7 @@ import net.blay09.mods.shogi.effect.ConstantEffect;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -25,8 +26,8 @@ public class ShogiGameTest {
     public void cooldownCommandsModifyPlayerCooldowns(GameTestHelper helper) throws CommandSyntaxException {
         final var player = helper.makeMockServerPlayerInLevel();
         final var cooldowns = ShogiCooldowns.get(player);
-        final var firstCooldown = ShogiCommon.id("test_command_first");
-        final var secondCooldown = ShogiCommon.id("test_command_second");
+        final var firstCooldown = Identifier.fromNamespaceAndPath("shogi", "test_command_first");
+        final var secondCooldown = Identifier.fromNamespaceAndPath("shogi", "test_command_second");
         final var server = helper.getLevel().getServer();
         final var dispatcher = server.getCommands().getDispatcher();
         final var source = server.createCommandSourceStack().withEntity(player);
@@ -53,8 +54,8 @@ public class ShogiGameTest {
         final var entity = helper.spawn(EntityType.PIG, 1, 1, 1);
         final var ruleEvaluated = new AtomicBoolean();
 
-        repository.apply(Map.of(ShogiCommon.id("on_death"), ShogiEffect.simple(
-                ShogiCommon.id("test_on_death"),
+        repository.apply(Map.of(Identifier.fromNamespaceAndPath("shogi", "on_death"), ShogiEffect.simple(
+                Identifier.fromNamespaceAndPath("shogi", "test_on_death"),
                 context -> {
                     final var matchesEntity = context.entity() == entity;
                     ruleEvaluated.set(matchesEntity);
@@ -76,10 +77,10 @@ public class ShogiGameTest {
     @SuppressWarnings("removal")
     public void cooldownAddedOnDeathPersistsAfterPlayerRespawn(GameTestHelper helper) {
         final var repository = ShogiRuleRepositories.get(Shogi.defaultScope()).orElseThrow();
-        final var cooldown = ShogiCommon.id("test_death_cooldown");
+        final var cooldown = Identifier.fromNamespaceAndPath("shogi", "test_death_cooldown");
         final var player = helper.makeMockServerPlayerInLevel();
 
-        repository.apply(Map.of(ShogiCommon.id("on_death"), new AddCooldown(cooldown, ConstantEffect.of(30))), Map.of());
+        repository.apply(Map.of(Identifier.fromNamespaceAndPath("shogi", "on_death"), new AddCooldown(cooldown, ConstantEffect.of(30))), Map.of());
 
         try {
             player.die(helper.getLevel().damageSources().genericKill());

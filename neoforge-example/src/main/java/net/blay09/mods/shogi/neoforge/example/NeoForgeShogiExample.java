@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.neoforge.example;
 
 import net.blay09.mods.shogi.Shogi;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -8,8 +9,6 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
-
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 @Mod(value = "shogi_example", dist = Dist.CLIENT)
 public class NeoForgeShogiExample {
@@ -32,5 +31,9 @@ public class NeoForgeShogiExample {
                 }
             }
         });
+    }
+
+    private Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath("shogi", path);
     }
 }

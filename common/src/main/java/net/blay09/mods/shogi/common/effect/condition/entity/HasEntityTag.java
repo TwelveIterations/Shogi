@@ -8,10 +8,8 @@ import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.minecraft.resources.Identifier;
 
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
-
 public record HasEntityTag(String tag) implements ShogiEffect<Boolean> {
-    public static final Identifier IDENTIFIER = id("has_entity_tag");
+    public static final Identifier IDENTIFIER = Identifier.fromNamespaceAndPath("shogi", "has_entity_tag");
     public static final MapCodec<HasEntityTag> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("tag").forGetter(HasEntityTag::tag)
     ).apply(instance, HasEntityTag::new));

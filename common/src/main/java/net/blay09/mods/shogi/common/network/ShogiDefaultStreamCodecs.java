@@ -23,10 +23,9 @@ import net.blay09.mods.shogi.network.ShogiStreamCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 
 import java.util.List;
-
-import static net.blay09.mods.shogi.common.ShogiCommon.id;
 
 public final class ShogiDefaultStreamCodecs {
     private static boolean initialized;
@@ -137,5 +136,9 @@ public final class ShogiDefaultStreamCodecs {
                 ClampEffect::max,
                 ClampEffect::new
         ));
+    }
+
+    private static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath("shogi", path);
     }
 }
