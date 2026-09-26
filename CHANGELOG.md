@@ -1,3 +1,1 @@
-- Added `/shogi cooldown <targets> add <identifier> <seconds>` and `/shogi cooldown <targets> set <identifier> <seconds>` commands
-- Added `shogi:on_death` rule that is evaluated when an entity dies
-- Fixed missing i18n for `/shogi cooldown` commands
+- Fixed circular reference resulting in crash with mods including shogi-api without a shogi dependency (like Hardcore Revival)
