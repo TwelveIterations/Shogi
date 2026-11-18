@@ -1,1 +1,1 @@
-- Fixed circular reference resulting in crash with mods including shogi-api without a shogi dependency (like Hardcore Revival)
+- Updated to Minecraft 26.4
