@@ -158,7 +158,7 @@ public class RuleEditBox extends AbstractTextAreaWidget {
     }
 
     @Override
-    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+    protected void extractContents(GuiGraphicsExtractor graphics) {
         final String value = this.textField.value();
         if (value.isEmpty() && !this.isFocused()) {
             graphics.textWithWordWrap(this.font, this.placeholder, this.getInnerLeft(), this.getInnerTop(), this.width - this.totalInnerPadding(), PLACEHOLDER_TEXT_COLOR);

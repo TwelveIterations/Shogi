@@ -1,14 +1,16 @@
 package net.blay09.mods.shogi.common.command;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldowns;
 import net.blay09.mods.shogi.common.effect.server.cooldown.ShogiCooldownsAccess;
+import net.minecraft.commands.CommandPermissionLevels;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.IdentifierArgument;
+import net.minecraft.commands.arguments.IntegerArgument;
+import net.minecraft.commands.suggestions.SuggestionContext;
+import net.minecraft.commands.suggestions.SuggestionProviders;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,15 +25,18 @@ public final class ShogiCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("shogi")
-                .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
+                .requires(Commands.hasPermission(CommandPermissionLevels.LEVEL_GAMEMASTERS))
                 .then(Commands.literal("cooldown")
                         .then(Commands.literal("reset")
                                 .then(Commands.argument("targets", EntityArgument.players())
                                         .then(Commands.literal("all")
                                                 .executes(context -> resetAllCooldowns(context.getSource(), EntityArgument.getPlayers(context, "targets"))))
                                         .then(Commands.argument("identifier", IdentifierArgument.id())
-                                                .suggests((context, builder) -> {
-                                                    final var targets = EntityArgument.getPlayers(context, "targets");
+                                                .suggests(SuggestionProviders.serverOnly((server, context, builder) -> {
+                                                    final var targets = EntityArgument.getSuggestedEntities(server, context, "targets")
+                                                            .filter(ServerPlayer.class::isInstance)
+                                                            .map(ServerPlayer.class::cast)
+                                                            .toList();
                                                     final var keys = new HashSet<String>();
                                                     for (final var target : targets) {
                                                         final var cooldowns = ((ShogiCooldownsAccess) target).shogi$getCooldowns();
@@ -39,8 +44,8 @@ public final class ShogiCommand {
                                                             keys.add(cooldown.identifier().toString());
                                                         }
                                                     }
-                                                    return SharedSuggestionProvider.suggest(keys, builder);
-                                                })
+                                                    return SuggestionContext.suggest(keys, builder);
+                                                }))
                                                 .executes(context -> resetCooldown(
                                                         context.getSource(),
                                                         EntityArgument.getPlayers(context, "targets"),
@@ -48,21 +53,21 @@ public final class ShogiCommand {
                         .then(Commands.literal("add")
                                 .then(Commands.argument("targets", EntityArgument.players())
                                         .then(Commands.argument("identifier", IdentifierArgument.id())
-                                                .then(Commands.argument("seconds", IntegerArgumentType.integer())
+                                                .then(Commands.argument("seconds", IntegerArgument.integer())
                                                         .executes(context -> addCooldown(
                                                                 context.getSource(),
                                                                 EntityArgument.getPlayers(context, "targets"),
                                                                 IdentifierArgument.getId(context, "identifier"),
-                                                                IntegerArgumentType.getInteger(context, "seconds")))))))
+                                                                IntegerArgument.getInteger(context, "seconds")))))))
                         .then(Commands.literal("set")
                                 .then(Commands.argument("targets", EntityArgument.players())
                                         .then(Commands.argument("identifier", IdentifierArgument.id())
-                                                .then(Commands.argument("seconds", IntegerArgumentType.integer(0))
+                                                .then(Commands.argument("seconds", IntegerArgument.integer(0))
                                                         .executes(context -> setCooldown(
                                                                 context.getSource(),
                                                                 EntityArgument.getPlayers(context, "targets"),
                                                                 IdentifierArgument.getId(context, "identifier"),
-                                                                IntegerArgumentType.getInteger(context, "seconds")))))))));
+                                                                IntegerArgument.getInteger(context, "seconds")))))))));
     }
 
     private static int resetAllCooldowns(CommandSourceStack source, Collection<ServerPlayer> targets) {
