@@ -21,6 +21,10 @@ public record IsBlockStateProperty(String property, String value) implements Sho
     public Either<Boolean, Throwable> apply(ShogiContext context) {
         final var state = context.requireBlockState();
         return Either.left(state.getProperties().stream().anyMatch(it -> {
+            if (!it.getName().equals(property)) {
+                return false;
+            }
+
             final var value = state.getValue(it);
             final var stringValue = value instanceof StringRepresentable rep ? rep.getSerializedName() : value.toString();
             return stringValue.equals(this.value);
