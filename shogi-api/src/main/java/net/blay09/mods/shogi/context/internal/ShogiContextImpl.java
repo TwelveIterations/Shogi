@@ -1,5 +1,7 @@
 package net.blay09.mods.shogi.context.internal;
 
+import com.mojang.datafixers.util.Either;
+
 import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.context.ShogiContext;
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
@@ -44,6 +46,11 @@ public class ShogiContextImpl implements MutableShogiContext {
     public ShogiContextImpl(@Nullable ShogiContext parent, @Nullable EffectExecutor executor) {
         this.parent = parent;
         this.executor = executor != null ? executor : new ImmediateEffectExecutor();
+    }
+
+    @Override
+    public Either<?, ?> resolveDefault() {
+        return parent != null ? parent.resolveDefault() : MutableShogiContext.super.resolveDefault();
     }
 
     @Override

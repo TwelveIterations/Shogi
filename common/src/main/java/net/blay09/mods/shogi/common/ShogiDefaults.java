@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.common;
 
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
+import net.blay09.mods.shogi.common.effect.compose.DefaultEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
@@ -66,6 +67,7 @@ public class ShogiDefaults {
     private static void registerEffects(ShogiScope scope) {
         scope.registerEffect(ConstantEffect.IDENTIFIER, ConstantEffect.MAP_CODEC, List.of("value"));
         scope.registerEffect(EmptyEffect.IDENTIFIER, EmptyEffect.MAP_CODEC);
+        scope.registerEffect(DefaultEffect.IDENTIFIER, DefaultEffect.MAP_CODEC);
 
         scope.registerEffect(AggregateEffect.IDENTIFIER, AggregateEffect.mapCodec(scope), List.of("effects"));
         scope.registerEffect(AndEffect.IDENTIFIER, AndEffect.mapCodec(scope), List.of("conditions"));
