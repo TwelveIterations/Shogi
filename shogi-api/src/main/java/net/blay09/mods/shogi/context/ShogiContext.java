@@ -1,5 +1,7 @@
 package net.blay09.mods.shogi.context;
 
+import com.mojang.datafixers.util.Either;
+
 import net.blay09.mods.shogi.context.executor.aggregate.AggregateKey;
 import net.blay09.mods.shogi.context.executor.EffectExecutor;
 import net.minecraft.core.BlockPos;
@@ -29,6 +31,16 @@ public interface ShogiContext {
      * @return the effect executor
      */
     EffectExecutor executor();
+
+    /**
+     * Invokes the fallback provider of the currently resolving value using its original input.
+     * Each invocation evaluates the provider again. Outside value resolution, returns a failure.
+     *
+     * @return the fallback result, including any failure from the provider
+     */
+    default Either<?, ?> resolveDefault() {
+        return Either.right(new IllegalStateException("default() requires an active ShogiValue resolution"));
+    }
 
     /**
      * Returns the level in this context.
