@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import net.blay09.mods.shogi.context.ShogiContext;
+import net.blay09.mods.shogi.context.internal.ShogiContextImpl;
 import net.blay09.mods.shogi.context.MutableShogiContext;
 import net.blay09.mods.shogi.effect.ShogiEffect;
 import net.blay09.mods.shogi.effect.ShogiEmpty;
@@ -149,7 +150,17 @@ public class ShogiScopeImpl implements ShogiScope {
         final var override = getOverride(identifier).orElse(null);
         if (override != null) {
             try {
-                var result = override.apply(normalizedContext);
+                final var evaluationContext = new ShogiContextImpl(normalizedContext) {
+                    @Override
+                    public Either<?, ?> resolveDefault() {
+                        try {
+                            return defaultProvider.apply(context);
+                        } catch (Throwable t) {
+                            return Either.right(t);
+                        }
+                    }
+                };
+                var result = override.apply(evaluationContext);
                 if (!(result.right().orElse(null) instanceof ShogiEmpty)) {
                     return result;
                 }

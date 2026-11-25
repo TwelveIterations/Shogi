@@ -1,6 +1,7 @@
 package net.blay09.mods.shogi.common.network;
 
 import net.blay09.mods.shogi.common.effect.compose.AggregateEffect;
+import net.blay09.mods.shogi.common.effect.compose.DefaultEffect;
 import net.blay09.mods.shogi.common.effect.compose.AndEffect;
 import net.blay09.mods.shogi.common.effect.compose.AnyEffect;
 import net.blay09.mods.shogi.common.effect.compose.ConditionEffect;
@@ -42,6 +43,7 @@ public final class ShogiDefaultStreamCodecs {
         }
         initialized = true;
 
+        ShogiStreamCodecs.register(id("default"), DefaultEffect.class, StreamCodec.unit(DefaultEffect.INSTANCE));
         ShogiStreamCodecs.register(id("failure"), FailureInformation.class, FailureInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("refusal"), RefusalInformation.class, RefusalInformation.STREAM_CODEC);
         ShogiStreamCodecs.register(id("missing_variable_failure"), MissingVariableFailure.class, MissingVariableFailure.STREAM_CODEC);
