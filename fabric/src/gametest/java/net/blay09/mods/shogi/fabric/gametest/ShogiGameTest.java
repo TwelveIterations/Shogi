@@ -28,21 +28,21 @@ public class ShogiGameTest {
         final var firstCooldown = Identifier.fromNamespaceAndPath("shogi", "test_command_first");
         final var secondCooldown = Identifier.fromNamespaceAndPath("shogi", "test_command_second");
         final var server = helper.getLevel().getServer();
-        final var dispatcher = server.getCommands().getDispatcher();
+        final var commands = server.getCommands();
         final var source = server.createCommandSourceStack().withEntity(player);
 
-        dispatcher.execute("shogi cooldown set @s " + firstCooldown + " 10", source);
+        commands.performPrefixedCommand(source, "shogi cooldown set @s " + firstCooldown + " 10");
         helper.assertValueEqual(cooldowns.getRemainingTicks(firstCooldown), 200L, "set command cooldown ticks");
 
-        dispatcher.execute("shogi cooldown add @s " + firstCooldown + " 5", source);
+        commands.performPrefixedCommand(source, "shogi cooldown add @s " + firstCooldown + " 5");
         helper.assertValueEqual(cooldowns.getRemainingTicks(firstCooldown), 300L, "add command cooldown ticks");
 
-        dispatcher.execute("shogi cooldown set @s " + secondCooldown + " 20", source);
-        dispatcher.execute("shogi cooldown reset @s " + firstCooldown, source);
+        commands.performPrefixedCommand(source, "shogi cooldown set @s " + secondCooldown + " 20");
+        commands.performPrefixedCommand(source, "shogi cooldown reset @s " + firstCooldown);
         helper.assertFalse(cooldowns.hasCooldown(firstCooldown), "reset command did not remove the selected cooldown");
         helper.assertTrue(cooldowns.hasCooldown(secondCooldown), "reset command removed an unrelated cooldown");
 
-        dispatcher.execute("shogi cooldown reset @s all", source);
+        commands.performPrefixedCommand(source, "shogi cooldown reset @s all");
         helper.assertFalse(cooldowns.hasCooldown(secondCooldown), "reset all command did not remove every cooldown");
         helper.succeed();
     }
